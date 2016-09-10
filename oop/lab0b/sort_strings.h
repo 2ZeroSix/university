@@ -14,7 +14,7 @@ namespace sort_strings_h {
      *
      * @return       list of strings
      */
-    std::list<std::string> read_stream_strings(std::istream *fin);
+    std::list<std::string>* read_stream_strings(std::istream &fin);
 
     /**
      * print list of strings in file
@@ -22,7 +22,7 @@ namespace sort_strings_h {
      * @param  fout  output file
      * @param  strs  list of strings
      */
-    void print_stream_strings(std::ostream *fout, std::list<std::string> strs);
+    void print_stream_strings(std::ostream &fout, std::list<std::string> strs);
 
     /**
      * sort list
@@ -37,12 +37,12 @@ namespace sort_strings_h {
      * @param  fin   input stream
      * @param  fout  output stream
      */
-    void sort_strings(std::istream *fin, std::ostream *fout);
+    void sort_strings(std::istream &fin, std::ostream &fout);
 
     //versions, which check that files are open
-    int sort_strings(std::ifstream *fin, std::ofstream *fout);
-    int sort_strings(std::ifstream *fin, std::ostream *fout);
-    int sort_strings(std::istream *fin, std::ofstream *fout);
+    int sort_strings(std::ifstream &fin, std::ofstream &fout);
+    int sort_strings(std::ifstream &fin, std::ostream &fout);
+    int sort_strings(std::istream &fin, std::ofstream &fout);
 
 }
 #endif
