@@ -1,7 +1,7 @@
 .PHONY: all clean test
 CC     = clang++
 CFLAGS = -std=c++11 -O3 -c
-LDFLAGS= -std=c++11
+LDFLAGS= -std=c++11 
 TARGET = lab1.exe
 SRC    = main.cpp tritset.cpp trit.cpp
 OBJ    = $(SRC:.cpp=.o)

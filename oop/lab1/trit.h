@@ -21,19 +21,19 @@ public:
         return *this;
     }
     operator Tritenum()               const;
-    Trit operator&(const Trit &other) const;
+    // Trit operator&(const Trit &other) const;
     template<class T,
     class = typename std::enable_if<std::is_integral<T>::value>::type>
     Trit operator&(const T &other)    const{
         return (_state < static_cast<Tritenum>(other)) ? _state : static_cast<Tritenum>(other);
     }
-    Trit operator|(const Trit &other) const;
+    // Trit operator|(const Trit &other) const;
     template<class T,
     class = typename std::enable_if<std::is_integral<T>::value>::type>
     Trit operator|(const T &other)    const{
         return (_state > Tritenum(other)) ? _state : Tritenum(other);
     }
-    Trit operator^(const Trit &other) const;
+    // Trit operator^(const Trit &other) const;
     template<class T,
     class = typename std::enable_if<std::is_integral<T>::value>::type>
     Trit operator^(const T &other)    const{

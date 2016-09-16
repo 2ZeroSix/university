@@ -15,18 +15,6 @@ namespace tritspace {
         return _state;
     }
 
-    Trit Trit::operator&(const Trit &other) const{
-        return (_state < other._state) ? _state : other._state;
-    }
-
-    Trit Trit::operator|(const Trit &other) const{
-        return (_state > other._state) ? _state : other._state;
-    }
-
-    Trit Trit::operator^(const Trit &other) const{
-        return (_state + other._state) % 3;
-    }
-
     Trit Trit::operator~() const{
         switch (_state) {
             case _False:
