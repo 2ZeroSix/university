@@ -36,23 +36,26 @@ namespace tritspace{
     private:
         uint        *data;
         std::size_t _capacity;
-        class reference {
+        class reference : public TritBase<reference, Trit> {
         public:
             reference(TritSet &set, std::size_t pos);
             reference(const reference& other);
-            operator    Trit        ()                      const;
-            reference&  operator=   (const Trit other);
-            reference&  operator=   (const reference& other);
-            bool        operator==  (const Trit other)      const;
-            bool        operator!=  (const Trit other)      const;
-            const Trit  operator&   (const Trit &other)     const;
-            const Trit  operator&=  (const Trit &other);
-            const Trit  operator|   (const Trit &other)     const;
-            const Trit  operator|=  (const Trit &other);
-            const Trit  operator^   (const Trit &other)     const;
-            const Trit  operator^=  (const Trit &other);
-            reference&  flip        ();  
-            ~reference();
+            // virtual operator    Trit        ()                      const;
+            // reference&  operator=   (const Trit other) {
+            //     return *this = other.state();
+            // }
+            virtual reference&  operator=   (const Tritenum state);
+            // reference&  operator=   (const reference& other);
+            // bool        operator==  (const Trit other)      const;
+            // bool        operator!=  (const Trit other)      const;
+            // reference&  operator&=  (const Trit &other);
+            // reference&  operator|=  (const Trit &other);
+            // reference&  operator^=  (const Trit &other);
+            // reference&  flip        ();
+            virtual Tritenum state() const {
+                return Tritenum(rset->data[(rpos * 2) / (8 * sizeof(uint))]
+                                                >> (rpos * 2) % (8 * sizeof(uint)));}
+            virtual ~reference();
         private:
             friend class TritSet;
             reference();

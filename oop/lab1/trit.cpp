@@ -11,32 +11,29 @@ namespace tritspace {
         return *this;
     }
 
-    Trit::operator Tritenum() const{
-        return _state;
-    }
+    // Trit::operator Tritenum() const{
+    //     return _state;
+    // }
 
-    Trit Trit::operator~() const{
-        switch (_state) {
-            case _False:
-                return True;
-            case _Unknown:
-                return Unknown;
-            case _True:
-                return False;
-        }
-    }
+    // Trit Trit::operator~() const{
+    //     switch (_state) {
+    //         case _False:
+    //             return True;
+    //         case _Unknown:
+    //             return Unknown;
+    //         case _True:
+    //             return False;
+    //     }
+    // }
 
-    const char* Trit::to_string() const{
-        switch (_state) {
-            case _False:
-                return "False";
-            case _Unknown:
-                return "Unknown";
-            case _True:
-                return "True";
-        }    
-    }
-
-    Trit::~Trit() { };
-
+    // const char* Trit::to_string() const{
+    //     switch (_state) {
+    //         case _False:
+    //             return "False";
+    //         case _Unknown:
+    //             return "Unknown";
+    //         case _True:
+    //             return "True";
+    //     }    
+    // }
 }

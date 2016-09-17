@@ -205,20 +205,10 @@ TritSet::reference::reference(TritSet &set, std::size_t pos)
 TritSet::reference::reference(const reference& other)
  : rset(other.rset), rpos(other.rpos) { }
 
-TritSet::reference::operator Trit() const {
-    if (rpos < rset->_capacity){
-        return Trit::Tritenum((rset->data[(rpos * 2) / (8 * sizeof(uint))]
-            >> (rpos * 2) % (8 * sizeof(uint))) & 0x3);
-    }
-    else {
-        return Unknown;
-    }
-}
-
-TritSet::reference& TritSet::reference::operator= (const Trit other) {
+TritSet::reference& TritSet::reference::operator= (const Tritenum other) {
     std::size_t shift    = (rpos * 2) / (8 * sizeof(uint));
     std::size_t shiftbit = (rpos * 2) % (8 * sizeof(uint));
-    if ((rpos >= rset->_capacity) && ((other == True) || (other == False))) {
+    if ((rpos >= rset->_capacity) && ((other == _True) || (other == _False))) {
         rset->resize(rpos + 1);
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
                             ((uint)other << shiftbit);
@@ -230,45 +220,17 @@ TritSet::reference& TritSet::reference::operator= (const Trit other) {
     return *this;
 }
 
-TritSet::reference& TritSet::reference::operator= (const reference& other) {
-    return *this = Trit(other);
-}
+// TritSet::reference& TritSet::reference::operator= (const reference& other) {
+//     return *this = other.state();
+// }
 
-bool TritSet::reference::operator==(const Trit other) const{
-    return Trit(*this) == other;
-}
+// bool TritSet::reference::operator==(const Trit other) const{
+//     return Trit(*this) == other;
+// }
 
-bool TritSet::reference::operator!=(const Trit other) const{
-    return Trit(*this) != other;
-}
-
-const Trit TritSet::reference::operator& (const Trit &other) const{
-    return Trit(*this)&other;
-}
-
-const Trit TritSet::reference::operator&=(const Trit &other){
-    return *this = Trit(*this)&other;
-}
-
-const Trit TritSet::reference::operator| (const Trit &other) const{
-    return Trit(*this)|other;
-}
-
-const Trit TritSet::reference::operator|=(const Trit &other){
-    return *this = Trit(*this)|other;
-}
-
-const Trit TritSet::reference::operator^ (const Trit &other) const{
-    return Trit(*this)^other;
-}
-
-const Trit TritSet::reference::operator^=(const Trit &other){
-    return *this = Trit(*this)^other;
-}
-
-TritSet::reference& TritSet::reference::flip() {
-    return *this = ~Trit(*this);
-}
+// bool TritSet::reference::operator!=(const Trit other) const{
+//     return Trit(*this) != other;
+// }
 
 TritSet::reference::~reference() {};
 

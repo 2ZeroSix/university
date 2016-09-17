@@ -7,7 +7,7 @@ using namespace tritspace;
 int main() {
     TritSet set(10);
     for (int i = 0; i <= 68; ++i) {
-        set[i] = i;
+        set[i] = Tritenum(i);
     }
     for (int j = 0; j <= 100; ++j)
     {
@@ -57,7 +57,7 @@ int main() {
     const Trit a;
     // a = -11;
     cout << a.to_string()           << endl;
-    cout << (Unknown|2).to_string() << endl;
-    cout << (Unknown|2).to_string() << endl;
+    cout << (Unknown|Trit(2)).to_string() << endl;
+    cout << (Unknown|Trit(2)).to_string() << endl;
     return 0;
 }
