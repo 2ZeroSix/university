@@ -6,10 +6,10 @@ using namespace tritspace;
 
 int main() {
     TritSet set(10);
-    for (int i = 0; i <= 68; ++i) {
-        set[i] = Tritenum(i);
+    for (int i = 0; i <= 11; ++i) {
+    set[i] = Trit(i);
     }
-    for (int j = 0; j <= 100; ++j)
+    for (int j = 0; j <= 10; ++j)
     {
         cout << Trit(set[j]).to_string() << endl;
     }
@@ -55,9 +55,10 @@ int main() {
         cout << (~False).to_string()   << endl << endl;
     */
     const Trit a;
-    // a = -11;
+    // // a = -11;
     cout << a.to_string()           << endl;
     cout << (Unknown|Trit(2)).to_string() << endl;
     cout << (Unknown|Trit(2)).to_string() << endl;
+    cout << -10 % 7 << endl;
     return 0;
 }

@@ -16,7 +16,7 @@ namespace tritspace{
         std::size_t     capacity    ()                      const;
         // don't forget to use delete[] after call of this function
         std::size_t*    cardinality ()                      const;
-        std::size_t     cardinality (Trit value)            const;
+        std::size_t     cardinality (const Trit value)      const;
         TritSet&        flip        ();
         std::size_t     length      ()                      const;
         TritSet&        operator=   (const TritSet& other);
@@ -32,7 +32,7 @@ namespace tritspace{
         TritSet&        resize      (std::size_t new_capacity);
         TritSet&        shrink      ();
         void            trim        (std::size_t lastIndex);
-        ~TritSet();
+        virtual ~TritSet();
     private:
         uint        *data;
         std::size_t _capacity;
@@ -40,21 +40,8 @@ namespace tritspace{
         public:
             reference(TritSet &set, std::size_t pos);
             reference(const reference& other);
-            // virtual operator    Trit        ()                      const;
-            // reference&  operator=   (const Trit other) {
-            //     return *this = other.state();
-            // }
             virtual reference&  operator=   (const Tritenum state);
-            // reference&  operator=   (const reference& other);
-            // bool        operator==  (const Trit other)      const;
-            // bool        operator!=  (const Trit other)      const;
-            // reference&  operator&=  (const Trit &other);
-            // reference&  operator|=  (const Trit &other);
-            // reference&  operator^=  (const Trit &other);
-            // reference&  flip        ();
-            virtual Tritenum state() const {
-                return Tritenum(rset->data[(rpos * 2) / (8 * sizeof(uint))]
-                                                >> (rpos * 2) % (8 * sizeof(uint)));}
+            virtual Tritenum state() const;
             virtual ~reference();
         private:
             friend class TritSet;

@@ -153,7 +153,8 @@ TritSet& TritSet::resize(std::size_t new_capacity) {
         for (std::size_t i = 0; i < min_size; ++i) {
             data[i] = buf[i];
         }
-        for (std::size_t i = _capacity / (4 * sizeof(uint)); i < new_capacity / (4 * sizeof(uint)); ++i) {
+        for (std::size_t i = _capacity / (4 * sizeof(uint));
+                i < new_capacity / (4 * sizeof(uint)); ++i) {
             data[i] = static_cast<uint>(0x5555555555555555);
         }
         if(_capacity) {
@@ -181,7 +182,8 @@ void TritSet::trim(std::size_t lastIndex) {
         (*this)[i] = Unknown;
     }
     limit /= 4 * sizeof(uint);
-    for(std::size_t i = limit; i < _capacity / (4 * sizeof(uint)); ++i) {
+    for(std::size_t i = limit;
+                i < _capacity / (4 * sizeof(uint)); ++i) {
         data[i] = static_cast<uint>(0x5555555555555555);
     }
 }
@@ -206,31 +208,29 @@ TritSet::reference::reference(const reference& other)
  : rset(other.rset), rpos(other.rpos) { }
 
 TritSet::reference& TritSet::reference::operator= (const Tritenum other) {
-    std::size_t shift    = (rpos * 2) / (8 * sizeof(uint));
+    std::size_t shift    = (rpos    ) / (4 * sizeof(uint));
     std::size_t shiftbit = (rpos * 2) % (8 * sizeof(uint));
     if ((rpos >= rset->_capacity) && ((other == _True) || (other == _False))) {
         rset->resize(rpos + 1);
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
-                            ((uint)other << shiftbit);
+                            ((uint)other%3 << shiftbit);
     }
     else if (rpos < rset->_capacity) {
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
-                            ((uint)other << shiftbit);
+                            ((uint)other%3 << shiftbit);
     }
     return *this;
 }
 
-// TritSet::reference& TritSet::reference::operator= (const reference& other) {
-//     return *this = other.state();
-// }
-
-// bool TritSet::reference::operator==(const Trit other) const{
-//     return Trit(*this) == other;
-// }
-
-// bool TritSet::reference::operator!=(const Trit other) const{
-//     return Trit(*this) != other;
-// }
+Tritenum TritSet::reference::state() const {
+    if (rpos < rset->capacity()) {
+        return Tritenum((rset->data[(rpos) / (4 * sizeof(uint))]
+        >> (rpos * 2) % (8 * sizeof(uint))) & 0x3);
+    }
+    else {
+        return _Unknown;
+    }
+}
 
 TritSet::reference::~reference() {};
 

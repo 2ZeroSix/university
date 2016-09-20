@@ -3,7 +3,7 @@ CC     = clang++
 CFLAGS = -std=c++11 -O3 -c
 LDFLAGS= -std=c++11 
 TARGET = lab1.exe
-SRC    = main.cpp tritset.cpp trit.cpp
+SRC    = main.cpp tritset.cpp
 OBJ    = $(SRC:.cpp=.o)
 INF    = 
 OUTF   = 

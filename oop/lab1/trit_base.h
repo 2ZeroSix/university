@@ -6,15 +6,14 @@ template<typename T, typename U=T>
 class TritBase {
 public:
     TritBase() { }
-    // TritBase(Tritenum state) {*this = state;}
-    U operator&(Tritenum other) const{
-        return (state() < other) ? state() : other;
+    U operator&(const Tritenum other) const{
+        return Tritenum((state() < other%3) ? state() : other%3);
     }
-    U operator|(Tritenum other) const{
-        return (state() > other) ? state() : other;
+    U operator|(const Tritenum other) const{
+        return Tritenum((state() > other%3) ? state() : other%3);
     }
-    U operator^(Tritenum other) const{
-        return Tritenum(state() + other % 3);
+    U operator^(const Tritenum other) const{
+        return Tritenum((state() + other)%3);
     }
     U operator~() const{
         switch (state()) {
@@ -26,13 +25,13 @@ public:
                 return _False;
         }
     }
-    T operator&=(Tritenum other){
+    T operator&=(const Tritenum other){
         return *this = (*this & other).state();
     }
-    T operator|=(Tritenum other){
+    T operator|=(const Tritenum other){
         return *this = (*this | other).state();
     }
-    T operator^=(Tritenum other){
+    T operator^=(const Tritenum other){
         return *this = (*this ^ other).state();
     }
     T flip()                    {
@@ -48,10 +47,9 @@ public:
                 return "True";
         }    
     }
-    operator              Tritenum  () const {return state();}
-    virtual     Tritenum  state     () const                = 0;
-    // virtual     T& operator= (const U& other)               = 0;
-    virtual     T& operator= (Tritenum state)               = 0;
+    operator                Tritenum  () const {return state();}
+    virtual     Tritenum    state     () const              = 0;
+    virtual     T&          operator= (Tritenum state)               = 0;
     virtual ~TritBase() { }
 };
 
