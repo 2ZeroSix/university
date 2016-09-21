@@ -1,37 +1,47 @@
 #ifndef _TRIT_BASE_H_
 #define _TRIT_BASE_H_
 
-enum Tritenum : unsigned char {_False, _Unknown, _True};
+enum Tritenum : unsigned char {_Unknown, _False, _True};
 template<typename T, typename U=T>
 class TritBase {
+protected:
+            TritBase  () { }
+    virtual ~TritBase () { }
 public:
-    TritBase() { }
-    U operator&(const Tritenum other) const{
-        return Tritenum((state() < other%3) ? state() : other%3);
+    template<typename A, typename B>
+    U operator&(const TritBase<A, B>& other) const{
+        return U((state() < other.state())
+                       ? state() : other.state());
     }
-    U operator|(const Tritenum other) const{
-        return Tritenum((state() > other%3) ? state() : other%3);
+    template<typename A, typename B>
+    U operator|(const TritBase<A, B>& other) const{
+        return U((state() > other.state())
+                       ? state() : other.state());
     }
-    U operator^(const Tritenum other) const{
-        return Tritenum((state() + other)%3);
+    template<typename A, typename B>
+    U operator^(const TritBase<A, B>& other) const{
+        return U((state() + other.state())%3);
     }
     U operator~() const{
         switch (state()) {
             case _False:
-                return _True;
+                return U(_True);
             case _Unknown:
-                return _Unknown;
+                return U(_Unknown);
             case _True:
-                return _False;
+                return U(_False);
         }
     }
-    T operator&=(const Tritenum other){
+    template<typename A, typename B>
+    T operator&=(const TritBase<A, B>& other){
         return *this = (*this & other).state();
     }
-    T operator|=(const Tritenum other){
+    template<typename A, typename B>
+    T operator|=(const TritBase<A, B>& other){
         return *this = (*this | other).state();
     }
-    T operator^=(const Tritenum other){
+    template<typename A, typename B>
+    T operator^=(const TritBase<A, B>& other){
         return *this = (*this ^ other).state();
     }
     T flip()                    {
@@ -47,10 +57,9 @@ public:
                 return "True";
         }    
     }
-    operator                Tritenum  () const {return state();}
-    virtual     Tritenum    state     () const              = 0;
-    virtual     T&          operator= (Tritenum state)               = 0;
-    virtual ~TritBase() { }
+    explicit operator   Tritenum  () const {return state();}
+    virtual Tritenum    state     () const               = 0;
+    virtual T&          operator= (const Tritenum state) = 0;
 };
 
 #endif

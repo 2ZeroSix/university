@@ -5,29 +5,28 @@
 using namespace std;
 namespace tritspace {
 
-std::size_t extend_to_capacity(std::size_t num) {
+std::size_t extendToCapacity(std::size_t num) {
     return  ((num)/(4 * sizeof(uint)))*4*sizeof(uint) 
             + (((2 * num) % (8 * sizeof(uint)))
                     ? sizeof(uint)*4 : 0);
 }
 
+uint unknown_uint() {
+    return 0;
+}
 
 /////////////
 // TritSet //
 /////////////
 
 
-TritSet::TritSet(std::size_t reserve) {
-    if ((_capacity = extend_to_capacity(reserve))){
-        data = new uint[(_capacity * 2) / (8 * sizeof(uint))];
-        for (std::size_t i = 0; i < (_capacity * 2) / (8 * sizeof(uint)); ++i) {
-            data[i] = static_cast<uint>(0x5555555555555555);
-        }
-    }
+TritSet::TritSet(std::size_t reserve)
+:_capacity(0) {
+    resize(reserve);
 }
 
-TritSet::TritSet(const TritSet& other) {
-    _capacity = 0;
+TritSet::TritSet(const TritSet& other)
+:_capacity(0) {
     *this = other;
 }
 
@@ -35,19 +34,20 @@ std::size_t TritSet::capacity() const {
     return _capacity;
 }
 
-std::size_t* TritSet::cardinality() const{
-    std::size_t *count = new std::size_t[3];
-    count[Unknown] = cardinality(Unknown);
-    count[True] = cardinality(True);
-    count[False] = cardinality(False);
+std::vector<std::size_t> TritSet::cardinality() const{
+    std::vector<std::size_t> count(3);
+    for (std::size_t i = 0; i < length(); ++i)
+    {
+        ++count[(*this)[i].state()];
+    }
     return count;
 }
 
-std::size_t TritSet::cardinality(Trit state) const{
+std::size_t TritSet::cardinality(Tritenum state) const{
     std::size_t count = 0;
-    for (std::size_t i = 0; i < _capacity; ++i)
+    for (std::size_t i = 0; i < length(); ++i)
     {
-        if ((*this)[i] == state) {
+        if ((*this)[i].state() == state) {
             ++count;
         }
     }
@@ -64,7 +64,7 @@ TritSet& TritSet::flip() {
 std::size_t TritSet::length() const{
     for(std::size_t i = _capacity - 1; i != static_cast<std::size_t>(-1); --i)
     {
-        if ((*this)[i] != Unknown) {
+        if ((*this)[i].state() != _Unknown) {
             return i + 1;
         }
     }
@@ -143,19 +143,15 @@ TritSet& TritSet::operator^=(const TritSet& other){
 }
 
 TritSet& TritSet::resize(std::size_t new_capacity) {
-    new_capacity = extend_to_capacity(new_capacity);
+    new_capacity = extendToCapacity(new_capacity);
     if (new_capacity && (new_capacity != _capacity)) {
         uint *buf = data;
-        data = new uint[new_capacity];
+        data = new uint[new_capacity]();
         std::size_t min_size = ((_capacity < new_capacity) ?
                             _capacity : new_capacity)
                            * 2 / (8 * sizeof(uint)); // (in sizeof(uint))
         for (std::size_t i = 0; i < min_size; ++i) {
             data[i] = buf[i];
-        }
-        for (std::size_t i = _capacity / (4 * sizeof(uint));
-                i < new_capacity / (4 * sizeof(uint)); ++i) {
-            data[i] = static_cast<uint>(0x5555555555555555);
         }
         if(_capacity) {
             delete[] buf;
@@ -177,14 +173,14 @@ TritSet& TritSet::shrink() {
 }
 
 void TritSet::trim(std::size_t lastIndex) {
-    size_t limit = extend_to_capacity(lastIndex);
+    size_t limit = extendToCapacity(lastIndex);
     for(std::size_t i = lastIndex; i < limit; ++i) {
-        (*this)[i] = Unknown;
+        (*this)[i] = _Unknown;
     }
     limit /= 4 * sizeof(uint);
     for(std::size_t i = limit;
                 i < _capacity / (4 * sizeof(uint)); ++i) {
-        data[i] = static_cast<uint>(0x5555555555555555);
+        data[i] = unknown_uint();
     }
 }
 
