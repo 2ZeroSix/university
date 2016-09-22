@@ -1,7 +1,6 @@
 #ifndef _TRITSET_H_
 #define _TRITSET_H_
 #include "trit.h"
-#include <vector>
 namespace tritspace{
 typedef unsigned int uint;
 /**
@@ -12,9 +11,11 @@ typedef unsigned int uint;
  * @return       increased number
  */
 std::size_t extendToCapacity(std::size_t num);
-// more safe than static_cast<uint>(0x5555555555555555)
-// but if bit is not equal to 8 bits
-// than behaviour is undefined
+/**
+ * initialize uint by Unknown trits
+ *
+ * @return  initialized uint
+ */
 uint unknown_uint();
 
 /**
@@ -28,7 +29,7 @@ public:
     TritSet(const TritSet& other);
     std::size_t     capacity    ()                      const;
     std::vector<std::size_t>  cardinality ()            const;
-    std::size_t     cardinality (const Tritenum value)  const;
+    std::size_t     cardinality (Tritenum value)  const;
     TritSet&        flip        ();
     std::size_t     length      ()                      const;
     TritSet&        operator=   (const TritSet& other);
@@ -36,7 +37,7 @@ public:
     const Trit      operator[]  (std::size_t id)        const;
     TritSet         operator&   (const TritSet& other)  const;
     TritSet         operator|   (const TritSet& other)  const;
-    TritSet         operator^   (const TritSet& other)  const;
+    TritSet            operator^(const TritSet& other)  const;
     TritSet         operator~   ()                      const;
     TritSet&        operator&=  (const TritSet& other);
     TritSet&        operator|=  (const TritSet& other);
@@ -56,7 +57,7 @@ private:
         reference&  operator=(const TritBase<A, B>& other){
             return *this = other.state();
         }
-        virtual reference&  operator=(const Tritenum state);
+        virtual reference&  operator=(Tritenum state);
         virtual Tritenum    state    () const;
         virtual             ~reference();
     private:

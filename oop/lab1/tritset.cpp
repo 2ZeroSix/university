@@ -203,9 +203,12 @@ TritSet::reference::reference(TritSet &set, std::size_t pos)
 TritSet::reference::reference(const reference& other)
  : rset(other.rset), rpos(other.rpos) { }
 
-TritSet::reference& TritSet::reference::operator= (const Tritenum other) {
+TritSet::reference& TritSet::reference::operator= (Tritenum other) {
     std::size_t shift    = (rpos    ) / (4 * sizeof(uint));
     std::size_t shiftbit = (rpos * 2) % (8 * sizeof(uint));
+    if(other == Tritenum(-1)) {
+        other = _False2;
+    }
     if ((rpos >= rset->_capacity) && ((other == _True) || (other == _False))) {
         rset->resize(rpos + 1);
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
@@ -220,12 +223,11 @@ TritSet::reference& TritSet::reference::operator= (const Tritenum other) {
 
 Tritenum TritSet::reference::state() const {
     if (rpos < rset->capacity()) {
-        return Tritenum((rset->data[(rpos) / (4 * sizeof(uint))]
-        >> (rpos * 2) % (8 * sizeof(uint))) & 0x3);
+        char ret = (rset->data[(rpos) / (4 * sizeof(uint))]
+                >> (rpos * 2) % (8 * sizeof(uint))) & 0x3;
+        return (ret == _False2) ? _False : Tritenum(ret);
     }
-    else {
-        return _Unknown;
-    }
+    return _Unknown;
 }
 
 TritSet::reference::~reference() {};

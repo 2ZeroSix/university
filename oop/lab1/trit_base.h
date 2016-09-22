@@ -1,7 +1,20 @@
 #ifndef _TRIT_BASE_H_
 #define _TRIT_BASE_H_
+#include <vector>
 
-enum Tritenum : unsigned char {_Unknown, _False, _True};
+enum Tritenum : char {_False=-1, _Unknown, _True, _False2};
+
+class WrongTrit: public std::exception {
+public:
+    WrongTrit(Tritenum state):_state(state){}
+    virtual const char* what() const throw()
+    {
+    return "Undefined trit state:";
+    }
+private:
+    Tritenum _state;
+};
+
 template<typename T, typename U=T>
 class TritBase {
 protected:
@@ -20,7 +33,7 @@ public:
     }
     template<typename A, typename B>
     U operator^(const TritBase<A, B>& other) const{
-        return U((state() + other.state())%3);
+        return U((state() + other.state() + 2) % 3 - 1);
     }
     U operator~() const{
         switch (state()) {
@@ -30,6 +43,8 @@ public:
                 return U(_Unknown);
             case _True:
                 return U(_False);
+            default:
+                throw WrongTrit(state());
         }
     }
     template<typename A, typename B>
@@ -55,11 +70,21 @@ public:
                 return "Unknown";
             case _True:
                 return "True";
+            default:
+                throw WrongTrit(state());
         }    
     }
     explicit operator   Tritenum  () const {return state();}
     virtual Tritenum    state     () const               = 0;
     virtual T&          operator= (const Tritenum state) = 0;
+    template<typename A, typename B>
+    T&                  operator= (const TritBase<A, B>& other) {
+        return *this = other.state();
+    }
+    template<typename A, typename B>
+    bool                operator==(const TritBase<A, B>& other) const{
+        return state() == other.state();
+    }
 };
 
 #endif

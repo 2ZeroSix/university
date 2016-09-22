@@ -10,10 +10,10 @@ public:
     template<typename A, typename B>
     Trit(const TritBase<A, B>& other):_state(other.state()) {}
     explicit Trit(const int state) {
-        _state = Tritenum((state < 0) ? -(state % 3) : state % 3);
+        _state = Tritenum((state < 0) ? _False : (state > 0 ? _True : _Unknown));
     }
     virtual Trit& operator=(const Tritenum state) {
-        _state = Tritenum(state % 3);
+        _state = Tritenum((state < 0) ? _False : (state > 0 ? _True : _Unknown));
         return *this;
     }
     virtual     Tritenum state() const {

@@ -22,7 +22,7 @@ int main() {
     }
     cout << endl;
     
-    /*
+    
         cout << (True    | True).to_string()    << " ";
         cout << (True    | Unknown).to_string() << " ";
         cout << (True    | False).to_string()   << endl;
@@ -53,7 +53,7 @@ int main() {
         cout << (~True).to_string()    << " ";
         cout << (~Unknown).to_string() << " ";
         cout << (~False).to_string()   << endl << endl;
-    */
+    
     const Trit a;
     // // a = -11;
     cout << a.to_string()           << endl;
