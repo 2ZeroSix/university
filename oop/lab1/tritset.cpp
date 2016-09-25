@@ -5,14 +5,10 @@
 using namespace std;
 namespace tritspace {
 
-std::size_t extendToCapacity(std::size_t num) {
+size_t extendToCapacity(size_t num) {
     return  ((num)/(4 * sizeof(uint)))*4*sizeof(uint) 
             + (((2 * num) % (8 * sizeof(uint)))
                     ? sizeof(uint)*4 : 0);
-}
-
-uint unknown_uint() {
-    return 0;
 }
 
 /////////////
@@ -20,33 +16,43 @@ uint unknown_uint() {
 /////////////
 
 
-TritSet::TritSet(std::size_t reserve)
-:_capacity(0) {
+TritSet::TritSet(size_t reserve)
+:_capacity(0), data(nullptr) {
     resize(reserve);
 }
 
+TritSet::TritSet(const Trit *arrt, size_t count)
+:_capacity(0), data(nullptr) {
+    resize(count);
+    for (size_t i = 0; i < count; ++i) {
+        (*this)[i] = arrt[i];
+    }
+}
+
+
 TritSet::TritSet(const TritSet& other)
-:_capacity(0) {
+:_capacity(0), data(nullptr) {
     *this = other;
 }
 
-std::size_t TritSet::capacity() const {
+size_t TritSet::capacity() const {
     return _capacity;
 }
 
-std::vector<std::size_t> TritSet::cardinality() const{
-    std::vector<std::size_t> count(3);
-    for (std::size_t i = 0; i < length(); ++i)
+vector<size_t> TritSet::cardinality() const{
+    vector<size_t> count(3);
+    size_t cur_len = length();
+    for (size_t i = 0; i < cur_len; ++i)
     {
-        ++count[(*this)[i].state()];
+        ++count[(*this)[i].state() + 1];
     }
     return count;
 }
 
-std::size_t TritSet::cardinality(Tritenum state) const{
-    std::size_t count = 0;
-    for (std::size_t i = 0; i < length(); ++i)
-    {
+size_t TritSet::cardinality(Tritenum state) const{
+    size_t count = 0;
+    size_t cur_len = length();
+    for (size_t i = 0; i < cur_len; ++i) {
         if ((*this)[i].state() == state) {
             ++count;
         }
@@ -55,15 +61,14 @@ std::size_t TritSet::cardinality(Tritenum state) const{
 }
 
 TritSet& TritSet::flip() {
-    for (std::size_t i = 0; i < _capacity; ++i) {
+    for (size_t i = 0; i < capacity(); ++i) {
         (*this)[i].flip();
     }
     return *this;
 }
 
-std::size_t TritSet::length() const{
-    for(std::size_t i = _capacity - 1; i != static_cast<std::size_t>(-1); --i)
-    {
+size_t TritSet::length() const{
+    for(size_t i = capacity() - 1; i != static_cast<size_t>(0)-1; --i) {
         if ((*this)[i].state() != _Unknown) {
             return i + 1;
         }
@@ -72,23 +77,40 @@ std::size_t TritSet::length() const{
 }
 
 TritSet& TritSet::operator=(const TritSet& other) {
-    if (_capacity < other._capacity) {
-        resize(other._capacity);
+    if (capacity() < other.capacity()) {
+        resize(other.capacity());
     }
-    std::size_t size = _capacity / (4 * sizeof(uint));
-    for (std::size_t i = 0; i < size; ++i) {
+    size_t size = capacity() / (4 * sizeof(uint));
+    for (size_t i = 0; i < size; ++i) {
         data[i] = other.data[i];
     }
     return *this;
 }
 
-TritSet::reference TritSet::operator[](std::size_t id) {
+bool TritSet::operator== (const TritSet& other) const{
+    size_t maxCapacity = (capacity() > other.capacity())
+                     ? capacity() : other.capacity();
+    for(size_t i = 0; i < maxCapacity; ++i) {
+        if((*this)[i] != other[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool TritSet::operator!= (const TritSet& other) const {
+    return !(*this == other);
+}
+
+TritSet::reference TritSet::operator[](size_t id) {
     return reference(*this, id);
 }
 
-const Trit TritSet::operator[](std::size_t id) const {
-    if (id < _capacity) {
-        return Trit((data[(id * 2) / (8 * sizeof(uint))] >> (id * 2) % (8 * sizeof(uint))) & 0x3);
+const Trit TritSet::operator[](size_t id) const {
+    if (id < capacity()) {
+        signed char a = (data[(id * 2) / (8 * sizeof(uint))]
+                         >> (id * 2) % (8 * sizeof(uint))) & 0x3;
+        return Trit(a == _False2 ? _False : a);
     }
     else {
         return Unknown;
@@ -116,52 +138,54 @@ TritSet TritSet::operator~() const{
 }
 
 TritSet& TritSet::operator&=(const TritSet& other) {
-    std::size_t max_capacity = (_capacity > other._capacity) ?
-                           _capacity : other._capacity;
-    for (std::size_t i = 0; i < max_capacity; ++i) {
-        (*this)[i] = (*this)[i] & other[i];
+    size_t max_capacity = (capacity() > other.capacity()) ?
+                           capacity() : other.capacity();
+    for (size_t i = 0; i < max_capacity; ++i) {
+        (*this)[i] &= other[i];
     }
     return *this;
 }
 
 TritSet& TritSet::operator|=(const TritSet& other) {
-    std::size_t max_capacity = (_capacity > other._capacity) ?
-                           _capacity : other._capacity;
-    for (std::size_t i = 0; i < max_capacity; ++i) {
-        (*this)[i] = (*this)[i] | other[i];
+    size_t max_capacity = (capacity() > other.capacity()) ?
+                           capacity() : other.capacity();
+    for (size_t i = 0; i < max_capacity; ++i) {
+        (*this)[i] |= other[i];
     }
     return *this;
 }
 
 TritSet& TritSet::operator^=(const TritSet& other){
-    std::size_t max_capacity = (_capacity > other._capacity) ?
-                           _capacity : other._capacity;
-    for (std::size_t i = 0; i < max_capacity; ++i) {
-        (*this)[i] = (*this)[i] ^ other[i];
+    size_t max_capacity = (capacity() > other.capacity()) ?
+                           capacity() : other.capacity();
+    for (size_t i = 0; i < max_capacity; ++i) {
+        (*this)[i] ^= other[i];
     }
     return *this;
 }
 
-TritSet& TritSet::resize(std::size_t new_capacity) {
+TritSet& TritSet::resize(size_t new_capacity) {
     new_capacity = extendToCapacity(new_capacity);
-    if (new_capacity && (new_capacity != _capacity)) {
+    if (new_capacity && (new_capacity != capacity())) {
         uint *buf = data;
         data = new uint[new_capacity]();
-        std::size_t min_size = ((_capacity < new_capacity) ?
-                            _capacity : new_capacity)
+        size_t min_size = ((capacity() < new_capacity) ?
+                            capacity() : new_capacity)
                            * 2 / (8 * sizeof(uint)); // (in sizeof(uint))
-        for (std::size_t i = 0; i < min_size; ++i) {
+        for (size_t i = 0; i < min_size; ++i) {
             data[i] = buf[i];
         }
-        if(_capacity) {
+        if(buf != nullptr) {
             delete[] buf;
+            buf = nullptr;
         }
         _capacity = new_capacity;
     }
     else if (!new_capacity){
-        if (_capacity)
+        if (data != nullptr)
         {
             delete[] data;
+            data = nullptr;
         }
         _capacity = 0;
     }
@@ -172,21 +196,23 @@ TritSet& TritSet::shrink() {
     return resize(length());
 }
 
-void TritSet::trim(std::size_t lastIndex) {
+void TritSet::trim(size_t lastIndex) {
     size_t limit = extendToCapacity(lastIndex);
-    for(std::size_t i = lastIndex; i < limit; ++i) {
+    for(size_t i = lastIndex; i < limit; ++i) {
         (*this)[i] = _Unknown;
     }
     limit /= 4 * sizeof(uint);
-    for(std::size_t i = limit;
-                i < _capacity / (4 * sizeof(uint)); ++i) {
-        data[i] = unknown_uint();
+    for(size_t i = limit;
+                i < capacity() / (4 * sizeof(uint)); ++i) {
+        data[i] = 0;
     }
 }
 
 TritSet::~TritSet() {
-    delete[] data;
-    data = 0;
+    _capacity = 0;
+    uint* buf = data;
+    data = nullptr;
+    delete[] buf;
 }
 
 
@@ -197,24 +223,24 @@ TritSet::~TritSet() {
 
 TritSet::reference::reference() {};
 
-TritSet::reference::reference(TritSet &set, std::size_t pos)
+TritSet::reference::reference(TritSet &set, size_t pos)
  : rset(&set), rpos(pos) { }
 
 TritSet::reference::reference(const reference& other)
  : rset(other.rset), rpos(other.rpos) { }
 
 TritSet::reference& TritSet::reference::operator= (Tritenum other) {
-    std::size_t shift    = (rpos    ) / (4 * sizeof(uint));
-    std::size_t shiftbit = (rpos * 2) % (8 * sizeof(uint));
-    if(other == Tritenum(-1)) {
+    size_t shift    = (rpos    ) / (4 * sizeof(uint));
+    size_t shiftbit = (rpos * 2) % (8 * sizeof(uint));
+    if(other == _False) {
         other = _False2;
     }
-    if ((rpos >= rset->_capacity) && ((other == _True) || (other == _False))) {
+    if ((rpos >= rset->capacity()) && ((other == _True) || (other == _False2))) {
         rset->resize(rpos + 1);
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
                             ((uint)other%3 << shiftbit);
     }
-    else if (rpos < rset->_capacity) {
+    else if (rpos < rset->capacity()) {
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
                             ((uint)other%3 << shiftbit);
     }
@@ -223,13 +249,16 @@ TritSet::reference& TritSet::reference::operator= (Tritenum other) {
 
 Tritenum TritSet::reference::state() const {
     if (rpos < rset->capacity()) {
-        char ret = (rset->data[(rpos) / (4 * sizeof(uint))]
-                >> (rpos * 2) % (8 * sizeof(uint))) & 0x3;
+        signed char ret = (rset->data[(rpos) / (4 * sizeof(uint))]
+                           >> (rpos * 2) % (8 * sizeof(uint))) & 0x3;
         return (ret == _False2) ? _False : Tritenum(ret);
     }
     return _Unknown;
 }
 
-TritSet::reference::~reference() {};
+TritSet::reference::~reference() {
+    rset = nullptr;
+    rpos = 0;
+}
 
 }

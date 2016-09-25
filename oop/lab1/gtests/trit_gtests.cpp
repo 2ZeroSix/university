@@ -1,45 +1,14 @@
-#include "tritset.h"
+#include "trit.h"
 #include <gtest/gtest.h>
 
 using namespace std;
 using namespace tritspace;
 
-///////////////
-// functions //
-///////////////
-
-bool extendToCapacityTestHelper(size_t test_val) {
-    size_t tmp      = extendToCapacity(test_val);
-    return (tmp >= test_val)               &&
-           (tmp % (sizeof(uint) * 4) == 0) &&
-           (tmp <= test_val + (sizeof(uint) * 4));    
-}
-TEST(extendToCapacityTest, Positive) {
-    EXPECT_TRUE(extendToCapacityTestHelper(1));
-    EXPECT_TRUE(extendToCapacityTestHelper(12));
-    EXPECT_TRUE(extendToCapacityTestHelper(123));
-    EXPECT_TRUE(extendToCapacityTestHelper(1234));
-    EXPECT_TRUE(extendToCapacityTestHelper(12345));
-    EXPECT_TRUE(extendToCapacityTestHelper(123456));
-    EXPECT_TRUE(extendToCapacityTestHelper(1234567));
-    EXPECT_TRUE(extendToCapacityTestHelper(12345678));
-    EXPECT_TRUE(extendToCapacityTestHelper(123456789));
-    EXPECT_TRUE(extendToCapacityTestHelper(1234567890));
-}
-
-TEST(extendToCapacityTest, Zero) {
-    EXPECT_EQ(0, extendToCapacity(0));
-}
-
-TEST(unknown_uintTest, general) {
-    EXPECT_EQ(0, unknown_uint());
-}
-
 //////////
 // Trit //
 //////////
 
-TEST(TritTest, initByInt) {
+TEST(TritTest, intConstructor) {
     ASSERT_EQ(_False,   Trit(-123456789).state());
     ASSERT_EQ(_False,   Trit(-1).state());
     ASSERT_EQ(_Unknown, Trit(0).state());
@@ -47,19 +16,19 @@ TEST(TritTest, initByInt) {
     ASSERT_EQ(_True,   Trit(123456789).state());
 }
 
-TEST(TritTest, initByTritenum) {
+TEST(TritTest, TritenumConstructor) {
     ASSERT_EQ(_Unknown, Trit(_Unknown).state());
     ASSERT_EQ(_False,   Trit(_False).state());
     ASSERT_EQ(_True,    Trit(_True).state());
 }
 
-TEST(TritTest, CopyConstructor) {
+TEST(TritTest, copyConstructor) {
     ASSERT_EQ(_Unknown, Trit(Unknown).state());
     ASSERT_EQ(_False,   Trit(False).state());
     ASSERT_EQ(_True,    Trit(True).state());
 }
 
-TEST(TritTest, initEmpty) {
+TEST(TritTest, defaultConstructor) {
     ASSERT_EQ(_Unknown, Trit().state());
     Trit tmp;
     ASSERT_EQ(_Unknown, tmp.state());
@@ -81,6 +50,18 @@ TEST(TritTest, operatorEqOther) {
     ASSERT_EQ(false,    False   == True);
     ASSERT_EQ(false,    False   == Unknown);
     ASSERT_EQ(true,     False   == False);
+}
+
+TEST(TritTest, operatorNeOther) {
+    ASSERT_EQ(false,    True    != True);
+    ASSERT_EQ(true,     True    != Unknown);
+    ASSERT_EQ(true,     True    != False);
+    ASSERT_EQ(true,     Unknown != True);
+    ASSERT_EQ(false,    Unknown != Unknown);
+    ASSERT_EQ(true,     Unknown != False);
+    ASSERT_EQ(true,     False   != True);
+    ASSERT_EQ(true,     False   != Unknown);
+    ASSERT_EQ(false,    False   != False);
 }
 
 TEST(TritTest, operatorAssignTritenum) {
@@ -133,7 +114,7 @@ TEST(TritTest, operatorXOR) {
     EXPECT_EQ(False,    False   ^ False);
 }
 
-TEST(TritTest, operatorNOT) {
+TEST(TritTest, operatorFLIP) {
     EXPECT_EQ(False,    ~True);
     EXPECT_EQ(Unknown,  ~Unknown);
     EXPECT_EQ(True,     ~False);   
@@ -190,7 +171,8 @@ TEST(TritTest, to_string) {
     EXPECT_EQ("True",   True.to_string());
 }
 
-int main(int argc, char **argv) {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+TEST(TritTest, destructor) {
+    Trit trit(True);
+    trit.~Trit();
+    EXPECT_EQ(Unknown.state(), trit.state());
 }

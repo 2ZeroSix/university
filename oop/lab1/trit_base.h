@@ -1,15 +1,14 @@
 #ifndef _TRIT_BASE_H_
 #define _TRIT_BASE_H_
-#include <vector>
+#include <exception>
 
-enum Tritenum : char {_False=-1, _Unknown, _True, _False2};
+enum Tritenum : signed char {_False=-1, _Unknown, _True, _False2};
 
 class WrongTrit: public std::exception {
 public:
-    WrongTrit(Tritenum state):_state(state){}
-    virtual const char* what() const throw()
-    {
-    return "Undefined trit state:";
+    WrongTrit(Tritenum state):_state(state){ }
+    virtual const char* what() const throw() {
+        return "Undefined trit state: ";
     }
 private:
     Tritenum _state;
@@ -84,6 +83,10 @@ public:
     template<typename A, typename B>
     bool                operator==(const TritBase<A, B>& other) const{
         return state() == other.state();
+    }
+    template<typename A, typename B>
+    bool                operator!=(const TritBase<A, B>& other) const{
+        return state() != other.state();
     }
 };
 
