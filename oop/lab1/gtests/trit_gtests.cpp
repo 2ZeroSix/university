@@ -9,11 +9,12 @@ using namespace tritspace;
 //////////
 
 TEST(TritTest, intConstructor) {
-    ASSERT_EQ(_False,   Trit(-123456789).state());
-    ASSERT_EQ(_False,   Trit(-1).state());
-    ASSERT_EQ(_Unknown, Trit(0).state());
-    ASSERT_EQ(_True,    Trit(1).state());
-    ASSERT_EQ(_True,   Trit(123456789).state());
+    ASSERT_EQ(_False,   Trit(0).state());
+    ASSERT_EQ(_False,   Trit(3).state());
+    ASSERT_EQ(_Unknown, Trit(1).state());
+    ASSERT_EQ(_Unknown, Trit(4).state());
+    ASSERT_EQ(_True,    Trit(2).state());
+    ASSERT_EQ(_True,    Trit(5).state());
 }
 
 TEST(TritTest, TritenumConstructor) {
@@ -72,10 +73,12 @@ TEST(TritTest, operatorAssignTritenum) {
 }
 
 TEST(TritTest, operatorAssignTrit) {
-    Trit tmp;
-    ASSERT_EQ(False,    tmp = False);
-    ASSERT_EQ(Unknown,  tmp = Unknown);
-    ASSERT_EQ(True,     tmp = True);
+    Trit tmp = False;
+    ASSERT_EQ(False,    tmp);
+    tmp = Unknown;
+    ASSERT_EQ(Unknown,  tmp);
+    tmp = True;
+    ASSERT_EQ(True,     tmp);
 }
 
 TEST(TritTest, operatorAND) {
@@ -117,46 +120,70 @@ TEST(TritTest, operatorXOR) {
 TEST(TritTest, operatorFLIP) {
     EXPECT_EQ(False,    ~True);
     EXPECT_EQ(Unknown,  ~Unknown);
-    EXPECT_EQ(True,     ~False);   
+    EXPECT_EQ(True,     ~False);
 }
 
 TEST(TritTest, operatorAssignAND) {
-    Trit tmp;
-    EXPECT_EQ(True,     tmp = True    & True);
-    EXPECT_EQ(Unknown,  tmp = True    & Unknown);
-    EXPECT_EQ(False,    tmp = True    & False);
-    EXPECT_EQ(Unknown,  tmp = Unknown & True);
-    EXPECT_EQ(Unknown,  tmp = Unknown & Unknown);
-    EXPECT_EQ(False,    tmp = Unknown & False);
-    EXPECT_EQ(False,    tmp = False   & True);
-    EXPECT_EQ(False,    tmp = False   & Unknown);
-    EXPECT_EQ(False,    tmp = False   & False);
+    Trit tmp = True;
+    EXPECT_EQ(True,    tmp &= True);
+    tmp = True;
+    EXPECT_EQ(Unknown, tmp &= Unknown);
+    tmp = True;
+    EXPECT_EQ(False,   tmp &= False);
+    tmp = Unknown;
+    EXPECT_EQ(Unknown, tmp &= True);
+    tmp = Unknown;
+    EXPECT_EQ(Unknown, tmp &= Unknown);
+    tmp = Unknown;
+    EXPECT_EQ(False,   tmp &= False);
+    tmp = False;
+    EXPECT_EQ(False,   tmp &= True);
+    tmp = False;
+    EXPECT_EQ(False,   tmp &= Unknown);
+    tmp = False;
+    EXPECT_EQ(False,   tmp &= False);
 }
 
 TEST(TritTest, operatorAssignOR) {
-    Trit tmp;
-    EXPECT_EQ(True,     tmp = True    | True);
-    EXPECT_EQ(True,     tmp = True    | Unknown);
-    EXPECT_EQ(True,     tmp = True    | False);
-    EXPECT_EQ(True,     tmp = Unknown | True);
-    EXPECT_EQ(Unknown,  tmp = Unknown | Unknown);
-    EXPECT_EQ(Unknown,  tmp = Unknown | False);
-    EXPECT_EQ(True,     tmp = False   | True);
-    EXPECT_EQ(Unknown,  tmp = False   | Unknown);
-    EXPECT_EQ(False,    tmp = False   | False);
+    Trit tmp = True;
+    EXPECT_EQ(True,    tmp |= True);
+    tmp = True;
+    EXPECT_EQ(True,    tmp |= Unknown);
+    tmp = True;
+    EXPECT_EQ(True,    tmp |= False);
+    tmp = Unknown;
+    EXPECT_EQ(True,    tmp |= True);
+    tmp = Unknown;
+    EXPECT_EQ(Unknown, tmp |= Unknown);
+    tmp = Unknown;
+    EXPECT_EQ(Unknown, tmp |= False);
+    tmp = False;
+    EXPECT_EQ(True,    tmp |= True);
+    tmp = False;
+    EXPECT_EQ(Unknown, tmp |= Unknown);
+    tmp = False;
+    EXPECT_EQ(False,   tmp |= False);
 }
 
 TEST(TritTest, operatorAssignXOR) {
-    Trit tmp;
-    EXPECT_EQ(Unknown,  tmp = True    ^ True);
-    EXPECT_EQ(False,    tmp = True    ^ Unknown);
-    EXPECT_EQ(True,     tmp = True    ^ False);
-    EXPECT_EQ(False,    tmp = Unknown ^ True);
-    EXPECT_EQ(True,     tmp = Unknown ^ Unknown);
-    EXPECT_EQ(Unknown,  tmp = Unknown ^ False);
-    EXPECT_EQ(True,     tmp = False   ^ True);
-    EXPECT_EQ(Unknown,  tmp = False   ^ Unknown);
-    EXPECT_EQ(False,    tmp = False   ^ False);
+    Trit tmp = True;
+    EXPECT_EQ(Unknown, tmp ^= True);
+    tmp = True;
+    EXPECT_EQ(False,   tmp ^= Unknown);
+    tmp = True;
+    EXPECT_EQ(True,    tmp ^= False);
+    tmp = Unknown;
+    EXPECT_EQ(False,   tmp ^= True);
+    tmp = Unknown;
+    EXPECT_EQ(True,    tmp ^= Unknown);
+    tmp = Unknown;
+    EXPECT_EQ(Unknown, tmp ^= False);
+    tmp = False;
+    EXPECT_EQ(True,    tmp ^= True);
+    tmp = False;
+    EXPECT_EQ(Unknown, tmp ^= Unknown);
+    tmp = False;
+    EXPECT_EQ(False,   tmp ^= False);
 }
 
 TEST(TritTest, FLIP) {

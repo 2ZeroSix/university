@@ -1,6 +1,4 @@
 #include "tritset.h"
-#include <limits>
-#include <iostream>
 
 using namespace std;
 namespace tritspace {
@@ -11,10 +9,30 @@ size_t extendToCapacity(size_t num) {
                     ? sizeof(uint)*4 : 0);
 }
 
+ostream & operator<<(ostream &os, const TritSet &set) {
+    for (size_t i = 0; i < set.length(); ++i) {
+        os << set[i].state();
+    }
+    return os;
+}
+
+
 /////////////
 // TritSet //
 /////////////
 
+
+TritSet::TritenumReal TritSet::toReal(Tritenum state) {
+    return (state == _False) ?
+           _FalseReal : ((state == _Unknown) ?
+                         _UnknownReal : _TrueReal);
+}
+
+Tritenum TritSet::fromReal(TritSet::TritenumReal state) {
+    return (state == _FalseReal) ?
+           _False : ((state == _UnknownReal) ?
+                     _Unknown : _True);
+}
 
 TritSet::TritSet(size_t reserve)
 :_capacity(0), data(nullptr) {
@@ -44,7 +62,7 @@ vector<size_t> TritSet::cardinality() const{
     size_t cur_len = length();
     for (size_t i = 0; i < cur_len; ++i)
     {
-        ++count[(*this)[i].state() + 1];
+        ++count[(*this)[i].state()];
     }
     return count;
 }
@@ -108,9 +126,9 @@ TritSet::reference TritSet::operator[](size_t id) {
 
 const Trit TritSet::operator[](size_t id) const {
     if (id < capacity()) {
-        signed char a = (data[(id * 2) / (8 * sizeof(uint))]
-                         >> (id * 2) % (8 * sizeof(uint))) & 0x3;
-        return Trit(a == _False2 ? _False : a);
+        Tritenum a = fromReal(TritenumReal((data[(id * 2) / (8 * sizeof(uint))]
+                >> (id * 2) % (8 * sizeof(uint))) & 0x3));
+        return Trit(a);
     }
     else {
         return Unknown;
@@ -119,17 +137,17 @@ const Trit TritSet::operator[](size_t id) const {
 
 TritSet TritSet::operator&(const TritSet& other) const{
     TritSet new_set(*this);
-    return new_set&=other;
+    return new_set &= other;
 }
 
 TritSet TritSet::operator|(const TritSet& other) const{
     TritSet new_set(*this);
-    return new_set|=other;
+    return new_set |= other;
 }
 
 TritSet TritSet::operator^(const TritSet& other) const{
     TritSet new_set(*this);
-    return new_set^=other;
+    return new_set ^= other;
 }
 
 TritSet TritSet::operator~() const{
@@ -177,15 +195,15 @@ TritSet& TritSet::resize(size_t new_capacity) {
         }
         if(buf != nullptr) {
             delete[] buf;
-            buf = nullptr;
         }
         _capacity = new_capacity;
     }
     else if (!new_capacity){
         if (data != nullptr)
         {
-            delete[] data;
+            uint *buf = data;
             data = nullptr;
+            delete[] buf;
         }
         _capacity = 0;
     }
@@ -215,7 +233,6 @@ TritSet::~TritSet() {
     delete[] buf;
 }
 
-
 ////////////////////////
 // TritSet::reference //
 ////////////////////////
@@ -232,26 +249,23 @@ TritSet::reference::reference(const reference& other)
 TritSet::reference& TritSet::reference::operator= (Tritenum other) {
     size_t shift    = (rpos    ) / (4 * sizeof(uint));
     size_t shiftbit = (rpos * 2) % (8 * sizeof(uint));
-    if(other == _False) {
-        other = _False2;
-    }
-    if ((rpos >= rset->capacity()) && ((other == _True) || (other == _False2))) {
+    TritenumReal state = toReal(other);
+    if ((rpos >= rset->capacity()) && ((state == _TrueReal) || (state == _FalseReal))) {
         rset->resize(rpos + 1);
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
-                            ((uint)other%3 << shiftbit);
+                            ((uint)state%3 << shiftbit);
     }
     else if (rpos < rset->capacity()) {
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
-                            ((uint)other%3 << shiftbit);
+                            ((uint)state%3 << shiftbit);
     }
     return *this;
 }
 
 Tritenum TritSet::reference::state() const {
     if (rpos < rset->capacity()) {
-        signed char ret = (rset->data[(rpos) / (4 * sizeof(uint))]
-                           >> (rpos * 2) % (8 * sizeof(uint))) & 0x3;
-        return (ret == _False2) ? _False : Tritenum(ret);
+        return fromReal(TritenumReal((rset->data[(rpos) / (4 * sizeof(uint))]
+                >> (rpos * 2) % (8 * sizeof(uint))) & 0x3));
     }
     return _Unknown;
 }

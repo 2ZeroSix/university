@@ -1,14 +1,16 @@
 #ifndef _TRIT_BASE_H_
 #define _TRIT_BASE_H_
 #include <exception>
+#include <string>
+#include <ostream>
 
-enum Tritenum : signed char {_False=-1, _Unknown, _True, _False2};
+enum Tritenum : unsigned char {_False, _Unknown, _True};
 
 class WrongTrit: public std::exception {
 public:
     WrongTrit(Tritenum state):_state(state){ }
     virtual const char* what() const throw() {
-        return "Undefined trit state: ";
+        return ("Undefined trit state: " + std::to_string(_state)).c_str();
     }
 private:
     Tritenum _state;
@@ -32,7 +34,7 @@ public:
     }
     template<typename A, typename B>
     U operator^(const TritBase<A, B>& other) const{
-        return U((state() + other.state() + 2) % 3 - 1);
+        return U((state() + other.state()) % 3);
     }
     U operator~() const{
         switch (state()) {
@@ -61,7 +63,7 @@ public:
     T flip()                    {
         return *this = (~(*this)).state();
     }
-    const char* to_string() const{
+    const std::string to_string() const{
         switch (state()) {
             case _False:
                 return "False";
@@ -89,5 +91,11 @@ public:
         return state() != other.state();
     }
 };
+
+template<typename A, typename B>
+std::ostream& operator<<(std::ostream &os, const TritBase<A, B> &trit) {
+    os << trit.to_string();
+    return os;
+}
 
 #endif

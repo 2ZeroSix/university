@@ -80,7 +80,7 @@ TEST_F(TritSetTest, copyConstructor) {
 TEST_F(TritSetTest, TritArrayConstructor) {
     Trit* arrt = new Trit[100];
     for (size_t i = 0; i < 100; ++i) {
-        arrt[i] = Trit(i%3 - 1);
+        arrt[i] = Trit(i%3);
     }
     TritSet set(arrt, 100);
     for (size_t i = 0; i < 100; ++i) {
@@ -292,32 +292,32 @@ TEST_F(TritSetTest, cardinalityAll) {
         set[i] = True;
     }
     tmp = set.cardinality();
-    EXPECT_EQ(set.capacity(), tmp[_True + 1]);
-    EXPECT_EQ(0, tmp[_Unknown + 1]);
-    EXPECT_EQ(0, tmp[_False + 1]);
+    EXPECT_EQ(set.capacity(), tmp[_True]);
+    EXPECT_EQ(0, tmp[_Unknown]);
+    EXPECT_EQ(0, tmp[_False]);
     for(size_t i = set.capacity()/2; i < set.capacity(); ++i) {
         set[i] = False;
     }
     tmp = set.cardinality();
-    EXPECT_EQ(set.capacity()/2, tmp[_True + 1]);
-    EXPECT_EQ(0, tmp[_Unknown + 1]);
-    EXPECT_EQ(set.capacity()-set.capacity()/2, tmp[_False + 1]);
+    EXPECT_EQ(set.capacity()/2, tmp[_True]);
+    EXPECT_EQ(0, tmp[_Unknown]);
+    EXPECT_EQ(set.capacity()-set.capacity()/2, tmp[_False]);
     for(size_t i = set.capacity()/2; i < set.capacity()*2/3; ++i) {
         set[i] = Unknown;
     }
     tmp = set.cardinality();
-    EXPECT_EQ(set.capacity()/2, tmp[_True + 1]);
-    EXPECT_EQ(set.capacity()*2/3-set.capacity()/2, tmp[_Unknown + 1]);
-    EXPECT_EQ(set.capacity()-set.capacity()*2/3, tmp[_False + 1]);
+    EXPECT_EQ(set.capacity()/2, tmp[_True]);
+    EXPECT_EQ(set.capacity()*2/3-set.capacity()/2, tmp[_Unknown]);
+    EXPECT_EQ(set.capacity()-set.capacity()*2/3, tmp[_False]);
 }
 
 TEST_F(TritSetTest, operatorAND) {
     TritSet setA(9), setB(9), setC(9);
     for (size_t i = 0; i < 3; ++i) {
         for (size_t j = 0; j < 3; ++j) {
-            setA[i*3 + j] = Trit(i - 1);
-            setB[i*3 + j] = Trit(j - 1);
-            setC[i*3 + j] = Trit(i - 1) & Trit(j - 1);
+            setA[i*3 + j] = Trit(i);
+            setB[i*3 + j] = Trit(j);
+            setC[i*3 + j] = Trit(i) & Trit(j);
         }
     }
     EXPECT_EQ(setC, setA & setB);
@@ -327,9 +327,9 @@ TEST_F(TritSetTest, operatorOR) {
     TritSet setA(9), setB(9), setC(9);
     for (size_t i = 0; i < 3; ++i) {
         for (size_t j = 0; j < 3; ++j) {
-            setA[i*3 + j] = Trit(i - 1);
-            setB[i*3 + j] = Trit(j - 1);
-            setC[i*3 + j] = Trit(i - 1) | Trit(j - 1);
+            setA[i*3 + j] = Trit(i);
+            setB[i*3 + j] = Trit(j);
+            setC[i*3 + j] = Trit(i) | Trit(j);
         }
     }
     EXPECT_EQ(setC, setA | setB);
@@ -339,9 +339,9 @@ TEST_F(TritSetTest, operatorXOR) {
     TritSet setA(9), setB(9), setC(9);
     for (size_t i = 0; i < 3; ++i) {
         for (size_t j = 0; j < 3; ++j) {
-            setA[i*3 + j] = Trit(i - 1);
-            setB[i*3 + j] = Trit(j - 1);
-            setC[i*3 + j] = Trit(i - 1) ^ Trit(j - 1);
+            setA[i*3 + j] = Trit(i);
+            setB[i*3 + j] = Trit(j);
+            setC[i*3 + j] = Trit(i) ^ Trit(j);
         }
     }
     for (size_t i = 9; i < setC.capacity() ; ++i) {
@@ -353,8 +353,8 @@ TEST_F(TritSetTest, operatorXOR) {
 TEST_F(TritSetTest, operatorFLIP) {
     TritSet setA(9), setB(9);
     for (size_t i = 0; i < 3; ++i) {
-        setA[i] = Trit(i - 1);
-        setB[i] = ~Trit(i - 1);
+        setA[i] = Trit(i);
+        setB[i] = ~Trit(i);
     }
     EXPECT_EQ(setB, ~setA);
 }
@@ -363,9 +363,9 @@ TEST_F(TritSetTest, operatorAssignAND) {
     TritSet setA(9), setB(9), setC(9);
     for (size_t i = 0; i < 3; ++i) {
         for (size_t j = 0; j < 3; ++j) {
-            setA[i*3 + j] = Trit(i - 1);
-            setB[i*3 + j] = Trit(j - 1);
-            setC[i*3 + j] = Trit(i - 1) & Trit(j - 1);
+            setA[i*3 + j] = Trit(i);
+            setB[i*3 + j] = Trit(j);
+            setC[i*3 + j] = Trit(i) & Trit(j);
         }
     }
     EXPECT_EQ(setC, setA &= setB);
@@ -375,9 +375,9 @@ TEST_F(TritSetTest, operatorAssignOR) {
     TritSet setA(9), setB(9), setC(9);
     for (size_t i = 0; i < 3; ++i) {
         for (size_t j = 0; j < 3; ++j) {
-            setA[i*3 + j] = Trit(i - 1);
-            setB[i*3 + j] = Trit(j - 1);
-            setC[i*3 + j] = Trit(i - 1) | Trit(j - 1);
+            setA[i*3 + j] = Trit(i);
+            setB[i*3 + j] = Trit(j);
+            setC[i*3 + j] = Trit(i) | Trit(j);
         }
     }
     EXPECT_EQ(setC, setA |= setB);
@@ -387,9 +387,9 @@ TEST_F(TritSetTest, operatorAssignXOR) {
     TritSet setA(9), setB(9), setC(9);
     for (size_t i = 0; i < 3; ++i) {
         for (size_t j = 0; j < 3; ++j) {
-            setA[i*3 + j] = Trit(i - 1);
-            setB[i*3 + j] = Trit(j - 1);
-            setC[i*3 + j] = Trit(i - 1) ^ Trit(j - 1);
+            setA[i*3 + j] = Trit(i);
+            setB[i*3 + j] = Trit(j);
+            setC[i*3 + j] = Trit(i) ^ Trit(j);
         }
     }
     for (size_t i = 9; i < setC.capacity() ; ++i) {
@@ -401,14 +401,18 @@ TEST_F(TritSetTest, operatorAssignXOR) {
 TEST_F(TritSetTest, FLIP) {
     TritSet setA(9), setB(9);
     for (size_t i = 0; i < 3; ++i) {
-        setA[i] = Trit(i - 1);
-        setB[i] = ~Trit(i - 1);
+        setA[i] = Trit(i);
+        setB[i] = ~Trit(i);
     }
     EXPECT_EQ(setB, setA.flip());
 }
 
 TEST_F(TritSetTest, destructor) {
     TritSet set(100);
+    fillset(set);
     set.~TritSet();
-    EXPECT_EQ(0, set.capacity());
+    ASSERT_EQ(0, set.capacity());
+    EXPECT_EQ(0, set.length());
+    EXPECT_EQ(Unknown, set[0]);
+    EXPECT_EQ(Unknown, set[1000]);
 }

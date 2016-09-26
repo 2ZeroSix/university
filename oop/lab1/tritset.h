@@ -2,6 +2,8 @@
 #define _TRITSET_H_
 #include "trit.h"
 #include <vector>
+#include <ostream>
+
 namespace tritspace{
 typedef unsigned int uint;
 /**
@@ -19,6 +21,10 @@ std::size_t extendToCapacity(std::size_t num);
 class TritSet {
 private:
     class reference;
+    // convenient internal representation of trits
+    enum TritenumReal : unsigned char {_UnknownReal=0, _TrueReal, _FalseReal};
+    static TritenumReal toReal(Tritenum state);
+    static Tritenum fromReal(TritenumReal state);
 public:
     explicit TritSet():_capacity(0), data(nullptr) { }
     explicit TritSet(std::size_t reserve);
@@ -69,6 +75,8 @@ private:
         std::size_t  rpos;
     };
 };
+
+std::ostream &operator<<(std::ostream &os, const TritSet &set);
 
 }
 #endif
