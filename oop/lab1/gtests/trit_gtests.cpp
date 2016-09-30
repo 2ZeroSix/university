@@ -1,6 +1,6 @@
 #include "trit.h"
 #include <gtest/gtest.h>
-
+#include <sstream>
 using namespace std;
 using namespace tritspace;
 
@@ -196,6 +196,30 @@ TEST(TritTest, to_string) {
     EXPECT_EQ("False",  False.to_string());
     EXPECT_EQ("Unknown",Unknown.to_string());
     EXPECT_EQ("True",   True.to_string());
+}
+
+TEST(TritTest, operatorStreamOut) {
+    stringstream ss;
+    string tmp;
+    ss << True;
+    ss >> tmp;
+    EXPECT_EQ("True", tmp);
+    ss = stringstream();
+    ss << Unknown;
+    ss >> tmp;
+    EXPECT_EQ("Unknown", tmp);
+    ss = stringstream();
+    ss << False;
+    ss >> tmp;
+    EXPECT_EQ("False", tmp);
+    ss = stringstream();
+    ss << True << " " << Unknown << " " << False;
+    ss >> tmp;
+    EXPECT_EQ("True", tmp);
+    ss >> tmp;
+    EXPECT_EQ("Unknown", tmp);
+    ss >> tmp;
+    EXPECT_EQ("False", tmp);
 }
 
 TEST(TritTest, destructor) {

@@ -407,6 +407,17 @@ TEST_F(TritSetTest, FLIP) {
     EXPECT_EQ(setB, setA.flip());
 }
 
+TEST_F(TritSetTest, operatorStreamOut) {
+    stringstream ss;
+    string tmp;
+    TritSet set = {True, Unknown, False};
+    ss << set << " " << "word";
+    ss >> tmp;
+    EXPECT_EQ("210", tmp);
+    ss >> tmp;
+    EXPECT_EQ("word", tmp);
+}
+
 TEST_F(TritSetTest, destructor) {
     TritSet set(100);
     fillset(set);

@@ -39,7 +39,7 @@ TritSet::TritSet(size_t reserve)
     resize(reserve);
 }
 
-TritSet::TritSet(const Trit *arrt, size_t count)
+TritSet::TritSet(const Trit arrt[], size_t count)
 :_capacity(0), data(nullptr) {
     resize(count);
     for (size_t i = 0; i < count; ++i) {
@@ -47,10 +47,22 @@ TritSet::TritSet(const Trit *arrt, size_t count)
     }
 }
 
+TritSet::TritSet(const initializer_list<Trit> list)
+:_capacity(0), data(nullptr) {
+    resize(list.size());
+    std::initializer_list<Trit>::iterator cur = list.begin();
+    for (size_t i = 0; i < list.size(); ++i) {
+        (*this)[i] = *(cur++);
+    }
+}
 
 TritSet::TritSet(const TritSet& other)
 :_capacity(0), data(nullptr) {
-    *this = other;
+    resize(other.capacity());
+    size_t size = capacity() / (4 * sizeof(uint));
+    for (size_t i = 0; i < size; ++i) {
+        data[i] = other.data[i];
+    }
 }
 
 size_t TritSet::capacity() const {
@@ -92,17 +104,6 @@ size_t TritSet::length() const{
         }
     }
     return 0;
-}
-
-TritSet& TritSet::operator=(const TritSet& other) {
-    if (capacity() < other.capacity()) {
-        resize(other.capacity());
-    }
-    size_t size = capacity() / (4 * sizeof(uint));
-    for (size_t i = 0; i < size; ++i) {
-        data[i] = other.data[i];
-    }
-    return *this;
 }
 
 bool TritSet::operator== (const TritSet& other) const{
@@ -210,7 +211,7 @@ TritSet& TritSet::resize(size_t new_capacity) {
     return *this;
 }
 
-TritSet& TritSet::shrink() {    
+TritSet& TritSet::shrink() {
     return resize(length());
 }
 
