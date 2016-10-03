@@ -1,9 +1,10 @@
+// TODO add noexcept modifiers
 #ifndef _TRITSET_H_
 #define _TRITSET_H_
 #include "trit.h"
-#include "trit_base.h"
 #include <vector>
 #include <ostream>
+#include <iostream>
 #include <initializer_list>
 #include <iterator>
 
@@ -19,17 +20,178 @@ typedef unsigned int uint;
 std::size_t extendToCapacity(std::size_t num);
 
 /**
- * dynamic container for trit logic elements
+ * dynamic container for three-value logic elements
  */
 class TritSet {
 private:
     class reference;
     friend reference;
     // convenient internal representation of Tritenum
-    enum TritenumReal : unsigned char {_UnknownReal=0, _TrueReal, _FalseReal};
+    enum class TritenumReal: unsigned char {Unknown=0, True, False};
+    // covert standard representation to internal representation
     static TritenumReal toReal(Tritenum state);
+    // covert internal representation to standard representation
     static Tritenum fromReal(TritenumReal state);
+    // class for iterator and const_iterator
+    template<typename ReferenceClass, typename TritSetClass>
+    class base_iterator :
+        public std::iterator
+         <std::random_access_iterator_tag, ReferenceClass,
+          std::ptrdiff_t, ReferenceClass, ReferenceClass> {
+    private:
+        friend TritSet;
+    public:
+        // default constructor of base_trit
+        base_iterator() : rset(nullptr), rpos(0), out_of_range(true) {}
+        // TritSet constructor of base_trit
+        base_iterator(TritSetClass& set,  std::size_t pos) :
+            rset(&set), rpos(pos), out_of_range(false) {
+            if (!set.capacity()) {
+                out_of_range = true;
+            }
+        }
+        // copy constructor of base_trit
+        base_iterator(const base_iterator<ReferenceClass, TritSetClass>& other) : 
+            rset(other.rset), rpos(other.rpos), out_of_range(other.out_of_range) {}
+        // cast to const version of base_iterator
+        operator base_iterator<const reference, const TritSet>() const {
+            base_iterator<const reference, const TritSet> buf;
+            buf.rset = rset;
+            buf.rpos = rpos;
+            return buf;
+        }
+        bool            operator==  (const base_iterator<ReferenceClass, TritSetClass>& other) const {
+            return (rset == other.rset) && (rpos == other.rpos);
+        }
+        bool            operator!=  (const base_iterator<ReferenceClass, TritSetClass>& other) const {
+            return (rset != other.rset) || (rpos != other.rpos);
+        }
+        bool            operator<   (const base_iterator<ReferenceClass, TritSetClass>& other) const {
+            if (rset != other.rset) {
+                return false;
+            }
+            if (out_of_range) {
+                return true;
+            }
+            return rpos < other.rpos;
+        }
+        bool            operator>   (const base_iterator<ReferenceClass, TritSetClass>& other) const {
+            if (rset != other.rset) {
+                return false;
+            }
+            if (other.out_of_range) {
+                return true;
+            }
+            return rpos > other.rpos;
+        }
+        bool            operator<=  (const base_iterator<ReferenceClass, TritSetClass>& other) const {
+            if (rset != other.rset) {
+                return false;
+            }
+            return !(*this > other);
+        }
+        bool            operator>=  (const base_iterator<ReferenceClass, TritSetClass>& other) const {
+            if (rset != other.rset) {
+                return false;
+            }
+            return !(*this < other);
+        }
+        ReferenceClass operator*   () {
+            if (rset) {
+                return tritspace::TritSet::reference(*const_cast<TritSet*>(rset), rpos);
+            }
+            return reference();
+        }
+        ReferenceClass operator->  () {
+            if (rset) {
+                return tritspace::TritSet::reference(*const_cast<TritSet*>(rset), rpos);
+            }
+            return reference();
+        }
+        base_iterator<ReferenceClass, TritSetClass>  operator+   (size_t range) const {
+            if (out_of_range) {
+                out_of_range = false;
+            }
+            return base_iterator<ReferenceClass, TritSetClass>(*rset, rpos + range);
+        }
+        base_iterator<ReferenceClass, TritSetClass>& operator+=  (size_t range) {
+            if (out_of_range) {
+                out_of_range = false;
+            }
+            rpos += range;
+            return *this;
+        }
+        base_iterator<ReferenceClass, TritSetClass>& operator++  () {
+            if (out_of_range) {
+                out_of_range = false;
+            }
+            ++rpos;
+            return *this;
+        }
+        base_iterator<ReferenceClass, TritSetClass>  operator++  (int) {
+            if (out_of_range) {
+                out_of_range = false;
+            }
+            return base_iterator(*rset, rpos++);
+        }
+        base_iterator<ReferenceClass, TritSetClass>  operator-   (size_t range) const {
+            base_iterator<ReferenceClass, TritSetClass> buf = *this;
+            return buf -= range;
+        }
+        base_iterator<ReferenceClass, TritSetClass>& operator-=  (size_t range) {
+            if (!out_of_range) {
+                if (rpos < range) {
+                    out_of_range = true;
+                    rpos = 0;
+                }
+                else {
+                    rpos = rpos - range;
+                }
+            }
+            return *this;
+        }
+        base_iterator<ReferenceClass, TritSetClass>& operator--  () {
+            if(!out_of_range) {
+                if(rpos == 0) {
+                    out_of_range = true;
+                }
+                else {
+                    --rpos;
+                }
+            }
+            return *this;
+        }
+        base_iterator<ReferenceClass, TritSetClass>  operator--  (int) {
+            base_iterator<ReferenceClass, TritSetClass> buf = *this;
+            --(*this);
+            return buf;
+        }
+        ReferenceClass operator[]  (size_t pos) const {
+            return tritspace::TritSet::reference(*const_cast<TritSet*>(rset), rpos + pos);
+        }
+        virtual ~base_iterator() noexcept{
+            TritSetClass* volatile &bufset = rset;
+            volatile size_t &bufpos = rpos;
+            volatile bool &bufoor = out_of_range;
+            bufset = nullptr;
+            bufpos = 0;
+            bufoor = true;
+        }
+    private:
+        /**
+         * pointer to TritSet which associated with iterator
+         */
+        TritSetClass *rset;
+        /**
+         * position of iterator
+         */
+        std::size_t  rpos;
+        bool out_of_range;
+    };
 public:
+    typedef base_iterator<reference, TritSet>               iterator;
+    typedef base_iterator<const reference, const TritSet>   const_iterator;
+
     /**
      * default constructor of TritSet
      */
@@ -43,7 +205,7 @@ public:
     /**
      * Trit array constructor of TritSet
      */
-    explicit TritSet(const Trit arrt[], std::size_t count);
+    TritSet(const Trit arrt[], std::size_t count);
 
     /**
      * initializer list constructor of TritSet
@@ -54,6 +216,11 @@ public:
      * copy constructor of TritSet
      */
     TritSet(const TritSet& other);
+
+    /**
+     * move constructor of TritSet
+     */
+    TritSet(TritSet&& other);
 
     /**
      * @return  current capacity
@@ -84,10 +251,9 @@ public:
      *
      * @param   other  which trit to count
      *
-     * @return         number of trits, which equal to state, in set
+     * @return         number of trits, which state is equal to other.state(), in set
      */
-    template<typename A, typename B>
-    std::size_t     cardinality (const TritBase<A, B>& other)const{
+    std::size_t     cardinality (const Trit& other)const{
         return cardinality(other.state());
     }
 
@@ -188,7 +354,7 @@ public:
     TritSet&        operator&=  (const TritSet& other);
 
     /**
-     * ternary OR
+     * assign ternary OR
      *
      * @param   other   set
      * 
@@ -197,7 +363,7 @@ public:
     TritSet&        operator|=  (const TritSet& other);
 
     /**
-     * ternary XOR
+     * assign ternary XOR
      *
      * @param   other   set
      * 
@@ -235,6 +401,30 @@ public:
      * destructor of TritSet
      */
     virtual ~TritSet();
+
+    iterator begin() {
+        return iterator(*this, 0);
+    }
+
+    iterator end() {
+        return iterator(*this, capacity());
+    }
+
+    const_iterator begin() const {
+        return const_iterator(*this, 0);
+    }
+
+    const_iterator end() const {
+        return const_iterator(*this, capacity());
+    }
+
+    const_iterator cbegin() const {
+        return const_iterator(*this, 0);
+    }
+
+    const_iterator cend() const {
+        return const_iterator(*this, capacity());
+    }
 private:
     /**
      * current capacity
@@ -248,8 +438,15 @@ private:
 
     /**
      * subclass that provides access to the elements in TritSet by index
+     *
+     * note:
+     *     will not change anything if defined as const,
+     *     so if you need to get element of const TritSet
+     *     as TritSet::reference you must use *const_cast<TritSet*>(&set)
      */
     class reference : public TritBase<reference> {
+    private:
+        friend TritSet;
     public:
         /**
          * TritSet constructor of TritSet::reference
@@ -260,34 +457,25 @@ private:
          * copy constructor of TritSet::reference
          */
         reference(const reference& other);
-
-        /**
-         * assign TritBase<A, B> operator
-         * 
-         * @param   other   class of trit, which was inherited from TritBase<A, B>
-         *
-         * @return          same reference
-         */
-        template<typename A, typename B>
-        reference&  operator=(const TritBase<A, B>& other){
-            return *this = other.state();
-        }
-
         /**
          * assign Tritenum
          * 
-         * @param   other   Tritenum {_False, _Unknown, _True}
+         * @param   other   Tritenum::[False|Unknown|True]
          *
          * @return          same reference
          */
-        virtual reference&  operator= (Tritenum state);
+        virtual reference&  operator= (Tritenum state) override;
+        
+        // it's necessary because previous definition
+        // hides other overloads of operator=
+        using TritBase<reference>::operator=;
 
         /**
          * current state of Trit which accessed by TritSet::reference
          *
          * @return  state
          */
-        virtual Tritenum    state     () const;
+        virtual Tritenum    state     () const override;
 
         /**
          * destructor of TritSet::reference
@@ -306,6 +494,14 @@ private:
          * position of element which associated with reference
          */
         std::size_t  rpos;
+    private:
+        // for use in iterators
+        reference* operator->(){
+            return this;
+        }
+        const reference* operator->() const{
+            return this;
+        }
     };
 };
 

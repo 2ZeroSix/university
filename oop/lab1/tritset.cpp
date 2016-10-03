@@ -3,7 +3,7 @@
 using namespace std;
 namespace tritspace {
 
-size_t extendToCapacity(size_t num) {
+std::size_t extendToCapacity(std::size_t num) {
     return  ((num)/(4 * sizeof(uint)))*4*sizeof(uint) 
             + (((2 * num) % (8 * sizeof(uint)))
                     ? sizeof(uint)*4 : 0);
@@ -11,7 +11,7 @@ size_t extendToCapacity(size_t num) {
 
 ostream & operator<<(ostream &os, const TritSet &set) {
     for (size_t i = 0; i < set.length(); ++i) {
-        os << set[i].state();
+        os << static_cast<unsigned int>(set[i].state());
     }
     return os;
 }
@@ -23,15 +23,29 @@ ostream & operator<<(ostream &os, const TritSet &set) {
 
 
 TritSet::TritenumReal TritSet::toReal(Tritenum state) {
-    return (state == _False) ?
-           _FalseReal : ((state == _Unknown) ?
-                         _UnknownReal : _TrueReal);
+    switch(state) {
+        case Tritenum::True:
+            return TritenumReal::True;
+        case Tritenum::Unknown:
+            return TritenumReal::Unknown;
+        case Tritenum::False:
+            return TritenumReal::False;
+        default:
+            throw WrongTrit(state);
+    }
 }
 
 Tritenum TritSet::fromReal(TritSet::TritenumReal state) {
-    return (state == _FalseReal) ?
-           _False : ((state == _UnknownReal) ?
-                     _Unknown : _True);
+    switch(state) {
+        case TritenumReal::True:
+            return Tritenum::True;
+        case TritenumReal::Unknown:
+            return Tritenum::Unknown;
+        case TritenumReal::False:
+            return Tritenum::False;
+        default:
+            throw WrongTrit(static_cast<Tritenum>(state));
+    }
 }
 
 TritSet::TritSet(size_t reserve)
@@ -42,17 +56,19 @@ TritSet::TritSet(size_t reserve)
 TritSet::TritSet(const Trit arrt[], size_t count)
 :_capacity(0), data(nullptr) {
     resize(count);
-    for (size_t i = 0; i < count; ++i) {
-        (*this)[i] = arrt[i];
+    iterator curset = begin();
+    for (size_t i = 0; i < count; ++i, ++arrt, ++curset) {
+        *curset = *arrt;
     }
 }
 
 TritSet::TritSet(const initializer_list<Trit> list)
 :_capacity(0), data(nullptr) {
     resize(list.size());
-    std::initializer_list<Trit>::iterator cur = list.begin();
-    for (size_t i = 0; i < list.size(); ++i) {
-        (*this)[i] = *(cur++);
+    iterator curset = begin();
+    for (initializer_list<Trit>::iterator curlist = list.begin();
+            curlist != list.end(); ++curlist, ++curset) {
+        *curset = *curlist;
     }
 }
 
@@ -65,25 +81,32 @@ TritSet::TritSet(const TritSet& other)
     }
 }
 
+TritSet::TritSet(TritSet&& other)
+:_capacity(other._capacity), data(std::move(other.data)){
+    other._capacity = 0;
+    other.data      = nullptr;
+}
+
 size_t TritSet::capacity() const {
     return _capacity;
 }
 
 vector<size_t> TritSet::cardinality() const{
     vector<size_t> count(3);
-    size_t cur_len = length();
-    for (size_t i = 0; i < cur_len; ++i)
-    {
-        ++count[(*this)[i].state()];
+    for (const_iterator curset = begin();
+            curset != end();
+            ++curset) {
+        ++count[static_cast<unsigned char>(curset->state())];
     }
     return count;
 }
 
 size_t TritSet::cardinality(Tritenum state) const{
     size_t count = 0;
-    size_t cur_len = length();
-    for (size_t i = 0; i < cur_len; ++i) {
-        if ((*this)[i].state() == state) {
+    for (const_iterator curset = begin();
+            curset != end();
+            ++curset) {
+        if (curset->state() == state) {
             ++count;
         }
     }
@@ -91,26 +114,30 @@ size_t TritSet::cardinality(Tritenum state) const{
 }
 
 TritSet& TritSet::flip() {
-    for (size_t i = 0; i < capacity(); ++i) {
-        (*this)[i].flip();
+    for (iterator it = begin(); it != end(); ++it) {
+        it->flip();
     }
     return *this;
 }
 
 size_t TritSet::length() const{
-    for(size_t i = capacity() - 1; i != static_cast<size_t>(0)-1; --i) {
-        if ((*this)[i].state() != _Unknown) {
-            return i + 1;
+    size_t res = capacity();
+    for (const_iterator curset = end() - 1;
+            curset >= begin();
+            --curset) {
+        if (curset->state() != Tritenum::Unknown) {
+            return res;
         }
+        --res;
     }
-    return 0;
+    return res;
 }
 
 bool TritSet::operator== (const TritSet& other) const{
-    size_t maxCapacity = (capacity() > other.capacity())
-                     ? capacity() : other.capacity();
-    for(size_t i = 0; i < maxCapacity; ++i) {
-        if((*this)[i] != other[i]) {
+    const_iterator itth = begin();
+    const_iterator itoth = other.begin();
+    for(; itth < end() || itoth < other.end(); ++itth, ++itoth) {
+        if(*itth != *itoth) {
             return false;
         }
     }
@@ -157,10 +184,10 @@ TritSet TritSet::operator~() const{
 }
 
 TritSet& TritSet::operator&=(const TritSet& other) {
-    size_t max_capacity = (capacity() > other.capacity()) ?
-                           capacity() : other.capacity();
-    for (size_t i = 0; i < max_capacity; ++i) {
-        (*this)[i] &= other[i];
+    iterator itth = begin();
+    const_iterator itoth = other.begin();
+    for(; itth < end() || itoth < other.end(); ++itth, ++itoth) {
+        *itth &= *itoth;
     }
     return *this;
 }
@@ -218,7 +245,7 @@ TritSet& TritSet::shrink() {
 void TritSet::trim(size_t lastIndex) {
     size_t limit = extendToCapacity(lastIndex);
     for(size_t i = lastIndex; i < limit; ++i) {
-        (*this)[i] = _Unknown;
+        (*this)[i] = Tritenum::Unknown;
     }
     limit /= 4 * sizeof(uint);
     for(size_t i = limit;
@@ -228,10 +255,12 @@ void TritSet::trim(size_t lastIndex) {
 }
 
 TritSet::~TritSet() {
-    _capacity = 0;
-    uint* buf = data;
-    data = nullptr;
-    delete[] buf;
+    // avoid optimizations which can cause double free
+    volatile size_t& bufcap = _capacity;
+    uint* volatile & bufdata = data;
+    delete[] bufdata;
+    bufdata = nullptr;
+    bufcap = 0;
 }
 
 ////////////////////////
@@ -239,7 +268,8 @@ TritSet::~TritSet() {
 ////////////////////////
 
 
-TritSet::reference::reference() {};
+TritSet::reference::reference()
+ : rset(nullptr), rpos(0){};
 
 TritSet::reference::reference(TritSet &set, size_t pos)
  : rset(&set), rpos(pos) { }
@@ -248,15 +278,25 @@ TritSet::reference::reference(const reference& other)
  : rset(other.rset), rpos(other.rpos) { }
 
 TritSet::reference& TritSet::reference::operator= (Tritenum other) {
+    if (!rset) {
+        return *this;
+    }
+    // shift of byte*sizeof(uint)
     size_t shift    = (rpos    ) / (4 * sizeof(uint));
+    // shift of bits
     size_t shiftbit = (rpos * 2) % (8 * sizeof(uint));
     TritenumReal state = toReal(other);
-    if ((rpos >= rset->capacity()) && ((state == _TrueReal) || (state == _FalseReal))) {
+    // if trit is significant and its position is bigger than capacity of set
+    if ((rpos >= rset->capacity()) && ((state == TritenumReal::True) || (state == TritenumReal::False))) {
         rset->resize(rpos + 1);
+        // apply mask with zeros on position
+        // and then apply binary or on it and new state
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
                             ((uint)state%3 << shiftbit);
     }
     else if (rpos < rset->capacity()) {
+        // apply mask with zeros on position
+        // and then apply binary or on it and new state
         rset->data[shift] = (rset->data[shift] & ~((uint)0x3 << shiftbit)) |
                             ((uint)state%3 << shiftbit);
     }
@@ -264,16 +304,25 @@ TritSet::reference& TritSet::reference::operator= (Tritenum other) {
 }
 
 Tritenum TritSet::reference::state() const {
+    if (!rset) {
+        return Unknown;
+    }
     if (rpos < rset->capacity()) {
+        // inside the brackets shifting of bite*sizeof(uint),
+        // outside the brackets shifting of bits
+        // and then apply mask 0b11
         return fromReal(TritenumReal((rset->data[(rpos) / (4 * sizeof(uint))]
                 >> (rpos * 2) % (8 * sizeof(uint))) & 0x3));
     }
-    return _Unknown;
+    return Tritenum::Unknown;
 }
 
 TritSet::reference::~reference() {
-    rset = nullptr;
-    rpos = 0;
+    // avoid optimizations which can delete assigning
+    TritSet*volatile&bufset = rset;
+    volatile size_t &bufpos = rpos;
+    bufset = nullptr;
+    bufpos = 0;
 }
 
 }

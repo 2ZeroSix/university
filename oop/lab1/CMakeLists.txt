@@ -6,7 +6,7 @@ include_directories(.)
 add_subdirectory(gtests)
 
 # set source files
-set(SOURCE_TRITSET tritset.cpp)
+set(SOURCE_TRITSET tritset.cpp trit.cpp)
 
 # set required flags
 set(TMP_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -std=c++11")

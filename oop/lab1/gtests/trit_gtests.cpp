@@ -9,30 +9,30 @@ using namespace tritspace;
 //////////
 
 TEST(TritTest, intConstructor) {
-    ASSERT_EQ(_False,   Trit(0).state());
-    ASSERT_EQ(_False,   Trit(3).state());
-    ASSERT_EQ(_Unknown, Trit(1).state());
-    ASSERT_EQ(_Unknown, Trit(4).state());
-    ASSERT_EQ(_True,    Trit(2).state());
-    ASSERT_EQ(_True,    Trit(5).state());
+    ASSERT_EQ(Tritenum::False,   Trit(0).state());
+    ASSERT_EQ(Tritenum::False,   Trit(3).state());
+    ASSERT_EQ(Tritenum::Unknown, Trit(1).state());
+    ASSERT_EQ(Tritenum::Unknown, Trit(4).state());
+    ASSERT_EQ(Tritenum::True,    Trit(2).state());
+    ASSERT_EQ(Tritenum::True,    Trit(5).state());
 }
 
 TEST(TritTest, TritenumConstructor) {
-    ASSERT_EQ(_Unknown, Trit(_Unknown).state());
-    ASSERT_EQ(_False,   Trit(_False).state());
-    ASSERT_EQ(_True,    Trit(_True).state());
+    ASSERT_EQ(Tritenum::Unknown, Trit(Tritenum::Unknown).state());
+    ASSERT_EQ(Tritenum::False,   Trit(Tritenum::False).state());
+    ASSERT_EQ(Tritenum::True,    Trit(Tritenum::True).state());
 }
 
 TEST(TritTest, copyConstructor) {
-    ASSERT_EQ(_Unknown, Trit(Unknown).state());
-    ASSERT_EQ(_False,   Trit(False).state());
-    ASSERT_EQ(_True,    Trit(True).state());
+    ASSERT_EQ(Tritenum::Unknown, Trit(Unknown).state());
+    ASSERT_EQ(Tritenum::False,   Trit(False).state());
+    ASSERT_EQ(Tritenum::True,    Trit(True).state());
 }
 
 TEST(TritTest, defaultConstructor) {
-    ASSERT_EQ(_Unknown, Trit().state());
+    ASSERT_EQ(Tritenum::Unknown, Trit().state());
     Trit tmp;
-    ASSERT_EQ(_Unknown, tmp.state());
+    ASSERT_EQ(Tritenum::Unknown, tmp.state());
 }
 
 TEST(TritTest, operatorTritenum) {
@@ -67,9 +67,9 @@ TEST(TritTest, operatorNeOther) {
 
 TEST(TritTest, operatorAssignTritenum) {
     Trit tmp;
-    ASSERT_EQ(False,    tmp = _False);
-    ASSERT_EQ(Unknown,  tmp = _Unknown);
-    ASSERT_EQ(True,     tmp = _True);
+    ASSERT_EQ(False,    tmp = Tritenum::False);
+    ASSERT_EQ(Unknown,  tmp = Tritenum::Unknown);
+    ASSERT_EQ(True,     tmp = Tritenum::True);
 }
 
 TEST(TritTest, operatorAssignTrit) {
@@ -187,9 +187,9 @@ TEST(TritTest, operatorAssignXOR) {
 }
 
 TEST(TritTest, FLIP) {
-    EXPECT_EQ(False,    Trit(_True).flip());
-    EXPECT_EQ(Unknown,  Trit(_Unknown).flip());
-    EXPECT_EQ(True,     Trit(_False).flip());   
+    EXPECT_EQ(False,    Trit(Tritenum::True).flip());
+    EXPECT_EQ(Unknown,  Trit(Tritenum::Unknown).flip());
+    EXPECT_EQ(True,     Trit(Tritenum::False).flip());   
 }
 
 TEST(TritTest, to_string) {

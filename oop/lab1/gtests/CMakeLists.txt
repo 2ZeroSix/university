@@ -18,18 +18,24 @@ set(CMAKE_CXX_FLAGS  "${TMP_CXX_FLAGS} -m32" )
 set(CMAKE_EXE_LINKER_FLAGS  "${TMP_EXE_LINKER_FLAGS} -m32" )
 add_executable(runTests-m32 ${SOURCE_GTESTS})
 target_link_libraries(runTests-m32 ${GTEST_LIBRARIES} tritset-m32 pthread)
-add_custom_command(TARGET runTests-m32 POST_BUILD COMMAND runTests-m32)
+add_custom_command( TARGET runTests-m32 
+                    POST_BUILD
+                    COMMAND runTests-m32) #> /dev/null && echo "[PASSED] m32" || (echo "[FAIL] m32" && false))
 
 # set platform -mx32
 set(CMAKE_CXX_FLAGS  "${TMP_CXX_FLAGS} -mx32" )
 set(CMAKE_EXE_LINKER_FLAGS  "${TMP_EXE_LINKER_FLAGS} -mx32" )
 add_executable(runTests-mx32 ${SOURCE_GTESTS})
 target_link_libraries(runTests-mx32 ${GTEST_LIBRARIES} tritset-mx32 pthread)
-add_custom_command(TARGET runTests-mx32 POST_BUILD COMMAND runTests-mx32)
+add_custom_command( TARGET runTests-mx32
+                    POST_BUILD
+                    COMMAND runTests-mx32)# > /dev/null && echo "[PASSED] mx32" || (echo "[FAIL] mx32" && false))
 
 # set platform -m64
 set(CMAKE_CXX_FLAGS  "${TMP_CXX_FLAGS} -m64" )
 set(CMAKE_EXE_LINKER_FLAGS  "${TMP_EXE_LINKER_FLAGS} -m64" )
 add_executable(runTests-m64 ${SOURCE_GTESTS})
 target_link_libraries(runTests-m64 ${GTEST_LIBRARIES} tritset-m64 pthread)
-add_custom_command(TARGET runTests-m64 POST_BUILD COMMAND runTests-m64)
+add_custom_command( TARGET runTests-m64
+                    POST_BUILD
+                    COMMAND runTests-m64)# > /dev/null && echo "[PASSED] m64" || (echo "[FAIL] m64" && false))

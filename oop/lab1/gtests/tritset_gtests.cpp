@@ -42,7 +42,7 @@ class TritSetTest : public testing::Test {
 public:
     TritSet& fillset(TritSet& set) {
         for(size_t i = 0; i < set.capacity(); ++i) {
-            set[i] = Tritenum(i % 3 - 1);
+            set[i] = i;
         }
         return set;
     }
@@ -246,21 +246,21 @@ TEST_F(TritSetTest, cardinalityTritenum) {
     for(size_t i = 0; i < set.capacity(); ++i) {
         set[i] = True;
     }
-    EXPECT_EQ(set.capacity(), set.cardinality(_True));
-    EXPECT_EQ(0, set.cardinality(_Unknown));
-    EXPECT_EQ(0, set.cardinality(_False));
+    EXPECT_EQ(set.capacity(), set.cardinality(Tritenum::True));
+    EXPECT_EQ(0, set.cardinality(Tritenum::Unknown));
+    EXPECT_EQ(0, set.cardinality(Tritenum::False));
     for(size_t i = set.capacity()/2; i < set.capacity(); ++i) {
         set[i] = False;
     }
-    EXPECT_EQ(set.capacity()/2, set.cardinality(_True));
-    EXPECT_EQ(0, set.cardinality(_Unknown));
-    EXPECT_EQ(set.capacity()-set.capacity()/2, set.cardinality(_False));
+    EXPECT_EQ(set.capacity()/2, set.cardinality(Tritenum::True));
+    EXPECT_EQ(0, set.cardinality(Tritenum::Unknown));
+    EXPECT_EQ(set.capacity()-set.capacity()/2, set.cardinality(Tritenum::False));
     for(size_t i = set.capacity()/2; i < set.capacity()*2/3; ++i) {
         set[i] = Unknown;
     }
-    EXPECT_EQ(set.capacity()/2, set.cardinality(_True));
-    EXPECT_EQ(set.capacity()*2/3-set.capacity()/2, set.cardinality(_Unknown));
-    EXPECT_EQ(set.capacity()-set.capacity()*2/3, set.cardinality(_False));
+    EXPECT_EQ(set.capacity()/2, set.cardinality(Tritenum::True));
+    EXPECT_EQ(set.capacity()*2/3-set.capacity()/2, set.cardinality(Tritenum::Unknown));
+    EXPECT_EQ(set.capacity()-set.capacity()*2/3, set.cardinality(Tritenum::False));
 }
 
 TEST_F(TritSetTest, cardinalityTrit) {
@@ -292,23 +292,23 @@ TEST_F(TritSetTest, cardinalityAll) {
         set[i] = True;
     }
     tmp = set.cardinality();
-    EXPECT_EQ(set.capacity(), tmp[_True]);
-    EXPECT_EQ(0, tmp[_Unknown]);
-    EXPECT_EQ(0, tmp[_False]);
+    EXPECT_EQ(set.capacity(), tmp[size_t(Tritenum::True)]);
+    EXPECT_EQ(0, tmp[size_t(Unknown)]);
+    EXPECT_EQ(0, tmp[size_t(False)]);
     for(size_t i = set.capacity()/2; i < set.capacity(); ++i) {
         set[i] = False;
     }
     tmp = set.cardinality();
-    EXPECT_EQ(set.capacity()/2, tmp[_True]);
-    EXPECT_EQ(0, tmp[_Unknown]);
-    EXPECT_EQ(set.capacity()-set.capacity()/2, tmp[_False]);
+    EXPECT_EQ(set.capacity()/2, tmp[size_t(True)]);
+    EXPECT_EQ(0, tmp[size_t(Unknown)]);
+    EXPECT_EQ(set.capacity()-set.capacity()/2, tmp[size_t(False)]);
     for(size_t i = set.capacity()/2; i < set.capacity()*2/3; ++i) {
         set[i] = Unknown;
     }
     tmp = set.cardinality();
-    EXPECT_EQ(set.capacity()/2, tmp[_True]);
-    EXPECT_EQ(set.capacity()*2/3-set.capacity()/2, tmp[_Unknown]);
-    EXPECT_EQ(set.capacity()-set.capacity()*2/3, tmp[_False]);
+    EXPECT_EQ(set.capacity()/2, tmp[size_t(True)]);
+    EXPECT_EQ(set.capacity()*2/3-set.capacity()/2, tmp[size_t(Unknown)]);
+    EXPECT_EQ(set.capacity()-set.capacity()*2/3, tmp[size_t(False)]);
 }
 
 TEST_F(TritSetTest, operatorAND) {
@@ -427,3 +427,24 @@ TEST_F(TritSetTest, destructor) {
     EXPECT_EQ(Unknown, set[0]);
     EXPECT_EQ(Unknown, set[1000]);
 }
+
+
+//////////////////////////////////////////
+// TritSet::[iterator | const_iterator] //
+//////////////////////////////////////////
+// TODO add tests for iterators
+
+// class TritSetIteratorsTest : public testing::Test, public TritSet::const_iterator, public TritSet::iterator {
+// public:
+//     TritSetIteratorsTest() {}
+//     ~TritSetIteratorsTest() {}
+// };
+
+// TEST_F(TritSetIteratorsTest, defaultConstructor) {
+//     TritSet::iterator it;
+//     TritSet::const_iterator cit;
+//     ASSERT_EQ(nullptr, get_rset(it));
+//     ASSERT_EQ(0, TritSetIteratorsTest::get_rpos(it));
+//     ASSERT_EQ(nullptr, TritSetIteratorsTest::get_rset(cit));
+//     ASSERT_EQ(0, TritSetIteratorsTest::get_rpos(cit));
+// }
