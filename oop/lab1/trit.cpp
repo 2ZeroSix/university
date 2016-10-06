@@ -1,7 +1,7 @@
 #include "trit.h"
 
-namespace tritspace {
 using namespace std;
+namespace tritspace {
 
     Tritenum operator+(Tritenum a, Tritenum b) {
         return static_cast<Tritenum>((static_cast<unsigned char>(a) + static_cast<unsigned char>(b)) % 3);
@@ -21,20 +21,21 @@ using namespace std;
         _state = state;
     }
 
-    Trit& Trit::operator=(Tritenum state) noexcept{
-        _state = state;
-        return *this;
-    }
-
-    Tritenum Trit::state() const noexcept{
-        return _state;
-    }
-
     Trit::~Trit() noexcept{
         // avoid optimizations which can delete assigning
         volatile Tritenum &buf = _state;
         buf = Tritenum::Unknown;
     }
+
+    Trit& Trit::set(Tritenum state) noexcept{
+        _state = state;
+        return *this;
+    }
+
+    Tritenum Trit::get() const noexcept{
+        return _state;
+    }
+
     std::ostream& operator<<(std::ostream &os, const Trit &trit) {
         os << trit.to_string();
         return os;

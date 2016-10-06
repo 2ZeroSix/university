@@ -1,7 +1,6 @@
 #ifndef _TRIT_H_
 #define _TRIT_H_
 #include <ostream>
-#include <iostream>
 #include "trit_base.h"
 
 namespace tritspace{
@@ -30,24 +29,24 @@ namespace tritspace{
         // 
         // _state = Tritenum(state mod 3)
         explicit Trit(std::size_t state) noexcept;
-        // assign operator of Trit
-        // 
-        // doesn't checks if it's one of significant Tritenum values
-        virtual  Trit& operator=(Tritenum state) noexcept override;
-        using TritBase<Trit>::operator=;
-        // returns current state of Trit
-        virtual  Tritenum state() const noexcept override;
+        // solve problem with overload resolution
+        // using TritBase<Trit>::operator=;
         // destructor of trit
         virtual ~Trit() noexcept;
+    protected:
+        // assign operator of Trit
+        virtual  Trit&      set(Tritenum) noexcept override;
+        // returns current state of Trit
+        virtual  Tritenum   get() const noexcept override;
     private:
         // current state of Trit
         Tritenum _state;
     };
 
     // define default Trits
-    const Trit False  (Tritenum::False);
-    const Trit Unknown(Tritenum::Unknown);
-    const Trit True   (Tritenum::True);
+    const Trit False    (Tritenum::False);
+    const Trit Unknown  (Tritenum::Unknown);
+    const Trit True     (Tritenum::True);
 
     /**
      * overload of stream out operator
@@ -60,7 +59,6 @@ namespace tritspace{
      * @return      reference to used std::ostream
      */
     std::ostream& operator<<(std::ostream &os, const Trit &trit);
-
 }
 
 #endif

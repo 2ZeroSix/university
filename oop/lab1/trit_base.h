@@ -4,7 +4,7 @@
 // and #define _TRIT_H_                      //
 ///////////////////////////////////////////////
 #ifndef _TRIT_H_
-#error "trit_base.h can only be included on the top of trit.h"
+#error "trit_base.h can only be included on the top of trit.h,\n don't include it directly in any other way"
 #endif
 
 #ifndef _TRIT_BASE_H_
@@ -13,8 +13,6 @@
 #include <string>
 #include <ostream>
 
-using namespace std;
-
 namespace tritspace {
 // standard implementation of trits
 class Trit;
@@ -22,16 +20,20 @@ class Trit;
 enum class Tritenum : unsigned char {False, Unknown, True};
 
 // throws if state() return not equal to standard states
+// 
+// if you want to use explanation of exception after destruction
+// you must copy returned from method what() string
 class WrongTrit: public std::exception {
 public:
-    WrongTrit(const Tritenum& state){
-        str[21] =   ' ';
-        str[22] =   (static_cast<unsigned char>(state)/100) ?
-                    (static_cast<unsigned char>(state)/100)      + '0' : ' ';
-        str[23] =   (static_cast<unsigned char>(state)%100)/10 ?
-                    (static_cast<unsigned char>(state)%100)/10 + '0' : ' ';
-        str[24] =   (static_cast<unsigned char>(state)%10)       + '0';
-        str[25] =   '\0';
+    WrongTrit(const Tritenum& state) noexcept{
+        unsigned char n = (static_cast<unsigned char>(state)/100);
+        str[21] = ' ';
+        str[22] = n ? n + '0' : ' ';
+        n = (static_cast<unsigned char>(state)%100)/10;
+        str[23] = n ? n + '0' : ' ';
+        n = (static_cast<unsigned char>(state)%10);
+        str[24] = n + '0';
+        str[25] = '\0';
     }
     virtual const char* what() const noexcept{
         return str;
@@ -41,23 +43,30 @@ private:
 };
 
 /**
- * WARNING: 
- *     Overload resolution PROBLEM:
- *     in inherited classes you MUST paste this string after
- *     override of operator=(Tritenum) :
- *     !!!"using TritBase<inherited class name>::operator=;"!!!
- *     otherwise, operator=(Tritenum) will hides 
- *     all other overloads of operator=
- *     
- * 
  * Base class for trits realizations
  *
  * @template T  name of realization
  * 
- * @template U  name of main realization
+ * @template U  name of main realization (default: Trit)
+ *               Do not change it if you don't want to lose compatibility!
+ *               Anyway it must have Tritenum constructor and copy constructor.
  *
  * note:
  *     all trit realizations can be casted to main realization
+ * 
+ * instruction:
+ *     all you need is:
+ *         create constructors and destructor
+ *         overload pure virtual functions:
+ *             Tritenum get ()
+ *             T&       set (Tritenum)
+ *         add string:
+ *             "using TritBase<inherited class name>::operator=;"
+ *
+ * WARNING: 
+ *     Overload resolution PROBLEM:
+ *     in inherited classes you MUST add this string:
+ *     !!!"using TritBase<inherited class name>::operator=;"!!!
  */
 template<typename T, typename U=Trit>
 class TritBase {
@@ -174,6 +183,9 @@ public:
     }
     /**
      * cast to integer type
+     *
+     * note:
+     *     must be template because of "explicit" specificator
      */
     template<typename Integer, typename = typename std::enable_if<std::is_integral<Integer>::value,Integer>::type>
     explicit operator Integer() const {
@@ -188,7 +200,9 @@ public:
     /**
      * current state of trit
      */
-    virtual Tritenum    state     () const               = 0;
+    Tritenum    state     () const {
+        return get();
+    }
     /**
      * Assign operator from Tritenum
      *
@@ -196,11 +210,10 @@ public:
      *
      * @return          same trit with realization U,
      *                       which state was changed
-     *
-     * note:
-     *     mustn't checks if it's one of significant Tritenum values
      */
-    virtual T&          operator= (const Tritenum state) = 0;
+    T&          operator= (Tritenum state){
+        return set(state);
+    }
     /**
      * Assign operator from integer type
      *
@@ -210,42 +223,39 @@ public:
      *                       which state was assigned
      *                       to state mod 3
      */
-    T&          operator= (const size_t& state) {
-        return *this = static_cast<Tritenum>(state % 3);
+    T&          operator= (size_t state) {
+        return set(static_cast<Tritenum>(state%3));
     }
     /**
-     * Assign operator from main realization
+     * Assign operator from trit with realization T
      *
-     * @param   other   trit with main realization
+     * @param   other   trit with realization T
      * 
-     * @return          same trit with realization U,
+     * @return          same trit with realization T,
      *                       which state was changed
      */
-    T&                  operator= (const U& other) {
-        return *this = other.state();
+    T&          operator= (const TritBase<T>& other) {
+        return set(other.state());
     }
+protected:
     /**
-     * Equation operator
+     * get trit state
      *
-     * @param   other   trit with main realization
-     *
-     * return           if equal: true
-     *                      else: false
+     * @return  state of the trit
      */
-    bool                operator==(const U& other) const{
-        return state() == other.state();
-    }
+    virtual Tritenum get() const = 0;
     /**
-     * Not equation operator
+     * set trit state
      *
-     * @param   other   trit with main realization
+     * @param   Tritenum  state to set
      *
-     * return           if equal: false
-     *                      else: true
+     * @return            same trit which state was changed
+     *
+     * note:
+     *     mustn't check if it's one of significant Tritenum values
      */
-    bool                operator!=(const U& other) const{
-        return state() != other.state();
-    }
+    virtual T& set(Tritenum)     = 0;
+
 };
 
 }

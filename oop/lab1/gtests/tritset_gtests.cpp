@@ -91,6 +91,19 @@ TEST_F(TritSetTest, TritArrayConstructor) {
     }
 }
 
+TEST_F(TritSetTest, InitializerListConstructor) {
+    TritSet set;
+    set[0] = True;
+    set[1] = Unknown;
+    set[2] = False;
+    TritSet set3 = {True, Unknown, False};
+    TritSet set4{True, Unknown, False};
+    TritSet set5({True, Unknown, False});
+    ASSERT_EQ(set, set3);
+    ASSERT_EQ(set, set4);
+    ASSERT_EQ(set, set5);
+}
+
 TEST_F(TritSetTest, resize) {
     TritSet set(100);
     fillset(set);
@@ -109,8 +122,16 @@ TEST_F(TritSetTest, resize) {
 
 TEST_F(TritSetTest, operatorAssign) {
     TritSet set1(1000);
+    TritSet set2;
     fillset(set1);
-    TritSet set2 = set1;
+    set2 = set1;
+    EXPECT_EQ(set1, set2);
+}
+
+TEST_F(TritSetTest, operatorAssignInitializerList) {
+    TritSet set1{True, Unknown, False};
+    TritSet set2;
+    set2 = {True, Unknown, False};
     EXPECT_EQ(set1, set2);
 }
 
@@ -429,22 +450,235 @@ TEST_F(TritSetTest, destructor) {
 }
 
 
-//////////////////////////////////////////
-// TritSet::[iterator | const_iterator] //
-//////////////////////////////////////////
-// TODO add tests for iterators
 
-// class TritSetIteratorsTest : public testing::Test, public TritSet::const_iterator, public TritSet::iterator {
-// public:
-//     TritSetIteratorsTest() {}
-//     ~TritSetIteratorsTest() {}
-// };
+////////////////////////////////
+// TritSet::[const_|]iterator //
+////////////////////////////////
 
-// TEST_F(TritSetIteratorsTest, defaultConstructor) {
-//     TritSet::iterator it;
-//     TritSet::const_iterator cit;
-//     ASSERT_EQ(nullptr, get_rset(it));
-//     ASSERT_EQ(0, TritSetIteratorsTest::get_rpos(it));
-//     ASSERT_EQ(nullptr, TritSetIteratorsTest::get_rset(cit));
-//     ASSERT_EQ(0, TritSetIteratorsTest::get_rpos(cit));
-// }
+class TritSetIteratorsTest : public testing::Test{
+public:
+    TritSetIteratorsTest() {
+        for (int i = 0; i < 3; ++i) {
+            it.emplace_back(set, i);
+            cit.emplace_back(set, i);
+            ccit.emplace_back(cset, i);
+            // rit.emplace_back(TritSet::iterator(set, 3 - i));
+            // crit.emplace_back(TritSet::const_iterator(set, 3 - i));
+            // ccrit.emplace_back(TritSet::const_iterator(cset, 3 - i));
+        }
+    }
+    ~TritSetIteratorsTest() {}
+    TritSet set{True, Unknown, False};
+    const TritSet cset{True, Unknown, False};
+    std::vector<TritSet::iterator>                  it;
+    std::vector<TritSet::const_iterator>            cit;
+    std::vector<TritSet::const_iterator>            ccit;
+    // std::vector<TritSet::reverse_iterator>          rit;
+    // std::vector<TritSet::const_reverse_iterator>    crit;
+    // std::vector<TritSet::const_reverse_iterator>    ccrit;
+};
+
+TEST_F(TritSetIteratorsTest, defaultConstructor_operatorDereferencing) {
+    TritSet::iterator               it;
+    TritSet::const_iterator         cit;
+    TritSet::const_iterator         ccit;
+    // TritSet::reverse_iterator       rit;
+    // TritSet::const_reverse_iterator crit;
+    // TritSet::const_reverse_iterator ccrit;
+    ASSERT_EQ(*it,   Unknown);
+    ASSERT_EQ(*cit,  Unknown);
+    ASSERT_EQ(*ccit,  Unknown);
+    // ASSERT_EQ(*rit,  Unknown);
+    // ASSERT_EQ(*crit, Unknown);
+    // ASSERT_EQ(*ccrit, Unknown);
+}
+
+TEST_F(TritSetIteratorsTest, TritSetConstructor_operatorDereferencing) {
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_EQ(*it[i],    Tritenum(2 - i));
+        EXPECT_EQ(*cit[i],   Tritenum(2 - i));
+        EXPECT_EQ(*ccit[i],  Tritenum(2 - i));
+        // EXPECT_EQ(*rit[i],   Tritenum(i));
+        // EXPECT_EQ(*crit[i],  Tritenum(i));
+        // EXPECT_EQ(*ccrit[i], Tritenum(i));
+    }
+}
+
+TEST_F(TritSetIteratorsTest, copyConstructor_operatorEq_operatorToConstIterator) {
+    TritSet::iterator       it(set,0);
+    TritSet::const_iterator ccopy(it);
+    TritSet::iterator       copy(it);
+    EXPECT_EQ(it, ccopy);
+    EXPECT_EQ(it, copy);
+    EXPECT_EQ(ccopy, copy);
+}
+
+TEST_F(TritSetIteratorsTest, operatorNe) {
+    for(int i = 0; i < 3; ++i) {
+        for(int j = 0; j < 3; ++j) {
+            if( i != j ) {
+                EXPECT_NE(it[i],    it[j]);
+                EXPECT_NE(cit[i],   cit[j]);
+                EXPECT_NE(ccit[i],  ccit[j]);
+                // EXPECT_NE(rit[i],   rit[j]);
+                // EXPECT_NE(crit[i],  crit[j]);
+                // EXPECT_NE(ccrit[i], ccrit[j]);
+            }
+        }
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorLt) {
+    for(int i = 0; i < 3; ++i) {
+        for(int j = 0; j < i; ++j) {
+            EXPECT_LT(it[j],    it[i]);
+            EXPECT_LT(cit[j],   cit[i]);
+            EXPECT_LT(ccit[j],  ccit[i]);
+            // EXPECT_LT(rit[j],   rit[i]);
+            // EXPECT_LT(crit[j],  crit[i]);
+            // EXPECT_LT(ccrit[j], ccrit[i]);
+        }
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorLe) {
+    for(int i = 0; i < 3; ++i) {
+        for(int j = 0; j <= i; ++j) {
+            EXPECT_LE(it[j],    it[i]);
+            EXPECT_LE(cit[j],   cit[i]);
+            EXPECT_LE(ccit[j],  ccit[i]);
+            // EXPECT_LE(rit[j],   rit[i]);
+            // EXPECT_LE(crit[j],  crit[i]);
+            // EXPECT_LE(ccrit[j], ccrit[i]);
+        }
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorGt) {
+    for(int i = 0; i < 3; ++i) {
+        for(int j = 0; j < i; ++j) {
+            EXPECT_GT(it[i],    it[j]);
+            EXPECT_GT(cit[i],   cit[j]);
+            EXPECT_GT(ccit[i],  ccit[j]);
+            // EXPECT_GT(rit[i],   rit[j]);
+            // EXPECT_GT(crit[i],  crit[j]);
+            // EXPECT_GT(ccrit[i], ccrit[j]);
+        }
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorGe) {
+    for(int i = 0; i < 3; ++i) {
+        for(int j = 0; j <= i; ++j) {
+            EXPECT_GE(it[i],    it[j]);
+            EXPECT_GE(cit[i],   cit[j]);
+            EXPECT_GE(ccit[i],  ccit[j]);
+            // EXPECT_GE(rit[i],   rit[j]);
+            // EXPECT_GE(crit[i],  crit[j]);
+            // EXPECT_GE(ccrit[i], ccrit[j]);
+        }
+    }
+}
+
+TEST_F(TritSetIteratorsTest, opearatorArrow) {
+    for(int i = 0; i < 3; ++i) {
+        EXPECT_EQ(it[i]->state(),    Tritenum(2 - i));
+        EXPECT_EQ(cit[i]->state(),   Tritenum(2 - i));
+        EXPECT_EQ(ccit[i]->state(),  Tritenum(2 - i));
+        // EXPECT_EQ(rit[i]->state(),   Tritenum(i));
+        // EXPECT_EQ(crit[i]->state(),  Tritenum(i));
+        // EXPECT_EQ(ccrit[i]->state(), Tritenum(i));
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorAdd) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j <= i; ++j) {
+            EXPECT_EQ(it[i],    it[j]   + i - j);
+            EXPECT_EQ(it[i],    cit[j]   + i - j);
+            EXPECT_EQ(cit[i],   it[j]   + i - j);
+            EXPECT_EQ(cit[i],   cit[j]  + i - j);
+            EXPECT_EQ(ccit[i],  ccit[j] + i - j);
+        }
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorAddAssign) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j <= i; ++j) {
+            TritSet::iterator testit = it[j];
+            EXPECT_EQ(it[i], testit+= i - j);
+            testit = it[j];
+            EXPECT_EQ(cit[i], testit+= i - j);
+        }
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorPrefixIncrement) {
+    for (int i = 0; i < 2; ++i) {
+        TritSet::iterator testit = it[i];
+        EXPECT_EQ(it[i + 1], ++testit);
+        EXPECT_EQ(cit[i + 1], testit);
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorPostfixIncrement) {
+    for (int i = 0; i < 3; ++i) {
+        TritSet::iterator testit = it[i];
+        EXPECT_EQ(it[i], testit++);
+        if (i < 2) {
+            EXPECT_EQ(cit[i + 1], testit);
+        }
+    }    
+}
+
+TEST_F(TritSetIteratorsTest, operatorSub) {    
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 2; j >= i; --j) {
+            EXPECT_EQ(it[i],    it[j]    - j + i);
+            EXPECT_EQ(it[i],    cit[j]   - j + i);
+            EXPECT_EQ(cit[i],   it[j]    - j + i);
+            EXPECT_EQ(cit[i],   cit[j]   - j + i);
+            EXPECT_EQ(ccit[i],  ccit[j]  - j + i);
+        }
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorSubAssign) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 2; j >= i; --j) {
+            TritSet::iterator testit = it[j];
+            EXPECT_EQ(it[i], testit-= - i + j);
+            testit = it[j];
+            EXPECT_EQ(cit[i], testit-= - i + j);
+        }
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorPrefixDecrement) {
+    for (int i = 1; i < 3; ++i) {
+        TritSet::iterator testit = it[i];
+        EXPECT_EQ(it[i - 1], --testit);
+        EXPECT_EQ(cit[i - 1], testit);
+    }
+}
+
+TEST_F(TritSetIteratorsTest, operatorPostfixDecrement) {
+    for (int i = 0; i < 3; ++i) {
+        TritSet::iterator testit = it[i];
+        EXPECT_EQ(it[i], testit--);
+        if (i > 0) {
+            EXPECT_EQ(cit[i - 1], testit);
+        }
+    }    
+}
+
+TEST_F(TritSetIteratorsTest, operatorIndex) {
+    TritSet::iterator testit = begin(set);
+    TritSet::const_iterator testcit = begin(cset);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_EQ(*it[i],    testit[i]);
+        EXPECT_EQ(*cit[i],   testit[i]);
+        EXPECT_EQ(*ccit[i],  testcit[i]);
+    }    
+}
