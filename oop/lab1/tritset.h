@@ -46,177 +46,128 @@ private:
         friend TritSet;
     public:
         // default constructor of base_trit
-        base_iterator() : rset( nullptr), rpos(0), out_of_range(false) {}
+        base_iterator() noexcept
+         : rset( nullptr), rpos(0) {}
+
         // TritSet constructor of base_trit
-        base_iterator(TritSetClass& set,  std::size_t pos) :
-            rset(&set), rpos(pos), out_of_range(false) {}
+        base_iterator(TritSetClass& set,  std::size_t pos) noexcept
+         : rset(&set), rpos(pos) {}
+
         // copy constructor of base_trit
-        base_iterator(const base_iterator<ReferenceClass, TritSetClass>& other) : 
-            rset(other.rset), rpos(other.rpos), out_of_range(other.out_of_range) {}
+        base_iterator(const base_iterator<ReferenceClass, TritSetClass>& other) noexcept
+         : rset(other.rset), rpos(other.rpos) {}
+
         // cast to const version of base_iterator
-        operator base_iterator<const reference, const TritSet>() const {
+        operator base_iterator<const reference, const TritSet>() const noexcept{
             base_iterator<const reference, const TritSet> buf;
             buf.rset = rset;
             buf.rpos = rpos;
             return buf;
         }
-        bool            operator==  (const base_iterator<const reference, const TritSet>& other) const {
+       
+        bool            operator==  (const base_iterator<const reference, const TritSet>& other) const noexcept{
             return (rset == other.rset) && (rpos == other.rpos);
         }
-        bool            operator!=  (const base_iterator<const reference, const TritSet>& other) const {
+
+        bool            operator!=  (const base_iterator<const reference, const TritSet>& other) const noexcept{
             return (rset != other.rset) || (rpos != other.rpos);
         }
-        bool            operator<   (const base_iterator<const reference, const TritSet>& other) const {
-            if (rset != other.rset) {
-                return false;
-            }
-            if (out_of_range) {
-                return true;
-            }
+
+        bool            operator<   (const base_iterator<const reference, const TritSet>& other) const noexcept{
             return rpos < other.rpos;
         }
-        bool            operator>   (const base_iterator<const reference, const TritSet>& other) const {
-            if (rset != other.rset) {
-                return false;
-            }
-            else if (other.out_of_range) {
-                return true;
-            }
+
+        bool            operator>   (const base_iterator<const reference, const TritSet>& other) const noexcept{
             return rpos > other.rpos;
         }
-        bool            operator<=  (const base_iterator<const reference, const TritSet>& other) const {
-            if (rset != other.rset) {
-                return false;
-            }
-            return !(*this > other);
+
+        bool            operator<=  (const base_iterator<const reference, const TritSet>& other) const noexcept{
+            return rpos <= other.rpos;
         }
-        bool            operator>=  (const base_iterator<const reference, const TritSet>& other) const {
-            if (rset != other.rset) {
-                return false;
-            }
-            return !(*this < other);
+
+        bool            operator>=  (const base_iterator<const reference, const TritSet>& other) const noexcept{
+            return rpos >= other.rpos;
         }
-        ReferenceClass  operator*   () const{
+
+        ReferenceClass  operator*   () const noexcept{
             if (rset) {
                 return reference(*const_cast<TritSet*>(rset), rpos);
             }
             return reference();
         }
-        ReferenceClass  operator->  () const{
+
+        ReferenceClass  operator->  () const noexcept{
             if (rset) {
                 return reference(*const_cast<TritSet*>(rset), rpos);
             }
             return reference();
         }
-        base_iterator<ReferenceClass, TritSetClass>  operator+   (std::ptrdiff_t range) const {
-            if (!rset) {
-                return *this;
-            }
-            if (out_of_range) {
-                out_of_range = false;
-            }
+
+        base_iterator<ReferenceClass, TritSetClass>  operator+   (std::ptrdiff_t range) const noexcept{
             return base_iterator<ReferenceClass, TritSetClass>(*rset, rpos + range);
         }
-        base_iterator<ReferenceClass, TritSetClass>& operator+=  (std::ptrdiff_t range) {
-            if (!rset) {
-                return *this;
-            }
-            if (out_of_range) {
-                out_of_range = false;
-            }
+
+        base_iterator<ReferenceClass, TritSetClass>& operator+=  (std::ptrdiff_t range) noexcept{
             rpos += range;
             return *this;
         }
-        base_iterator<ReferenceClass, TritSetClass>& operator++  () {
-            if (!rset) {
-                return *this;
-            }
-            if (out_of_range) {
-                out_of_range = false;
-            }
+
+        base_iterator<ReferenceClass, TritSetClass>& operator++  () noexcept{
             ++rpos;
             return *this;
         }
-        base_iterator<ReferenceClass, TritSetClass>  operator++  (int) {
-            if (!rset) {
-                return *this;
-            }
-            if (out_of_range) {
-                out_of_range = false;
-            }
-            return base_iterator(*rset, rpos++);
+
+        base_iterator<ReferenceClass, TritSetClass>  operator++  (int) noexcept{
+            base_iterator<ReferenceClass, TritSetClass> buf = *this;
+            ++rpos;
+            return buf;
         }
-        base_iterator<ReferenceClass, TritSetClass>  operator-   (std::ptrdiff_t range) const {
-            if (!rset) {
-                return *this;
-            }
+
+        base_iterator<ReferenceClass, TritSetClass>  operator-   (std::ptrdiff_t range) const noexcept{
             base_iterator<ReferenceClass, TritSetClass> buf = *this;
             return buf -= range;
         }
-        base_iterator<ReferenceClass, TritSetClass>& operator-=  (std::ptrdiff_t range) {
-            if (!rset) {
-                return *this;
-            }
-            if (!out_of_range) {
-                if (rpos < range) {
-                    out_of_range = true;
-                    rpos = 0;
-                }
-                else {
-                    rpos = rpos - range;
-                }
-            }
+
+        base_iterator<ReferenceClass, TritSetClass>& operator-=  (std::ptrdiff_t range) noexcept{
+            rpos = rpos - range;
             return *this;
         }
-        base_iterator<ReferenceClass, TritSetClass>& operator--  () {
-            if (!rset) {
-                return *this;
-            }
-            if(!out_of_range) {
-                if(rpos == 0) {
-                    out_of_range = true;
-                }
-                else {
-                    --rpos;
-                }
-            }
+
+        base_iterator<ReferenceClass, TritSetClass>& operator--  () noexcept{
+            --rpos;
             return *this;
         }
-        base_iterator<ReferenceClass, TritSetClass>  operator--  (int) {
-            if (!rset) {
-                return *this;
-            }
+
+        base_iterator<ReferenceClass, TritSetClass>  operator--  (int) noexcept{
             base_iterator<ReferenceClass, TritSetClass> buf = *this;
-            --(*this);
+            --rpos;
             return buf;
         }
-        ReferenceClass operator[]  (std::ptrdiff_t pos) const {
+
+        ReferenceClass operator[]  (std::ptrdiff_t pos) const noexcept{
             if (rset) {
                 return reference(*const_cast<TritSet*>(rset), rpos + pos);
             }
             return reference();
         }
+
         virtual ~base_iterator() noexcept{
             TritSetClass* volatile  &bufset = rset;
             volatile std::ptrdiff_t         &bufpos = rpos;
-            volatile bool           &bufoor = out_of_range;
             bufset = nullptr;
             bufpos = 0;
-            bufoor = true;
         }
     private:
         /**
          * pointer to TritSet which associated with iterator
          */
         TritSetClass *rset;
+
         /**
          * position of iterator
          */
         mutable std::ptrdiff_t  rpos;
-        mutable bool out_of_range;
     };
-
-
 public:
     typedef base_iterator<reference, TritSet>               iterator;
     typedef base_iterator<const reference, const TritSet>   const_iterator;
@@ -460,7 +411,6 @@ public:
         std::swap(first.data, second.data);
         std::swap(first._capacity, second._capacity);
     }
-
 private:
     /**
      * current capacity
@@ -508,8 +458,6 @@ private:
         // for use in iterators only
         reference* operator->();
         const reference* operator->() const;
-        reference* operator&();
-        const reference* operator&() const;
     protected:
         /**
          * assign Tritenum

@@ -174,8 +174,8 @@ TritSet& TritSet::flip() {
 size_t TritSet::length() const{
     size_t res = capacity();
     for (const_iterator curset = end() - 1;
-            curset >= begin();
-            --curset) {
+         curset >= begin();
+         --curset) {
         if (curset->state() != Tritenum::Unknown) {
             return res;
         }
@@ -392,14 +392,6 @@ TritSet::reference* TritSet::reference::operator->(){
 }
 
 const TritSet::reference* TritSet::reference::operator->() const{
-    return this;
-}
-
-TritSet::reference* TritSet::reference::operator&() {
-    return this;
-}
-
-const TritSet::reference* TritSet::reference::operator&() const {
     return this;
 }
 
