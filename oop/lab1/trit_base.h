@@ -187,7 +187,7 @@ public:
      * note:
      *     must be template because of "explicit" specificator
      */
-    template<typename Integer, typename = typename std::enable_if<std::is_integral<Integer>::value,Integer>::type>
+    template<typename Integer, typename = typename std::enable_if<std::is_integral<Integer>::value,bool>::type>
     explicit operator Integer() const {
         return static_cast<Integer>(state());
     }
@@ -255,7 +255,6 @@ protected:
      *     mustn't check if it's one of significant Tritenum values
      */
     virtual T& set(Tritenum)     = 0;
-
 };
 
 }

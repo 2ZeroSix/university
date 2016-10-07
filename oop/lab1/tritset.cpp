@@ -330,16 +330,16 @@ TritSet::~TritSet() {
 ////////////////////////
 
 
-TritSet::reference::reference()
+TritSet::reference::reference() noexcept
  : rset( nullptr), rpos(0) {}
 
-TritSet::reference::reference(TritSet &set, size_t pos)
+TritSet::reference::reference(TritSet &set, size_t pos) noexcept
  : rset(&set), rpos(pos) {}
 
-TritSet::reference::reference(const reference& other)
+TritSet::reference::reference(const reference& other) noexcept
  : rset(other.rset), rpos(other.rpos) {}
 
-TritSet::reference& TritSet::reference::set (Tritenum other) {
+TritSet::reference& TritSet::reference::set (Tritenum other) noexcept{
     if (!rset) {
         return *this;
     }
@@ -365,7 +365,7 @@ TritSet::reference& TritSet::reference::set (Tritenum other) {
     return *this;
 }
 
-Tritenum TritSet::reference::get() const {
+Tritenum TritSet::reference::get() const noexcept{
     if (!rset) {
         return Unknown;
     }
@@ -374,7 +374,7 @@ Tritenum TritSet::reference::get() const {
         // outside the brackets shifting of bits
         // and then apply mask 0b11
         return fromReal(TritenumReal((rset->data[(rpos) / (4 * sizeof(uint))]
-                >> (rpos * 2) % (8 * sizeof(uint))) & 0x3));
+                                  >> (rpos * 2) % (8 * sizeof(uint))) & 0x3));
     }
     return Tritenum::Unknown;
 }

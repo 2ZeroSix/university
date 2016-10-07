@@ -485,9 +485,9 @@ TEST_F(TritSetIteratorsTest, defaultConstructor_operatorDereferencing) {
     // TritSet::reverse_iterator       rit;
     // TritSet::const_reverse_iterator crit;
     // TritSet::const_reverse_iterator ccrit;
-    ASSERT_EQ(*it,   Unknown);
-    ASSERT_EQ(*cit,  Unknown);
-    ASSERT_EQ(*ccit,  Unknown);
+    ASSERT_EQ(*it,  Unknown);
+    ASSERT_EQ(*cit, Unknown);
+    ASSERT_EQ(*ccit,Unknown);
     // ASSERT_EQ(*rit,  Unknown);
     // ASSERT_EQ(*crit, Unknown);
     // ASSERT_EQ(*ccrit, Unknown);
@@ -681,4 +681,16 @@ TEST_F(TritSetIteratorsTest, operatorIndex) {
         EXPECT_EQ(*cit[i],   testit[i]);
         EXPECT_EQ(*ccit[i],  testcit[i]);
     }    
+}
+
+TEST_F(TritSetIteratorsTest, destructor) {
+    TritSet::iterator       testit  = begin(set);
+    TritSet::const_iterator testcit = begin(set);
+    TritSet::const_iterator testccit= begin(cset);
+    testit.TritSet::iterator::~iterator();
+    testcit.TritSet::const_iterator::~const_iterator();
+    testccit.TritSet::const_iterator::~const_iterator();
+    EXPECT_EQ(Unknown, *testit);
+    EXPECT_EQ(Unknown, *testcit);
+    EXPECT_EQ(Unknown, *testccit);
 }

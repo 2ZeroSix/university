@@ -4,7 +4,6 @@
 #include "trit.h"
 #include <vector>
 #include <ostream>
-#include <iostream> //for test
 #include <initializer_list>
 #include <iterator>
 
@@ -153,7 +152,7 @@ private:
 
         virtual ~base_iterator() noexcept{
             TritSetClass* volatile  &bufset = rset;
-            volatile std::ptrdiff_t         &bufpos = rpos;
+            volatile std::ptrdiff_t &bufpos = rpos;
             bufset = nullptr;
             bufpos = 0;
         }
@@ -437,17 +436,12 @@ private:
         /**
          * TritSet constructor of TritSet::reference
          */
-        reference(TritSet &set, std::size_t pos);
+        reference(TritSet &set, std::size_t pos) noexcept;
 
         /**
          * copy constructor of TritSet::reference
          */
-        reference(const reference& other);
-        reference(reference&& other)
-         :rset(other.rset), rpos(other.rpos) {
-            other.rset = nullptr;
-            other.rpos = 0;
-         }
+        reference(const reference& other) noexcept;
 
         using TritBase<reference>::operator=;
         /**
@@ -466,19 +460,19 @@ private:
          *
          * @return          same reference
          */
-        virtual reference&  set (Tritenum state) override;
+        virtual reference&  set (Tritenum state) noexcept override;
 
         /**
          * current state of Trit which accessed by TritSet::reference
          *
          * @return  state
          */
-        virtual Tritenum    get () const override;
+        virtual Tritenum    get () const noexcept override;
 
         /**
          * default constructor of TritSet::reference
          */
-        reference();
+        reference() noexcept;
     private:
         /**
          * pointer to TritSet which associated with reference
