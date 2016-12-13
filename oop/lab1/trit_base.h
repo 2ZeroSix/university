@@ -127,7 +127,7 @@ public:
      *
      * @return  same trit with realization class T
      */
-    T operator&=(const U& other){
+    T& operator&=(const U& other){
         return *this = (*this & other).state();
     }
     /**
@@ -137,7 +137,7 @@ public:
      *
      * @return  same trit with realization class T
      */
-    T operator|=(const U& other){
+    T& operator|=(const U& other){
         return *this = (*this | other).state();
     }
     /**
@@ -147,7 +147,7 @@ public:
      *
      * @return  same trit with realization class T
      */
-    T operator^=(const U& other){
+    T& operator^=(const U& other){
         return *this = (*this ^ other).state();
     }
     /**
@@ -155,7 +155,7 @@ public:
      *
      * @return  same trit with realization class U
      */
-    T flip()                    {
+    T& flip()                    {
         return *this = (~(*this)).state();
     }
     /**

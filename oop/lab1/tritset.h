@@ -39,8 +39,8 @@ private:
     template<typename ReferenceClass, typename TritSetClass>
     class base_iterator :
         public std::iterator
-         <std::random_access_iterator_tag, ReferenceClass,
-          std::ptrdiff_t, ReferenceClass*, ReferenceClass> {
+         <std::random_access_iterator_tag, Trit,
+          std::ptrdiff_t, ReferenceClass, ReferenceClass> {
     private:
         friend TritSet;
     public:
@@ -171,8 +171,8 @@ public:
     typedef base_iterator<reference, TritSet>               iterator;
     typedef base_iterator<const reference, const TritSet>   const_iterator;
     // TODO resolve problem with dereference of reverse_iterator
-    // typedef std::reverse_iterator<iterator>                 reverse_iterator;
-    // typedef std::reverse_iterator<const_iterator>           const_reverse_iterator;
+    typedef std::reverse_iterator<iterator>                 reverse_iterator;
+    typedef std::reverse_iterator<const_iterator>           const_reverse_iterator;
     // iterators
     iterator begin();
     iterator end();
@@ -180,12 +180,12 @@ public:
     const_iterator end() const;
     const_iterator cbegin() const;
     const_iterator cend() const;
-    // reverse_iterator rbegin();
-    // reverse_iterator rend();
-    // const_reverse_iterator rbegin() const;
-    // const_reverse_iterator rend() const;
-    // const_reverse_iterator crbegin() const;
-    // const_reverse_iterator crend() const;
+    reverse_iterator rbegin();
+    reverse_iterator rend();
+    const_reverse_iterator rbegin() const;
+    const_reverse_iterator rend() const;
+    const_reverse_iterator crbegin() const;
+    const_reverse_iterator crend() const;
 
     /**
      * default constructor of TritSet

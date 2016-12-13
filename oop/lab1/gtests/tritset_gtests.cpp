@@ -462,9 +462,9 @@ public:
             it.emplace_back(set, i);
             cit.emplace_back(set, i);
             ccit.emplace_back(cset, i);
-            // rit.emplace_back(TritSet::iterator(set, 3 - i));
-            // crit.emplace_back(TritSet::const_iterator(set, 3 - i));
-            // ccrit.emplace_back(TritSet::const_iterator(cset, 3 - i));
+            rit.emplace_back(TritSet::iterator(set, 3 - i));
+            crit.emplace_back(TritSet::const_iterator(set, 3 - i));
+            ccrit.emplace_back(TritSet::const_iterator(cset, 3 - i));
         }
     }
     ~TritSetIteratorsTest() {}
@@ -473,24 +473,24 @@ public:
     std::vector<TritSet::iterator>                  it;
     std::vector<TritSet::const_iterator>            cit;
     std::vector<TritSet::const_iterator>            ccit;
-    // std::vector<TritSet::reverse_iterator>          rit;
-    // std::vector<TritSet::const_reverse_iterator>    crit;
-    // std::vector<TritSet::const_reverse_iterator>    ccrit;
+    std::vector<TritSet::reverse_iterator>          rit;
+    std::vector<TritSet::const_reverse_iterator>    crit;
+    std::vector<TritSet::const_reverse_iterator>    ccrit;
 };
 
 TEST_F(TritSetIteratorsTest, defaultConstructor_operatorDereferencing) {
     TritSet::iterator               it;
     TritSet::const_iterator         cit;
     TritSet::const_iterator         ccit;
-    // TritSet::reverse_iterator       rit;
-    // TritSet::const_reverse_iterator crit;
-    // TritSet::const_reverse_iterator ccrit;
+    TritSet::reverse_iterator       rit;
+    TritSet::const_reverse_iterator crit;
+    TritSet::const_reverse_iterator ccrit;
     ASSERT_EQ(*it,  Unknown);
     ASSERT_EQ(*cit, Unknown);
     ASSERT_EQ(*ccit,Unknown);
-    // ASSERT_EQ(*rit,  Unknown);
-    // ASSERT_EQ(*crit, Unknown);
-    // ASSERT_EQ(*ccrit, Unknown);
+    ASSERT_EQ(*rit,  Unknown);
+    ASSERT_EQ(*crit, Unknown);
+    ASSERT_EQ(*ccrit, Unknown);
 }
 
 TEST_F(TritSetIteratorsTest, TritSetConstructor_operatorDereferencing) {
@@ -498,9 +498,9 @@ TEST_F(TritSetIteratorsTest, TritSetConstructor_operatorDereferencing) {
         EXPECT_EQ(*it[i],    Tritenum(2 - i));
         EXPECT_EQ(*cit[i],   Tritenum(2 - i));
         EXPECT_EQ(*ccit[i],  Tritenum(2 - i));
-        // EXPECT_EQ(*rit[i],   Tritenum(i));
-        // EXPECT_EQ(*crit[i],  Tritenum(i));
-        // EXPECT_EQ(*ccrit[i], Tritenum(i));
+        EXPECT_EQ(*rit[i],   Tritenum(i));
+        EXPECT_EQ(*crit[i],  Tritenum(i));
+        EXPECT_EQ(*ccrit[i], Tritenum(i));
     }
 }
 
@@ -520,9 +520,9 @@ TEST_F(TritSetIteratorsTest, operatorNe) {
                 EXPECT_NE(it[i],    it[j]);
                 EXPECT_NE(cit[i],   cit[j]);
                 EXPECT_NE(ccit[i],  ccit[j]);
-                // EXPECT_NE(rit[i],   rit[j]);
-                // EXPECT_NE(crit[i],  crit[j]);
-                // EXPECT_NE(ccrit[i], ccrit[j]);
+                EXPECT_NE(rit[i],   rit[j]);
+                EXPECT_NE(crit[i],  crit[j]);
+                EXPECT_NE(ccrit[i], ccrit[j]);
             }
         }
     }
@@ -534,9 +534,9 @@ TEST_F(TritSetIteratorsTest, operatorLt) {
             EXPECT_LT(it[j],    it[i]);
             EXPECT_LT(cit[j],   cit[i]);
             EXPECT_LT(ccit[j],  ccit[i]);
-            // EXPECT_LT(rit[j],   rit[i]);
-            // EXPECT_LT(crit[j],  crit[i]);
-            // EXPECT_LT(ccrit[j], ccrit[i]);
+            EXPECT_LT(rit[j],   rit[i]);
+            EXPECT_LT(crit[j],  crit[i]);
+            EXPECT_LT(ccrit[j], ccrit[i]);
         }
     }
 }
@@ -547,9 +547,9 @@ TEST_F(TritSetIteratorsTest, operatorLe) {
             EXPECT_LE(it[j],    it[i]);
             EXPECT_LE(cit[j],   cit[i]);
             EXPECT_LE(ccit[j],  ccit[i]);
-            // EXPECT_LE(rit[j],   rit[i]);
-            // EXPECT_LE(crit[j],  crit[i]);
-            // EXPECT_LE(ccrit[j], ccrit[i]);
+            EXPECT_LE(rit[j],   rit[i]);
+            EXPECT_LE(crit[j],  crit[i]);
+            EXPECT_LE(ccrit[j], ccrit[i]);
         }
     }
 }
@@ -560,9 +560,9 @@ TEST_F(TritSetIteratorsTest, operatorGt) {
             EXPECT_GT(it[i],    it[j]);
             EXPECT_GT(cit[i],   cit[j]);
             EXPECT_GT(ccit[i],  ccit[j]);
-            // EXPECT_GT(rit[i],   rit[j]);
-            // EXPECT_GT(crit[i],  crit[j]);
-            // EXPECT_GT(ccrit[i], ccrit[j]);
+            EXPECT_GT(rit[i],   rit[j]);
+            EXPECT_GT(crit[i],  crit[j]);
+            EXPECT_GT(ccrit[i], ccrit[j]);
         }
     }
 }
@@ -573,9 +573,9 @@ TEST_F(TritSetIteratorsTest, operatorGe) {
             EXPECT_GE(it[i],    it[j]);
             EXPECT_GE(cit[i],   cit[j]);
             EXPECT_GE(ccit[i],  ccit[j]);
-            // EXPECT_GE(rit[i],   rit[j]);
-            // EXPECT_GE(crit[i],  crit[j]);
-            // EXPECT_GE(ccrit[i], ccrit[j]);
+            EXPECT_GE(rit[i],   rit[j]);
+            EXPECT_GE(crit[i],  crit[j]);
+            EXPECT_GE(ccrit[i], ccrit[j]);
         }
     }
 }

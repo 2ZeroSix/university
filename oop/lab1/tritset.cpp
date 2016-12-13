@@ -72,29 +72,29 @@ TritSet::const_iterator TritSet::cend() const {
     return const_iterator(*this, capacity());
 }
 
-// TritSet::reverse_iterator TritSet::rbegin() {
-//     return reverse_iterator(end());
-// }
+TritSet::reverse_iterator TritSet::rbegin() {
+    return reverse_iterator(end());
+}
 
-// TritSet::reverse_iterator TritSet::rend() {
-//     return reverse_iterator(begin());
-// }
+TritSet::reverse_iterator TritSet::rend() {
+    return reverse_iterator(begin());
+}
 
-// TritSet::const_reverse_iterator TritSet::rbegin() const {
-//     return const_reverse_iterator(end());
-// }
+TritSet::const_reverse_iterator TritSet::rbegin() const {
+    return const_reverse_iterator(end());
+}
 
-// TritSet::const_reverse_iterator TritSet::rend() const {
-//     return const_reverse_iterator(begin());
-// }
+TritSet::const_reverse_iterator TritSet::rend() const {
+    return const_reverse_iterator(begin());
+}
 
-// TritSet::const_reverse_iterator TritSet::crbegin() const {
-//     return const_reverse_iterator(cend());
-// }
+TritSet::const_reverse_iterator TritSet::crbegin() const {
+    return const_reverse_iterator(cend());
+}
 
-// TritSet::const_reverse_iterator TritSet::crend() const {
-//     return const_reverse_iterator(cbegin());
-// }
+TritSet::const_reverse_iterator TritSet::crend() const {
+    return const_reverse_iterator(cbegin());
+}
 
 
 TritSet::TritSet() noexcept
@@ -118,9 +118,8 @@ TritSet::TritSet(const initializer_list<Trit> list)
  :TritSet() {
     resize(list.size());
     iterator curset = begin();
-    for (initializer_list<Trit>::iterator curlist = list.begin();
-            curlist != list.end(); ++curlist, ++curset) {
-        *curset = *curlist;
+    for (auto& i : list) {
+        *curset++ = i;
     }
 }
 
@@ -144,20 +143,16 @@ size_t TritSet::capacity() const {
 
 vector<size_t> TritSet::cardinality() const{
     vector<size_t> count(3);
-    for (const_iterator curset = begin();
-            curset != end();
-            ++curset) {
-        ++count[static_cast<unsigned char>(curset->state())];
+    for (auto&& trit : *this) {
+        ++count[static_cast<unsigned char>(trit)];
     }
     return count;
 }
 
 size_t TritSet::cardinality(Tritenum state) const{
     size_t count = 0;
-    for (const_iterator curset = begin();
-            curset != end();
-            ++curset) {
-        if (curset->state() == state) {
+    for (auto&& trit : *this) {
+        if (trit == state) {
             ++count;
         }
     }
@@ -165,18 +160,18 @@ size_t TritSet::cardinality(Tritenum state) const{
 }
 
 TritSet& TritSet::flip() {
-    for (iterator it = begin(); it != end(); ++it) {
-        it->flip();
+    for (auto&& trit : *this) {
+        trit.flip();
     }
     return *this;
 }
 
 size_t TritSet::length() const{
     size_t res = capacity();
-    for (const_iterator curset = end() - 1;
-         curset >= begin();
-         --curset) {
-        if (curset->state() != Tritenum::Unknown) {
+    for (auto curset = rbegin();
+         curset != rend();
+         ++curset) {
+        if ((*curset).state() != Tritenum::Unknown) {
             return res;
         }
         --res;
@@ -198,7 +193,9 @@ TritSet& TritSet::operator= (TritSet&& other) {
 bool TritSet::operator== (const TritSet& other) const{
     const_iterator itth = begin();
     const_iterator itoth = other.begin();
-    for(; itth < end() || itoth < other.end(); ++itth, ++itoth) {
+    const_iterator& bigger = (capacity() > other.capacity()) ? itth : itoth;
+    const_iterator biggerend = (capacity() > other.capacity()) ? end() : other.end();
+    for(; bigger != biggerend; ++itth, ++itoth) {
         if(*itth != *itoth) {
             return false;
         }
