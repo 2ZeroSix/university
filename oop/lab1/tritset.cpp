@@ -4,7 +4,7 @@ using namespace std;
 namespace tritspace {
 
 std::size_t extendToCapacity(std::size_t num) {
-    return  ((num)/(4 * sizeof(uint)))*4*sizeof(uint) 
+    return  ((num)/(4 * sizeof(uint)))*4*sizeof(uint)
             + (((2 * num) % (8 * sizeof(uint)))
                     ? sizeof(uint)*4 : 0);
 }
@@ -114,7 +114,7 @@ TritSet::TritSet(const Trit arrt[], size_t count)
     }
 }
 
-TritSet::TritSet(const initializer_list<Trit> list)
+TritSet::TritSet(const initializer_list<Trit>& list)
  :TritSet() {
     resize(list.size());
     iterator curset = begin();
@@ -280,18 +280,13 @@ TritSet& TritSet::resize(size_t new_capacity) {
         for (size_t i = 0; i < min_size; ++i) {
             data[i] = buf[i];
         }
-        if(buf != nullptr) {
-            delete[] buf;
-        }
+        delete[] buf;
         _capacity = new_capacity;
     }
     else if (!new_capacity){
-        if (data != nullptr)
-        {
-            uint *buf = data;
-            data = nullptr;
-            delete[] buf;
-        }
+        uint *buf = data;
+        data = nullptr;
+        delete[] buf;
         _capacity = 0;
     }
     return *this;

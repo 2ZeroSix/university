@@ -25,7 +25,8 @@ namespace tritspace{
         // 
         // don't checks if it's one of significant Tritenum values
         Trit(Tritenum state) noexcept;
-        // integral constructor of Trit
+		using TritBase<Trit>::operator=;
+		// integral constructor of Trit
         // 
         // _state = Tritenum(state mod 3)
         explicit Trit(std::size_t state) noexcept;

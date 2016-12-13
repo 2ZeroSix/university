@@ -205,7 +205,7 @@ public:
     /**
      * initializer list constructor of TritSet
      */
-    TritSet(const std::initializer_list<Trit> list);
+    TritSet(const std::initializer_list<Trit>& list);
 
     /**
      * copy constructor of TritSet
