@@ -3,13 +3,18 @@
 #include <exception>
 #include <vector>
 #include <tuple>
-typedef unsigned int uint;
+#include <cstddef>
+#include <utility>
+#include <algorithm>
 
+
+namespace SearcherSpace {
+
+
+typedef unsigned int uint;
+typedef unsigned char uchar;
 class BadMove : public std::exception {};
-/**
- * P - тип точки в пространстве
- * M - метрика пространства
- */
+
 template<typename P, typename M>
 class Surface{
 public:
@@ -24,5 +29,9 @@ public:
      */
     virtual std::vector<std::tuple<P, M>> lookup() = 0;
 };
+
+
+}
+
 
 #endif
