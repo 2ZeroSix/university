@@ -50,7 +50,7 @@ public:
     Searcher()                      : surf( nullptr ), current(std::vector<P>(0), M()) {}
     Searcher(Surface<P, M> &surface): surf(&surface ), current(std::vector<P>(0), M()) {}
     Searcher(Surface<P, M> *surface): surf( surface ), current(std::vector<P>(0), M()) {}
-    std::vector<P> Search() {
+    std::vector<P> search() {
         if(surf) {
             std::unordered_map<P, decltype(std::ignore)> closed;
             // priority queue based on vector of paths
@@ -66,7 +66,7 @@ public:
             // priority queue based on vector of points
             std::priority_queue<std::tuple<P, M>,
                 std::vector<std::tuple<P, M>>, pointGT<P, M>>
-                first_successors(pointGT(), surf->lookup());
+                first_successors(pointGT<P, M>(), surf->lookup());
             // loop for surfaces in which the transition is not a symmetric relation
             for (auto& i: first_successors) {
                 open.emplace(std::vector<P>(1, std::get<0>(i)), std::get<1>(i));
@@ -89,10 +89,12 @@ public:
                     for (auto&&i : std::move(successors)) {
                         if (std::get<1>(i) == M()) {
                             surf->move(std::get<0>(i));
-                            return std::get<0>(path).push_back(std::get<0>(std::get<0>(i)));
+                            std::get<0>(path).push_back(std::get<0>(std::get<0>(i)));
+                            return std::get<0>(path); /// TODO check
                         }
                         auto buf = std::get<0>(path);
-                        open.emplace(buf.push_back(std::get<0>(i)), std::get<1>(i));
+                        buf.push_back(std::get<0>(i));
+                        open.emplace(buf, std::get<1>(i));
                     }
                 }
             }
