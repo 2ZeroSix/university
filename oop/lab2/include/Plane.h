@@ -7,11 +7,9 @@ namespace SearcherSpace {
 
 class Plane : public TwoDimSurface {
 public:
-    Plane  (std::size_t limit = std::numeric_limits<std::size_t>::max())    noexcept;
-    Plane  (const std::vector<std::vector<dot>> &map,
-            std::size_t limit = std::numeric_limits<std::size_t>::max())    noexcept;
-    Plane  (std::vector<std::vector<dot>> &&map,
-            std::size_t limit = std::numeric_limits<std::size_t>::max())    noexcept;
+    Plane  ()    noexcept;
+    Plane  (const std::vector<std::vector<dot>> &map);
+    Plane  (std::vector<std::vector<dot>> &&map);
     virtual std::vector<std::tuple<TwoDimPoint, std::size_t>> lookup()      noexcept override;
 private:
     virtual std::size_t distance(const TwoDimPoint &a, const TwoDimPoint &b)const noexcept override;

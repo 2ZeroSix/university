@@ -2,17 +2,15 @@
 
 namespace SearcherSpace {
 
-Cylinder::Cylinder  (std::size_t limit) noexcept
-: TwoDimSurface( limit) {}
+Cylinder::Cylinder  () noexcept
+: TwoDimSurface( ) {}
 
 
-Cylinder::Cylinder  (const std::vector<std::vector<dot>> &map,
-        std::size_t limit) noexcept
-: TwoDimSurface(map, limit) {}
+Cylinder::Cylinder  (const std::vector<std::vector<dot>> &map) 
+: TwoDimSurface(map) {}
 
-Cylinder::Cylinder  (std::vector<std::vector<dot>> &&map,
-        std::size_t limit) noexcept
-: TwoDimSurface(std::move(map), limit) {}
+Cylinder::Cylinder  (std::vector<std::vector<dot>> &&map) 
+: TwoDimSurface(std::move(map)) {}
 
 
 std::vector<std::tuple<TwoDimPoint, std::size_t>> Cylinder::lookup() noexcept {

@@ -2,17 +2,15 @@
 
 namespace SearcherSpace {
 
-Torus::Torus  (std::size_t limit) noexcept
-: TwoDimSurface( limit) {}
+Torus::Torus  () noexcept
+: TwoDimSurface() {}
 
 
-Torus::Torus  (const std::vector<std::vector<dot>> &map,
-        std::size_t limit) noexcept
-: TwoDimSurface(map, limit) {}
+Torus::Torus  (const std::vector<std::vector<dot>> &map) 
+: TwoDimSurface(map) {}
 
-Torus::Torus  (std::vector<std::vector<dot>> &&map,
-        std::size_t limit) noexcept
-: TwoDimSurface(std::move(map), limit) {}
+Torus::Torus  (std::vector<std::vector<dot>> &&map) 
+: TwoDimSurface(std::move(map)) {}
 
 
 std::vector<std::tuple<TwoDimPoint, std::size_t>> Torus::lookup() noexcept {

@@ -11,31 +11,31 @@ bool TwoDimPoint::operator!=(const TwoDimPoint& other) const {
 
 
 TwoDimSurface::dot intToDot(int ch) {
-    TwoDimSurface::dot point;
+    TwoDimSurface::dot dot;
     switch(ch) {
         case '#':
-            point = TwoDimSurface::dot::block;
+            dot = TwoDimSurface::dot::block;
             break;
         case '.':
-            point = TwoDimSurface::dot::free;
+            dot = TwoDimSurface::dot::free;
             break;
         case '*':
-            point = TwoDimSurface::dot::passed;
+            dot = TwoDimSurface::dot::passed;
             break;
         case 'S':
-            point = TwoDimSurface::dot::start;
+            dot = TwoDimSurface::dot::start;
             break;
         case 'F':
-            point = TwoDimSurface::dot::finish;
+            dot = TwoDimSurface::dot::finish;
             break;
         default:
             throw std::invalid_argument("unknown intToDot");
     }
-    return point;
+    return dot;
 }
-char dotToChar(TwoDimSurface::dot point) {
+char dotToChar(TwoDimSurface::dot dot) {
     char ch;;
-    switch(point) {
+    switch(dot) {
         case TwoDimSurface::dot::block:
             ch = '#';
             break;
@@ -58,8 +58,8 @@ char dotToChar(TwoDimSurface::dot point) {
 }
 
 
-std::istream &operator>>(std::istream &is, TwoDimSurface::dot &point) {
-    point = intToDot(is.get());
+std::istream &operator>>(std::istream &is, TwoDimSurface::dot &dot) {
+    dot = intToDot(is.get());
     return is;
 }
 
@@ -78,12 +78,12 @@ std::istream &operator>>(std::istream &is, TwoDimSurface &surf) {
     return is;
 }
 
-std::ostream &operator<<(std::ostream &os, TwoDimSurface::dot &point) {
-    os << dotToChar(point);
+std::ostream &operator<<(std::ostream &os, const TwoDimSurface::dot &dot) {
+    os << dotToChar(dot);
     return os;
 }
 
-std::ostream &operator<<(std::ostream &os, TwoDimSurface &surf) {
+std::ostream &operator<<(std::ostream &os, const TwoDimSurface &surf) {
     for (auto& vec : surf._map) {
         for (auto& cur : vec)
             os << cur;
@@ -94,36 +94,31 @@ std::ostream &operator<<(std::ostream &os, TwoDimSurface &surf) {
 
 
 
-TwoDimSurface::TwoDimSurface(std::size_t limit) noexcept
-: _lim( limit) {}
+TwoDimSurface::TwoDimSurface() noexcept{}
 
 TwoDimSurface::TwoDimSurface(const TwoDimSurface &field) noexcept
-: _cur(field._cur), _fin(field._fin), _map(field._map), _lim(field._lim) {}
+: _cur(field._cur), _fin(field._fin), _map(field._map) {}
 TwoDimSurface::TwoDimSurface(TwoDimSurface &&field) noexcept
 : _cur(std::move(field._cur)), _fin(std::move(field._fin)),
-    _map(std::move(field._map)), _lim(std::move(field._lim)) {}
+    _map(std::move(field._map)) {}
 
 TwoDimSurface::TwoDimSurface(const TwoDimPoint &beg, const TwoDimPoint &end, 
-                             const std::vector<std::vector<dot>> &map,
-                             std::size_t limit) noexcept
-: _cur( beg), _fin(end), _map(map), _lim(limit) {
+                             const std::vector<std::vector<dot>> &map)
+: _cur( beg), _fin(end), _map(map) {
     initMap(beg, end);
 }
 TwoDimSurface::TwoDimSurface(const TwoDimPoint &beg, const TwoDimPoint &end, 
-                             std::vector<std::vector<dot>> &&map,
-                             std::size_t limit) noexcept
-: _cur( beg), _fin(end), _map(std::move(map)), _lim(limit) {
+                             std::vector<std::vector<dot>> &&map)
+: _cur( beg), _fin(end), _map(std::move(map)){
     initMap(beg, end);
 }
 
-TwoDimSurface::TwoDimSurface(const std::vector<std::vector<dot>> &map,
-                             std::size_t limit)noexcept
-: _map( map), _lim(limit) {
+TwoDimSurface::TwoDimSurface(const std::vector<std::vector<dot>> &map)
+: _map( map){
     findDots();
 }
-TwoDimSurface::TwoDimSurface(std::vector<std::vector<dot>> &&map,
-                             std::size_t limit)noexcept
-: _map( std::move(map)), _lim(limit) {
+TwoDimSurface::TwoDimSurface(std::vector<std::vector<dot>> &&map)
+: _map( std::move(map)) {
     findDots();
 }
 
@@ -135,8 +130,19 @@ std::size_t TwoDimSurface::move(TwoDimPoint point) throw (BadMove){
         _map[point.y][point.x]  == dot::block   ){
         throw BadMove();
     }
-    _cur.x = point.x;
+    // switch (_map[point.y][point.x]) {
+    //     case dot::passed:
+    //         _map[point.y][point.x] = dot::free;
+    //         break;
+    //     case dot::free:
+    //         _map[point.y][point.x] = dot::passed;
+    //         break;
+    //     default:
+    //         break;
+    // }
     _cur.y = point.y;
+    _cur.x = point.x;
+    return distance(_cur, _fin);
 }
 
 
@@ -148,14 +154,19 @@ void TwoDimSurface::initMap(const TwoDimPoint &beg, const TwoDimPoint &end) {
             }
         }
     }
+    _cur = beg;
+    _fin = end;
     _map[_cur.y][_cur.x] = dot::start;
     _map[_fin.y][_fin.x] = dot::finish;
 }
 
 void TwoDimSurface::drawPath(const std::vector<TwoDimPoint> &path){
-    for(auto cur = path.rbegin() + 1; cur < path.rend(); ++cur) {
+    for(auto cur = path.rbegin(); cur < path.rend(); ++cur) {
         if (_map[cur->y][cur->x] == dot::start) {
             break;
+        }
+        if (_map[cur->y][cur->x] == dot::finish) {
+            continue;
         }
         _map[cur->y][cur->x] = dot::passed;
     }

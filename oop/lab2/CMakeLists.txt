@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 2.8)
+
+project(Searcher)
+
+include_directories(include)
+include_directories(AnyOption)
+# add_subdirectory(gtests)
+
+# set required flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -std=c++14")
+set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wall -std=c++14")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wall -std=c++14")
+
+add_library(anyoption SHARED AnyOption/anyoption.cpp)
+install(TARGETS anyoption DESTINATION lib/anyoption)
+install(FILES AnyOption/anyoption.h DESTINATION include/anyoption)
+add_library(TwoDimSurface SHARED Surfaces/TwoDimSurface.cpp)
+add_library(Plane SHARED Surfaces/Plane.cpp)
+target_link_libraries(Plane TwoDimSurface)
+install(TARGETS Plane DESTINATION lib/Plane)
+install(FILES Surfaces/Plane.h DESTINATION include/Plane)
+add_library(Cylinder SHARED Surfaces/Cylinder.cpp)
+target_link_libraries(Cylinder TwoDimSurface)
+install(TARGETS Cylinder DESTINATION lib/Cylinder)
+install(FILES Surfaces/Cylinder.h DESTINATION include/Cylinder)
+add_library(Torus SHARED Surfaces/Torus.cpp)
+target_link_libraries(Torus TwoDimSurface)
+install(TARGETS Torus DESTINATION lib/Torus)
+install(FILES Surfaces/Torus.h DESTINATION include/Torus)
+add_library(WordSurface SHARED Surfaces/WordSurface.cpp)
+install(TARGETS WordSurface DESTINATION lib/WordSurface)
+install(FILES include/WordSurface.h DESTINATION include/WordSurface)
+
+add_executable(Searcher.exe base/main.cpp)
+target_link_libraries(Searcher.exe anyoption Plane Cylinder Torus WordSurface)

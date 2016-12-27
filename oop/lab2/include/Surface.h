@@ -18,6 +18,8 @@ class BadMove : public std::exception {};
 template<typename P, typename M>
 class Surface{
 public:
+    typedef P PointType;
+    typedef M MetricType;
     /**
      * Продвигает в новую соседнюю точку и возвращает
      * расстояние до цели в новой точке

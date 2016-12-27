@@ -2,21 +2,19 @@
 
 namespace SearcherSpace {
 
-Plane::Plane  (std::size_t limit) noexcept
-: TwoDimSurface( limit) {}
+Plane::Plane  () noexcept
+: TwoDimSurface() {}
 
 
-Plane::Plane  (const std::vector<std::vector<dot>> &map,
-        std::size_t limit) noexcept
-: TwoDimSurface(map, limit) {}
+Plane::Plane  (const std::vector<std::vector<dot>> &map) 
+: TwoDimSurface( map) {}
 
-Plane::Plane  (std::vector<std::vector<dot>> &&map,
-        std::size_t limit) noexcept
-: TwoDimSurface(std::move(map), limit) {}
+Plane::Plane  (std::vector<std::vector<dot>> &&map)
+: TwoDimSurface(std::move(map)) {}
 
 
 std::vector<std::tuple<TwoDimPoint, std::size_t>> Plane::lookup() noexcept {
-    std::vector<std::tuple<TwoDimPoint, std::size_t>> vec;
+    std::vector<std::tuple<TwoDimPoint, std::size_t>> vec(0);
     if (!_map.empty()) {
         TwoDimPoint p;
 
