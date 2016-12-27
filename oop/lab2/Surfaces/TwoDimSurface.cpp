@@ -2,6 +2,14 @@
 
 namespace SearcherSpace {
 
+bool TwoDimPoint::operator==(const TwoDimPoint& other) const {
+    return (x == other.x) && (y == other.y);
+}
+bool TwoDimPoint::operator!=(const TwoDimPoint& other) const {
+    return !(*this == other);
+}
+
+
 TwoDimSurface::dot intToDot(int ch) {
     TwoDimSurface::dot point;
     switch(ch) {
@@ -121,7 +129,10 @@ TwoDimSurface::TwoDimSurface(std::vector<std::vector<dot>> &&map,
 
 
 std::size_t TwoDimSurface::move(TwoDimPoint point) throw (BadMove){
-    if(distance(_cur, point) != 1) {
+    if( distance(_cur, point)   >  1            ||
+        _map.size()             <= point.y      ||
+        _map[point.y].size()    <= point.x      ||
+        _map[point.y][point.x]  == dot::block   ){
         throw BadMove();
     }
     _cur.x = point.x;
@@ -139,6 +150,15 @@ void TwoDimSurface::initMap(const TwoDimPoint &beg, const TwoDimPoint &end) {
     }
     _map[_cur.y][_cur.x] = dot::start;
     _map[_fin.y][_fin.x] = dot::finish;
+}
+
+void TwoDimSurface::drawPath(const std::vector<TwoDimPoint> &path){
+    for(auto cur = path.rbegin() + 1; cur < path.rend(); ++cur) {
+        if (_map[cur->y][cur->x] == dot::start) {
+            break;
+        }
+        _map[cur->y][cur->x] = dot::passed;
+    }
 }
 
 void TwoDimSurface::findDots() {

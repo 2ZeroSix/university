@@ -3,6 +3,8 @@
 #include <tuple>
 #include <iostream>
 #include "Plane.h"
+#include "Torus.h"
+#include "Cylinder.h"
 #include "Searcher.h"
 using namespace std;
 using namespace SearcherSpace;
@@ -14,10 +16,11 @@ struct comparator {
 };
 
 int main() {
-    Plane pl;
+    Torus pl;
     cin >> pl;
-    cout << pl;
+    cout << pl << endl << endl;
     Searcher<TwoDimPoint, size_t> robot(pl);
-    auto vec = robot.search();
-
+    pl.drawPath(robot.search());
+    cout << pl;
+    return 0;
 }

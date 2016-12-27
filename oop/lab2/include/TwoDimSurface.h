@@ -8,7 +8,11 @@
 namespace SearcherSpace {
 
 
-struct TwoDimPoint {std::size_t x, y;};
+struct TwoDimPoint {
+    bool operator==(const TwoDimPoint& other) const;
+    bool operator!=(const TwoDimPoint& other) const;
+    std::size_t x, y;
+};
 
 class TwoDimSurface : public Surface<TwoDimPoint, std::size_t> {
 public:
@@ -34,6 +38,8 @@ public:
     virtual std::size_t move(TwoDimPoint point)                             throw (BadMove) final;
 
     void initMap(const TwoDimPoint &beg, const TwoDimPoint &end);
+
+    void drawPath(const std::vector<TwoDimPoint> &path);
     
     friend std::istream &operator>>(std::istream &is, TwoDimSurface &surf);
     friend std::ostream &operator<<(std::ostream &os, TwoDimSurface &surf);

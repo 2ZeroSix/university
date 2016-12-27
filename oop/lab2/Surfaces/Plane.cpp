@@ -17,29 +17,32 @@ Plane::Plane  (std::vector<std::vector<dot>> &&map,
 
 std::vector<std::tuple<TwoDimPoint, std::size_t>> Plane::lookup() noexcept {
     std::vector<std::tuple<TwoDimPoint, std::size_t>> vec;
-    if (_cur.x > 0) {
+    if (!_map.empty()) {
         TwoDimPoint p;
-        p.x = _cur.x  - 1;
+
         p.y = _cur.y;
-        vec.emplace_back(p, distance(p, _fin));
-    }
-    if (_cur.x < _map[0].size() - 1) {
-        TwoDimPoint p;
-        p.x = _cur.x  + 1;
-        p.y = _cur.y;
-        vec.emplace_back(p, distance(p, _fin));
-    }
-    if (_cur.y > 0) {
-        TwoDimPoint p;
-        p.y = _cur.y  - 1;
+        if (_cur.x > 0) {
+            p.x = _cur.x  - 1;
+            if (_map[p.y][p.x] != dot::block)
+                vec.emplace_back(p, distance(p, _fin));
+        }
+        if (_cur.x < _map[0].size() - 1) {
+            p.x = _cur.x  + 1;
+            if (_map[p.y][p.x] != dot::block)
+                vec.emplace_back(p, distance(p, _fin));
+        }
+
         p.x = _cur.x;
-        vec.emplace_back(p, distance(p, _fin));
-    }
-    if (_cur.y < _map[0].size() - 1) {
-        TwoDimPoint p;
-        p.y = _cur.y  + 1;
-        p.x = _cur.x;
-        vec.emplace_back(p, distance(p, _fin));
+        if (_cur.y > 0) {
+            p.y = _cur.y  - 1;
+            if (_map[p.y][p.x] != dot::block)
+                vec.emplace_back(p, distance(p, _fin));
+        }
+        if (_cur.y < _map.size() - 1) {
+            p.y = _cur.y  + 1;
+            if (_map[p.y][p.x] != dot::block)
+                vec.emplace_back(p, distance(p, _fin));
+        }
     }
     return vec;
 }
