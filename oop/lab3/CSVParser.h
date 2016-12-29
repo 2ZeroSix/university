@@ -4,7 +4,7 @@
 #include <iterator>
 #include <iostream>
 #include <string>
-#include "TupleUtil.h"
+#include "TupleUtils.h"
 #include "exception"
 
 class CSVReadError : std::exception {
@@ -32,7 +32,7 @@ public:
     class iterator;
     typedef const iterator const_iterator; 
     CSVParser(std::istream& is=std::cin, std::size_t skipRows=0, char colonDelim=',', char rowDelim='\n', char escChar='"')
-    : colonDelim(colonDelim), rowDelim(rowDelim), escChar(escChar), is(is), curRow(skipRows){
+    : colonDelim(colonDelim), rowDelim(rowDelim), escChar(escChar), is(is), curRow(0){
         std::size_t count = 0;
         while(count < skipRows && is.good()) {
             char c;
@@ -53,27 +53,98 @@ public:
         std::tuple<Types...> cur;
         CSVParser *parser;
         void parseRow() {
-            std::string str, finstr;
             if(!parser->is.good()) {
-                TupleUtil::DefaultInitTuple(cur);
+                TupleUtils::DefaultInitTuple(cur);
                 return;
             }
-            getline(parser->is, str, parser->rowDelim);
-            // if ((pos = str.find(parser->escChar)) != std::string::npos) {
-                
-            // }
-            // finstr = str.substr(0, pos - 1);
-            // getline(parser->is, str, parser->rowDelim);
-            // finstr+=str;
-            std::size_t colon;
-            if(( colon = TupleUtil::assignTupleToString(cur, str, parser->colonDelim))) {
-                throw  CSVReadError(parser->curRow, colon);
-            }
             parser->curRow++;
+            bool screened = false;
+            bool mayBeEscapeSymbol = false;
+            char c;
+            std::vector<std::string> vec(sizeof...(Types));
+            for (std::size_t i = 0; i < sizeof...(Types) - 1; ++i) {
+                while(true) {
+                    if (!parser->is.good()) {
+                        throw  CSVReadError(parser->curRow, i + 1);
+                    }
+                    parser->is.get(c);
+                    if(screened) {
+                        if (c == parser->escChar) {
+                            screened = false;
+                            if (mayBeEscapeSymbol) {
+                                mayBeEscapeSymbol = false;
+                            }
+                            else {
+                                mayBeEscapeSymbol = true;
+                                continue;
+                            }
+                        }
+                    }
+                    else {
+                        if (c == parser->escChar) {
+                            screened = true;
+                            if (mayBeEscapeSymbol) {
+                                mayBeEscapeSymbol = false;
+                            }
+                            else {
+                                mayBeEscapeSymbol = true;
+                                continue;
+                            }
+                        }
+                        if (c == parser->colonDelim) {
+                            break;
+                        }
+                        if (c == parser->rowDelim) {
+                            throw  CSVReadError(parser->curRow, i + 1);
+                        }
+                    }
+                    mayBeEscapeSymbol = false;
+                    vec[i].push_back(c);
+                }
+            }
+            while(true) {
+                if (!parser->is.good()) {
+                    break;
+                }
+                parser->is.get(c);
+                if(screened) {
+                    if (c == parser->escChar) {
+                        screened = false;
+                        if (mayBeEscapeSymbol) {
+                            mayBeEscapeSymbol = false;
+                        }
+                        else {
+                            mayBeEscapeSymbol = true;
+                            continue;
+                        }
+                    }
+                }
+                else {
+                    if (c == parser->escChar) {
+                        screened = true;
+                        if (mayBeEscapeSymbol) {
+                            mayBeEscapeSymbol = false;
+                        }
+                        else {
+                            mayBeEscapeSymbol = true;
+                            continue;
+                        }
+                    }
+                    if (c == parser->colonDelim) {
+                        throw CSVReadError(parser->curRow, sizeof...(Types));
+                    }
+                    if (c == parser->rowDelim) {
+                        break;
+                    }
+                }
+                mayBeEscapeSymbol = false;
+                vec[sizeof...(Types) - 1].push_back(c);
+            }
+            TupleUtils::assignTupleToVector(cur, vec);
         }
     public:
         iterator() {
-            TupleUtil::DefaultInitTuple(cur);
+            TupleUtils::DefaultInitTuple(cur);
         }
         iterator(CSVParser& par) : parser(&par) {
             parseRow();

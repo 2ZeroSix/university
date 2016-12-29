@@ -20,13 +20,15 @@ std::pair< int, std::tuple<std::string, std::string, std::size_t, std::string> >
     std::string space = "space.txt", out = "route.txt", topology = "plane";
     std::size_t limit = 1000;
 
-    opt->addUsage( "Usage: " );
+    opt->addUsage( "Usage (with values by default): " );
     opt->addUsage( "" );
-    opt->addUsage( " -h  --help                 Prints this help " );
-    opt->addUsage( " -s  --space space.txt      File with space description " );
-    opt->addUsage( " -o  --out   route.txt      Output file " );
-    opt->addUsage( " -l  --limit 1000           Max length of path " );
-    opt->addUsage( " -t  --topology plane       Type of topology " );
+    opt->addUsage( " -h  --help             Prints this help " );
+    opt->addUsage( " -s  --space space.txt  File with space description " );
+    opt->addUsage( " -o  --out   route.txt  Output file " );
+    opt->addUsage( " -l  --limit 1000       Max length of path " );
+    opt->addUsage( "                        l > 0 " );
+    opt->addUsage( " -t  --topology plane   Type of topology " );
+    opt->addUsage( "                        {plane, cylinder, torus, wordsurface} " );
     
     opt->setFlag("help",        'h');
     opt->setOption("space",     's');
@@ -66,7 +68,7 @@ std::pair< int, std::tuple<std::string, std::string, std::size_t, std::string> >
     if (!std::ifstream(space)) {
         errCounter |= spaceerr;
     }
-    if (!std::ofstream(out)) {
+    if (!std::ofstream(out, ios_base::app)) {
         errCounter |= routeerr;
     }
     return make_pair(errCounter, make_tuple(space, out, limit, topology));
@@ -75,12 +77,13 @@ std::pair< int, std::tuple<std::string, std::string, std::size_t, std::string> >
 template<typename Surface>
 int readSolvePrintLabyrinth(const std::string &space, const std::string& out, std::size_t limit) {
     std::ifstream is(space);
-    std::ofstream os(out);
     Surface surf;
     is >> surf;
+    is.close();
     Searcher<typename Surface::PointType, typename Surface::MetricType> robot(surf, limit);
     auto path = robot.search();
     surf.drawPath(path);
+    std::ofstream os(out);
     os << surf;
     return path.empty() ? solveerr : 0;    
 }
@@ -99,30 +102,37 @@ int solveAnyLabyrinth(const std::string &space, const std::string& out, std::siz
         return readSolvePrintLabyrinth<WordSurface> (space,out, limit);
     }
     else {
-        return topologyerr; 
+        return topologyerr;
     }
 }
 
-int printErrors(int errs) {
-    int i = 1;
+void printErrors(int errs) {
+    int i = 2;
     bool check = false;
     for (auto& cur : LabyrinthErrorsInfo) {
         if (errs & i) {
             if (i != 32) check = true;
-            cout << cur << endl;
+            cout << "error: " << cur << endl;
         }
         i <<= 1;
     }
     if (check) opt->printUsage();
-    return errs;
 }
 
 int main(int argc, char *argv[]) {
     auto bufargs = parser(argc, argv);
     int errs = bufargs.first;
-    if(!errs) {
-        auto args = std::move(bufargs.second);
-        errs |= solveAnyLabyrinth(get<0>(args), get<1>(args), get<2>(args), get<3>(args));
+    try {
+        if (!errs) {
+            errs |= solveAnyLabyrinth(get<0>(bufargs.second), get<1>(bufargs.second), get<2>(bufargs.second), get<3>(bufargs.second));
+        }
+        if (!errs) {
+            cout << "COMPLETE" << endl << "check file: " << get<1>(bufargs.second) << endl;
+        }
     }
-    return printErrors(errs);
+    catch (std::invalid_argument e) {
+        std::cout << "exception: " << e.what() << std::endl;
+    }
+    printErrors(errs);
+    return errs >> 1;
 }

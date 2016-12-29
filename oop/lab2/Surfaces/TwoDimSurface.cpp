@@ -68,6 +68,9 @@ std::istream &operator>>(std::istream &is, TwoDimSurface &surf) {
     while (is.good()) {
         std::string str;
         getline(is, str);
+        if (str.empty()) {
+            throw std::invalid_argument("can't read map");
+        }
         surf._map.emplace_back(str.size());
         for (std::size_t j = 0; j < surf._map[i].size(); ++j) {
             surf._map[i][j] = intToDot(str[j]);
@@ -178,6 +181,9 @@ void TwoDimSurface::findDots() {
     size_t counters = 0;
     size_t counterf = 0;
     for(size_t i = 0; i < rows; ++i) {
+        if(_map[i].size() != colons) {
+            throw std::invalid_argument("map must have equal number of colons");
+        }
         for(size_t j = 0; j < colons; ++j) {
             if (_map[i][j] == dot::start) {
                 if(counters) {
