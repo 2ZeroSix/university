@@ -84,7 +84,7 @@ int solveAnyLabyrinth(const std::string &space, const std::string& out, std::siz
 }
 
 void printErrors(int errs) {
-    int i = 2;
+    int i = 1;
     bool check = false;
     for (auto& cur : LabyrinthErrorsInfo) {
         if (errs & i) {
