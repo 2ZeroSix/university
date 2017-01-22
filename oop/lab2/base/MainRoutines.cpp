@@ -17,7 +17,7 @@ std::pair< int, std::tuple<std::string, std::string, std::size_t, std::string> >
     opt->addUsage( " -s  --space space.txt  File with space description " );
     opt->addUsage( " -o  --out   route.txt  Output file " );
     opt->addUsage( " -l  --limit 1000       Max length of path " );
-    opt->addUsage( "                        l > 0 " );
+    opt->addUsage( "                        l >= 0 (zero means infinity)" );
     opt->addUsage( " -t  --topology plane   Type of topology " );
     opt->addUsage( "                        {plane, cylinder, torus, wordsurface} " );
     

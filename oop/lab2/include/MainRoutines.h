@@ -17,13 +17,15 @@ std::pair< int, std::tuple< std::string, std::string, std::size_t, std::string >
 
 template<typename Surface>
 int readSolvePrintLabyrinth(const std::string &space, const std::string& out, std::size_t limit) {
-    std::ifstream is(space);
     Surface surf;
+    std::ifstream is(space);
     is >> surf;
     is.close();
+
     SearcherSpace::Searcher<typename Surface::PointType, typename Surface::MetricType> robot(surf, limit);
     auto path = robot.search();
     surf.drawPath(path);
+    
     std::ofstream os(out);
     os << surf;
     return path.empty() ? solveerr : 0;    

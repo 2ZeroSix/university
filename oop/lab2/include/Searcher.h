@@ -91,7 +91,7 @@ public:
                 while (!open.empty()) {
                     auto path = std::move(open.top());
                     open.pop();
-                    if (std::get<1>(path) > _lim || std::get<0>(path).size() >= _lim) {
+                    if (_lim != 0 && (std::get<1>(path) > _lim || std::get<0>(path).size() >= _lim)) {
                         continue;
                     }
                     auto last = std::get<0>(path).back();
