@@ -89,19 +89,6 @@ public:
                 auto min = minPoint(successors);
                 open.emplace(std::vector<P>(1, std::get<0>(min)), std::get<1>(min));
                 while (!open.empty()) {
-                    if (successors.empty()) {
-                        continue;
-                    }
-                    for (auto& i : successors) {
-                        if (std::get<1>(i) == M()) {
-                            surf->move(std::get<0>(i));
-                            std::get<0>(current).push_back(std::get<0>(i));
-                            return std::get<0>(current);
-                        }
-                        auto buf = std::get<0>(current);
-                        buf.push_back(std::get<0>(i));
-                        open.emplace(buf, std::get<1>(i));
-                    }
                     auto path = std::move(open.top());
                     open.pop();
                     if (_lim != 0 && (std::get<1>(path) > _lim || std::get<0>(path).size() >= _lim)) {
@@ -131,6 +118,19 @@ public:
                         // std::cout << "OK" << std::endl;
                         current = std::move(path);
                         successors = surf->lookup();
+                        if (successors.empty()) {
+                            continue;
+                        }
+                        for (auto& i : successors) {
+                            if (std::get<1>(i) == M()) {
+                                surf->move(std::get<0>(i));
+                                std::get<0>(current).push_back(std::get<0>(i));
+                                return std::get<0>(current);
+                            }
+                            auto buf = std::get<0>(current);
+                            buf.push_back(std::get<0>(i));
+                            open.emplace(buf, std::get<1>(i));
+                        }
                     }
                 }
             }

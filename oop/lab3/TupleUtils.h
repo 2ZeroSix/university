@@ -107,14 +107,6 @@ namespace TupleUtils {
 // TUPLE = VECTOR //
 ////////////////////
     namespace {
-        template<typename Type, unsigned N, unsigned Last>
-        struct TupleAssignVectorHelper {
-            static void assign(Type& tuple, const std::vector<std::string>& vec) {
-                std::stringstream sstr(vec[N]);
-                sstr >> std::get<N>(tuple);
-                return TupleAssignVectorHelper<Type, N + 1, Last>::assign(tuple, vec);
-            }
-        };
         template<typename Type>
         struct TupleAssignElemntOfVectorHelper {
             static void assign(Type& elem, const std::string& str) {
@@ -128,9 +120,17 @@ namespace TupleUtils {
                 elem = str;                                
             }
         };
+        template<typename Type, unsigned N, unsigned Last>
+        struct TupleAssignVectorHelper {
+            using NthType = typename std::tuple_element<N, Type>::type;
+            static void assign(Type& tuple, const std::vector<std::string>& vec) {
+                TupleAssignElemntOfVectorHelper<NthType>::assign(std::get<N>(tuple), vec[N]);
+                return TupleAssignVectorHelper<Type, N + 1, Last>::assign(tuple, vec);
+            }
+        };
         template<typename Type, unsigned N>
         struct TupleAssignVectorHelper<Type, N, N> {
-        using NthType = typename std::tuple_element<N, Type>::type;
+            using NthType = typename std::tuple_element<N, Type>::type;
             static void assign(Type& tuple, const std::vector<std::string>& vec) {
                 TupleAssignElemntOfVectorHelper<NthType>::assign(std::get<N>(tuple), vec[N]);
             }
