@@ -1,4 +1,3 @@
-import StackCalc.*;
 import java.lang.String;
 
 
