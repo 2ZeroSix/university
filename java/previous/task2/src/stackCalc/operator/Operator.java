@@ -4,6 +4,6 @@ import stackCalc.Calc.Context;
 import java.lang.String;
 
 
-public abstract class Operator {
-    public abstract String action(Context context, String args[]);
+public interface Operator {
+    public String action(Context context, String args[]) throws OperatorException;
 }

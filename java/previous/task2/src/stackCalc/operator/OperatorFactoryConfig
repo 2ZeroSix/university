@@ -1,0 +1,9 @@
+POP         stackCalc.operator.Pop
+PUSH        stackCalc.operator.Push
++           stackCalc.operator.Add
+-           stackCalc.operator.Sub
+*           stackCalc.operator.Mul
+/           stackCalc.operator.Div
+SQRT        stackCalc.operator.Sqrt
+PRINT       stackCalc.operator.Print
+DEFINE      stackCalc.operator.Define
