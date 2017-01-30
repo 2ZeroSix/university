@@ -22,11 +22,12 @@ public class Calc {
 
     public void init(InputStream inFile, OutputStream outFile) {
         reader = inFile;
-        writer = new PrintStream(outFile);
+        writer = new PrintStream(outFile, true);
         context = new Context();
     }
     public Calc(InputStream inFile, OutputStream outFile) {init(inFile, outFile);}
     public Calc(InputStream inFile)                    {init(inFile, System.out);}
+    public Calc(OutputStream outFile)                  {init(System.in, outFile);}
     public Calc()                                   {init(System.in, System.out);}
 
     public void calculate() {
@@ -72,8 +73,13 @@ public class Calc {
                 }
                 strbld.append((char)c);
             }
-            if (c == -1) throw new IOException();
-            if(strbld.length() == 0) return getOperatorStr();
+            if(strbld.length() == 0) {
+                if (c == -1) {
+                    return null;
+                } else {
+                    return getOperatorStr();
+                }
+            }
             currentStrs = strbld.toString().split("[\\h\\s\\v]+");
             return currentStrs[0];
         } catch(IOException ex) {

@@ -11,7 +11,7 @@ public final class OperatorFactory {
 
     static {
         opClasses = new HashMap<String, Class<Operator>>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(OperatorFactory.class.getClass().getResourceAsStream("/stackCalc/operator/OperatorFactoryConfig")))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(OperatorFactory.class.getResourceAsStream("OperatorFactoryConfig")))) {
             if (reader != null) {
                 while(reader.ready()) {
                     String strs[] = reader.readLine().split("[\\h\\s\\v]+");
