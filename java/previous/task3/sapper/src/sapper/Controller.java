@@ -5,12 +5,9 @@ import static Field.*;
 
 public class Controller {
     private Field field;
-    public enum Status {ALIVE, DEAD}
-    Status status;
 
     private void init(Field fld) {
         field = fld;
-        status = Status.ALIVE;
     }
     public Controller(Field fld) {
         init(fld);
@@ -20,21 +17,36 @@ public class Controller {
     }
 
     public boolean touch(int row, int colon) {
-        if (status == Status.ALIVE) {
+        if (fld.status == Status.ALIVE) {
             Point p = field.getPoint(row, colon);
             if (p.getNote() == Note.UNKNOWN) {
                 p.setNote(Known);
                 if (p.getState() == State.MINED) {
-                    status = Status.DEAD;
+                    fld.status = Status.DEAD;
                     return false;
+                } else if (field.getPointScore(row, colon) == 0) {
+                    touchSuccessors(row, colon);
                 }
             }
         }
         return true;
     }
 
-    public void lookAt(int row, int colon) {
-        if (status == Status.ALIVE) {
+    private void touchSuccessors(int row, int colon) {
+        for (int i = row - 1; i <= row + 1; ++i) {
+            for (int j = colon - 1; j <= colon + 1; ++j) {
+                if (i >= 0 && i < map.length &&
+                    j >= 0 && j < map[0].length) {
+                    if (!touch(i, j)) {
+                        throw new UnexpectedBehaviorException("score == 0, but it's not");
+                    }
+                }
+            }
+        }
+    }
+
+    public void mark(int row, int colon) {
+        if (fld.status == Status.ALIVE) {
             Point p = field.getPoint(row, colon);
             Note note = p.getNote();
             switch(note) {

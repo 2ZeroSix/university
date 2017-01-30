@@ -7,7 +7,9 @@ import java.security.SecureRandom;
 
 public class Field {
     public enum State   {FREE, MINED}
+    public enum Status {ALIVE, DEAD}
     public enum Note    {UNKNOWN, UNKNOWN_MINE, UNKNOWN_FLAG, KNOWN}
+
     public class Point {
         
         private State state;
@@ -27,7 +29,9 @@ public class Field {
         public Note getNote()           {return note;}
         public Note setNote(Note nt)    {return note = nt;}
     }
+
     private Point[][] map;
+    Status status;
 
     private void init(int rows, int colons, int mines) {
         if (rows <= 0)
