@@ -5,7 +5,6 @@ import java.lang.String;
 import java.util.*;
 
 public class Mul implements Operator {
-    private Mul(){}
     public String action(Context context, String args[]) throws OperatorException{
         double arg1, arg2;
         try {
