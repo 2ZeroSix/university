@@ -1,6 +1,6 @@
 package sapper;
 
-import static Field.*;
+import static sapper.Field.*;
 
 
 public class Controller {
@@ -17,12 +17,12 @@ public class Controller {
     }
 
     public boolean touch(int row, int colon) {
-        if (fld.status == Status.ALIVE) {
-            Point p = field.getPoint(row, colon);
+        if (field.status == Status.ALIVE) {
+            Field.Point p = field.getPoint(row, colon);
             if (p.getNote() == Note.UNKNOWN) {
-                p.setNote(Known);
+                p.setNote(Note.KNOWN);
                 if (p.getState() == State.MINED) {
-                    fld.status = Status.DEAD;
+                    field.status = Status.DEAD;
                     return false;
                 } else if (field.getPointScore(row, colon) == 0) {
                     touchSuccessors(row, colon);
@@ -34,28 +34,25 @@ public class Controller {
 
     private void touchSuccessors(int row, int colon) {
         for (int i = row - 1; i <= row + 1; ++i) {
-            for (int j = colon - 1; j <= colon + 1; ++j) {
-                if (i >= 0 && i < map.length &&
-                    j >= 0 && j < map[0].length) {
-                    if (!touch(i, j)) {
-                        throw new UnexpectedBehaviorException("score == 0, but it's not");
-                    }
+        for (int j = colon - 1; j <= colon + 1; ++j) {
+                if (!touch(i, j)) {
+                    throw new UnexpectedBehaviorException("score == 0, but it's not");
                 }
             }
         }
     }
 
     public void mark(int row, int colon) {
-        if (fld.status == Status.ALIVE) {
-            Point p = field.getPoint(row, colon);
+        if (field.status == Status.ALIVE) {
+            Field.Point p = field.getPoint(row, colon);
             Note note = p.getNote();
             switch(note) {
-                case Note.UNKNOWN:
+                case UNKNOWN:
                     p.setNote(Note.UNKNOWN_MINE);
                     break;
-                case Note.UNKNOWN_MINE:
+                case UNKNOWN_MINE:
                     p.setNote(Note.UNKNOWN_FLAG);
-                case Note.UNKNOWN_FLAG:
+                case UNKNOWN_FLAG:
                     p.setNote(Note.UNKNOWN);
                     break;
                 default:
