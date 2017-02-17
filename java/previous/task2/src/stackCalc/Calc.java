@@ -4,9 +4,19 @@ import stackCalc.operator.*;
 import java.io.*;
 import java.util.*;
 import java.lang.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Calc {
+    private Context context;
+    private InputStream reader;
+    private PrintStream writer;
+    private String currentStrs[];
+    private static Logger logger;
+    static {
+        logger = LoggerFactory.getLogger("stackCalc.Calc");
+    }
     public class Context {
         public Map<String, Double> definitions;
         public Stack<Double> operands;
@@ -15,15 +25,12 @@ public class Calc {
             operands = new Stack<Double>();
         }
     }
-    private Context context;
-    private InputStream reader;
-    private PrintStream writer;
-    private String currentStrs[];
 
     public void init(InputStream inFile, OutputStream outFile) {
         reader = inFile;
         writer = new PrintStream(outFile, true);
         context = new Context();
+        logger.trace("new Calc constructed");
     }
     public Calc(InputStream inFile, OutputStream outFile) {init(inFile, outFile);}
     public Calc(InputStream inFile)                    {init(inFile, System.out);}
@@ -31,6 +38,7 @@ public class Calc {
     public Calc()                                   {init(System.in, System.out);}
 
     public void calculate() {
+        logger.trace("calculating started");
         String operatorStr;
         while((operatorStr = getOperatorStr()) != null) {
             String args[] = getArguments();
@@ -42,18 +50,23 @@ public class Calc {
                 }
             }
             catch (ClassNotFoundException ex) {
-                writer.println("Unknown operator: \"" + operatorStr + "\"");
+                logger.error("Unknown operator: \"{}\"", operatorStr);
+                writer.println("Unknown operator: \""+operatorStr+"\"");
             }
             catch (ReflectiveOperationException ex) {
-                writer.println("Can't instantiate operator " + operatorStr + " class");
+                logger.error("Can't instantiate operator {} class", operatorStr);
+                writer.println("Can't instantiate operator "+operatorStr+" class");
             }
             catch (OperatorException ex) {
-                writer.println("Exception caused in \"" + operatorStr + "\":\n\t" + ex);
+                logger.error("Exception caused in \"{}\":\n\t{}",operatorStr, ex);
+                writer.println("Exception caused in \""+operatorStr+"\":\n\t"+ex);
             }
         }
+        logger.trace("calculating completed");
     }
 
     private String getOperatorStr() {
+        logger.trace("getting operator string");
         try {
             StringBuilder strbld = new StringBuilder();
             int c;
@@ -81,15 +94,19 @@ public class Calc {
                 }
             }
             currentStrs = strbld.toString().split("[\\h\\s\\v]+");
+            logger.trace("getting operator string completed");
             return currentStrs[0];
         } catch(IOException ex) {
+            logger.error("exception catched while getting operator string: {}", ex);
             return null;
         }
     }
 
     private String[] getArguments() {
+        logger.trace("getting arguments of operator");
         String strs[] = new String[currentStrs.length - 1];
         System.arraycopy(currentStrs, 1, strs, 0, strs.length);
+        logger.trace("getting arguments of completed");
         return strs;
     }
 }

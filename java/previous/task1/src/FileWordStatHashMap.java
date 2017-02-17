@@ -36,7 +36,7 @@ public class FileWordStatHashMap implements WordStat {
             System.err.println("Error while reading file: " + e.getLocalizedMessage());
         }
         finally {
-            if (null != reader) {
+            if (reader != null) {
                 try {
                     reader.close();
                 }
