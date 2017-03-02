@@ -1,6 +1,8 @@
 package sapper;
 
-
+/**
+ * Created by dzs on 14.02.17.
+ */
 public class UnexpectedBehaviorException extends RuntimeException {
     public UnexpectedBehaviorException(){
         super();

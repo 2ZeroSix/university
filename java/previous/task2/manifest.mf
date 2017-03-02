@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
 Created-By: with openjdk-9 by 2ZeroSix
 Main-Class: MainRoutines
+Class-Path: /usr/share/java/logback-classic.jar /usr/share/java/logback-core.jar /usr/share/java/slf4j-api.jar

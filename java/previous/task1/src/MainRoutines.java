@@ -1,7 +1,5 @@
-package first_task;
-
 import java.lang.*;
-
+import wordStat.*;
 public class MainRoutines {
     public static void main(String args[]) {
         if (args.length > 0) {
