@@ -82,9 +82,10 @@ int waitForInput(struct timeval tv) {
 int printFile(int fd) {
     char buf[255];
     ssize_t len;
+    lseek(fd, 0, SEEK_SET);
     while((len = read(fd, buf, 255)) > 0) {
         buf[len] = '\0';
-        if (write(0, buf, len) < len) {
+        if (write(1, buf, len) < len) {
             return -1;
         }
     }
