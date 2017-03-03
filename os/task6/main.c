@@ -109,6 +109,7 @@ int main(int argc, char** argv) {
         return errno;
     }
     printf("Complete\n");
+    fflush(stdout);
     switch (waitForInput((struct timeval){5,0})) {
         case -1:
             free(table);
