@@ -10,14 +10,8 @@ int main(int argc, char** argv, char* envp[]) {
     switch (p = fork()) {
         case 0: {
             char* file          = argc == 2 ? argv[1] : "main.c";
-            size_t fileLen      = strlen(file);
-            char* command       = "cat";
-            size_t commandLen   = strlen(command);
-            char* commWithArg  = malloc((fileLen + 1 + commandLen + 1)*sizeof(char));
-            strcpy(commWithArg, command);
-            commWithArg[commandLen] = ' ';
-            strcpy(commWithArg + commandLen + 1, file);
-            fprintf(stderr, "error: %d", execlp("/bin/sh", "sh", "-c", commWithArg, NULL));
+            char* command       = "/bin/cat";
+            fprintf(stderr, "error: %d", execl(command, command, file, NULL));
             perror(" ");
         }
         default: {
