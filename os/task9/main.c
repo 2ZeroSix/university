@@ -1,18 +1,18 @@
-#include <sys/wait.h>
 #include <sys/types.h>
-#include <stdlib.h>
-#include <string.h>
+#include <sys/wait.h>
 #include <unistd.h>
+#include <errno.h>
 #include <stdio.h>
 
-int main(int argc, char** argv, char* envp[]) {
+int main(int argc, char** argv) {
     pid_t p;
     switch (p = fork()) {
         case 0: {
-            char* file          = argc == 2 ? argv[1] : "main.c";
-            char* command       = "/bin/cat";
-            fprintf(stderr, "error: %d", execl(command, command, file, NULL));
-            perror(" ");
+            char* command   = "cat";
+            char* file      = (argc == 2) ? argv[1] : "main.c";
+            execlp(command, command, file, NULL);
+            perror("Error");
+            return errno;
         }
         default: {
             waitpid(p, NULL, 0);

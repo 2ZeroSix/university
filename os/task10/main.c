@@ -1,25 +1,21 @@
-#include <sys/wait.h>
 #include <sys/types.h>
-#include <stdlib.h>
-#include <string.h>
+#include <sys/wait.h>
 #include <unistd.h>
+#include <errno.h>
 #include <stdio.h>
 
-extern char** environ;
-
-int main(int argc, char** argv, char* envp[]) {
+int main(int argc, char** argv) {
     pid_t p;
     if (argc >= 2) {
         switch (p = fork()) {
-            case 0: {
-                fprintf(stderr, "error: %d", execve(argv[1], argv + 1, envp));
-                perror(" ");
-		break;
-            }
+            case 0:
+                execvp(argv[1], argv + 1);
+                perror("Error");
+        		return errno;
             default: {
-                int status;
+                int status = 0;
                 waitpid(p, &status, 0);
-                printf("return code of a child process: %d\n", status);
+                printf("child process(%d) return code: %d\n", p, status);
                 break;
             }
         }
