@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
         return errno;
     }
     printf("Complete\n");
-
+    fflush(stdout);
     switch (waitForInput((struct timeval){(time_t)5,(suseconds_t)0})) {
         case -1:
             free(table);
