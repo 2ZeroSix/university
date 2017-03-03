@@ -14,15 +14,17 @@ int main(int argc, char** argv, char* envp[]) {
             case 0: {
                 fprintf(stderr, "error: %d", execve(argv[1], argv + 1, envp));
                 perror(" ");
+		break;
             }
             default: {
                 int status;
                 waitpid(p, &status, 0);
                 printf("return code of a child process: %d\n", status);
-                return 0;
+                break;
             }
         }
     } else {
         printf("using: %s <command> [args] \n", argv[0]);
     }
+    return 0;
 }
