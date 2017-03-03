@@ -1,6 +1,5 @@
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -21,7 +20,7 @@ int lockOnWrite(int fd, short type) {
 char* createCommandString(char* command, char* arguments) {
     size_t commandLen = strlen(command);
     size_t argumentsLen = strlen(arguments);
-    char* commandWArgs = malloc(commandLen + 1 + argumentsLen + 1);
+    char* commandWArgs = malloc((commandLen + 1 + argumentsLen + 1)*sizeof(char));
     if(commandWArgs == NULL) return NULL;
     strcpy(commandWArgs, command);
     commandWArgs[commandLen] = ' ';
@@ -45,11 +44,8 @@ int main(int argc, char** argv) {
             if(command == NULL) {
                 retcode = errno;
                 perror("Error: can't create command string");
-            } else if (system(command) == -1) {
-                retcode = errno;
+            } else if ((retcode = system(command)) == -1) {
                 fprintf(stderr, "Error: can't open editor\n");
-            } else {
-                retcode = wait(NULL);
             }
             free(command);
         }
