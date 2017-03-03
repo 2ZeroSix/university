@@ -23,10 +23,6 @@ off_t* createOffsetTable(int fd, size_t* tableSize) {
     char buf[255];
     ssize_t bufLen = 0;
     while((bufLen = read(fd, buf, 255)) > 0) {
-        if (bufLen == -1) {
-            free(table);
-            return NULL;
-        }
         for (ssize_t i = 0; i < bufLen; ++i) {
             if(buf[i] == '\n') {
                 off_t pos = lseek(fd, 0, SEEK_CUR);
