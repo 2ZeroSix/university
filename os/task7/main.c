@@ -82,7 +82,7 @@ int printFile(int fd) {
             : st.st_size - offset;
         char* fileMap = mmap(NULL, len, PROT_READ, MAP_SHARED, fd, offset);
         if(fileMap == MAP_FAILED)           return -1;
-        if (write(0, fileMap, len) < len)   return -1;
+        if (write(1, fileMap, len) < len)   return -1;
     }
     return 0;
 }
@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
         if (fileMap == MAP_FAILED) {
             perror("Error: can't read file");
             break;
-        } else if (write(0, fileMap + addOffset, length) == -1
+        } else if (write(1, fileMap + addOffset, length) == -1
             || putc('\n', stdout) == EOF) {
             perror("Error: can't write line");
             break;
