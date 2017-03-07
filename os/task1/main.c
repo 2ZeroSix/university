@@ -22,20 +22,20 @@ void printUsage(FILE* fout, char* progName) {
 
 void printOptions(FILE* fout) {
     fprintf(fout,   "Options:\n"
-                    "-i             Печатает реальные и эффективные "
-                                    "идентификаторы пользователя и группы.\n"
+                    "-i             Печатает реальные и эффективные\n"
+                    "               идентификаторы пользователя и группы.\n"
                     "-s             Процесс становится лидером группы.\n"
-                    "-p             Печатает иидентификаторы процесса, "
-                                    "процесса-родителя и группы процессов.\n"
+                    "-p             Печатает иидентификаторы процесса,\n"
+                    "               процесса-родителя и группы процессов.\n"
                     "-u             Печатает значение ulimit\n"
                     "-Unew_ulimit   Изменяет значение ulimit.\n"
-                    "-c             Печатает размер в байтах core-файла, "
-                                    "который может быть создан.\n"
+                    "-c             Печатает размер в байтах core-файла,\n"
+                    "               который может быть создан.\n"
                     "-Csize         Изменяет размер core-файла\n"
                     "-d             Печатает текущую рабочую директорию\n"
                     "-v             Распечатывает переменные среды и их значения\n"
-                    "-Vname=value   Вносит новую переменную в среду или "
-                                    "изменяет значение существующей переменной.\n");
+                    "-Vname=value   Вносит новую переменную в среду или\n"
+                    "               изменяет значение существующей переменной.\n");
 }
 void printHelp(FILE* fout, char* progName) {
     printUsage(fout, progName);
@@ -98,28 +98,12 @@ void printCWD(FILE* fout) {
 void printEnvironment(FILE* fout) {
     if (environ) {
         fprintf(fout, "Variables:");
-        char** cur = environ;
-        if (*cur) {
-            char* val = getenv(*cur);
-            fprintf(fout, " %s: %s", *cur, val ? val : "");
-            ++cur;
-        }
-        while(*cur) {
-            char* val = getenv(*cur);
-            fprintf(fout, " %s: %s", *cur, val ? val : "");
-            ++cur;
+        for (size_t i = 0;; ++i) {
+            if (environ[i] == NULL) break;
+            fprintf(fout, " %s;", environ[i]);               
         }
         fprintf(stdout, "\n");
     }
-}
-
-// example of string "name=value"
-void setEnvironmentVariable(char* varAssignValue) {
-    size_t len = strlen(varAssignValue);
-    size_t assignPos;
-    for (assignPos = 0; assignPos < len && varAssignValue[assignPos] != '='; ++assignPos);
-    varAssignValue[assignPos] = '\0';
-    setenv(varAssignValue, varAssignValue + assignPos+1, 1);
 }
 
 int main(int argc, char **argv) {
@@ -158,7 +142,7 @@ int main(int argc, char **argv) {
                     printEnvironment(stdout);
                     break;
                 case 'V':
-                    setEnvironmentVariable(optarg);
+                    putenv(optarg);
                     break;
                 case 'h':
                     printHelp(stdout,argv[0]);
