@@ -35,6 +35,7 @@ off_t* createOffsetTable(int fd, size_t* tableSize) {
                     off_t* bufTable = realloc(table,
                                             *tableSize * sizeof(off_t));
                     if (bufTable == NULL) {
+                        munmap(fileMap, st.st_size);
                         free(table);
                         return NULL;
                     } else {
@@ -44,9 +45,11 @@ off_t* createOffsetTable(int fd, size_t* tableSize) {
             }
         }
     } else {
+        munmap(fileMap, st.st_size);
         free(table);
         return NULL;
     }
+    munmap(fileMap, st.st_size);
     table[line] = st.st_size + 1;
     *tableSize = line + 1;
     return table;
@@ -82,7 +85,11 @@ int printFile(int fd) {
             : st.st_size - offset;
         char* fileMap = mmap(NULL, len, PROT_READ, MAP_SHARED, fd, offset);
         if(fileMap == MAP_FAILED)           return -1;
-        if (write(1, fileMap, len) < len)   return -1;
+        if (write(1, fileMap, len) < len)   {
+            munmap(fileMap, len);
+            return -1;
+        }
+        munmap(fileMap, len);
     }
     return 0;
 }
@@ -143,8 +150,10 @@ int main(int argc, char** argv) {
         } else if (write(1, fileMap + addOffset, length) == -1
             || putc('\n', stdout) == EOF) {
             perror("Error: can't write line");
+            munmap(fileMap, length + addOffset);
             break;
         }
+        munmap(fileMap, length + addOffset);
     }
     free(table);
     close(fd);
