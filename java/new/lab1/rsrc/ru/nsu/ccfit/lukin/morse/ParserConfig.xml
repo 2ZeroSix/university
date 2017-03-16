@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Handlers [
+        <!ELEMENT Handlers (Handler)*>
+        <!ELEMENT Handler EMPTY>
+        <!ATTLIST Handler name CDATA #REQUIRED>
+        <!ATTLIST Handler class CDATA #REQUIRED>
+        ]>
+<Handlers>
+    <Handler name="code" class="ru.nsu.ccfit.lukin.morse.Encoder"/>
+    <Handler name="decode" class="ru.nsu.ccfit.lukin.morse.Decoder"/>
+</Handlers>
