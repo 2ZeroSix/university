@@ -1,6 +1,8 @@
 package ru.nsu.ccfit.lukin.morse;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Decoder implements Handler{
     @Override
@@ -8,6 +10,7 @@ public class Decoder implements Handler{
         if (args.length == 1) {
             try (InputStream inStream = new FileInputStream(args[0]);
                  Reader reader = new InputStreamReader(inStream)) {
+                Map<String, Long> symbolFrequency = new HashMap<>();
                 StringBuilder builder = new StringBuilder();
                 int spaceCount = 0;
                 while (reader.ready()) {
@@ -20,6 +23,8 @@ public class Decoder implements Handler{
                             if (symbol == null) {
                                 throw new HandlerException("Unknown morse code: '" + morse + "'");
                             }
+                            symbolFrequency.put(symbol, symbolFrequency.containsKey(symbol) ?
+                                    symbolFrequency.get(symbol) + 1 : 1);
                             System.out.print(symbol);
                             builder = new StringBuilder();
                         } else if (spaceCount % 7 == 0) {
@@ -31,7 +36,7 @@ public class Decoder implements Handler{
                     } else if (c == '.') {
                         builder.append('.');
                     } else {
-                        throw new HandlerException("Unsupported symbol: " + c);
+                        throw new HandlerException("Unsupported symbol: " + String.valueOf(Character.toChars(c)));
                     }
                     spaceCount = 0;
                 }
@@ -40,7 +45,14 @@ public class Decoder implements Handler{
                 if (symbol == null) {
                     throw new HandlerException("Unknown morse code: '" + morse + "'");
                 }
+                symbolFrequency.put(symbol, symbolFrequency.containsKey(symbol) ?
+                        symbolFrequency.get(symbol) + 1 : 1);
                 System.out.println(symbol);
+                try (PrintStream ps = new PrintStream("symbolFrequency.log")) {
+                    symbolFrequency.forEach((s, count) -> ps.println("\"" + s + "\" : " + count));
+                } catch (IOException e) {
+                    throw new HandlerException("Can't write symbols frequency ", e);
+                }
             } catch (IOException e) {
                 throw new HandlerException("Can't read from " + args[0], e);
             }
@@ -48,5 +60,8 @@ public class Decoder implements Handler{
             throw new HandlerException("Wrong number of arguments, must be 1:"
                     + args.length);
         }
+    }
+    private static void printSymbolFrequency(Map<String, Long> symbolFrequency) {
+        symbolFrequency.forEach((s, count) -> System.out.println(s + " : " + count));
     }
 }
