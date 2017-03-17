@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
             default: {
                 int status = 0;
                 waitpid(p, &status, 0);
-                printf("child process(%d) return code: %d\n", p, status);
+                printf("child process(%d) return code: %d\n", p, WEXITSTATUS(status));
                 break;
             }
         }

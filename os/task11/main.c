@@ -8,7 +8,7 @@ extern char **environ;
 
 int execvpe(const char* file, char *const argv[], char *const envp[]) {
     char** tmp  = environ;
-    environ     = (char** volatile)envp;
+    environ     = (char**)envp;
     int retval  = execvp(file, argv);
     environ     = tmp;
     return retval;
