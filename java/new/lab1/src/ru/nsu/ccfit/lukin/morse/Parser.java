@@ -15,14 +15,14 @@ public class Parser {
     private static Map<String, Integer> morseToSymbol;
     private static Map<Integer, String> symbolToMorse;
 
-    public static String getSymbolByMorse(String morse) {
+    static String getSymbolByMorse(String morse) {
         return morseToSymbol.containsKey(morse)
                 ? String.valueOf(Character.toChars(
                         morseToSymbol.get(morse)))
                 : null;
     }
 
-    public static String getMorseBySymbol(int symbol) {
+    static String getMorseBySymbol(int symbol) {
         return symbolToMorse.get(symbol);
     }
 
@@ -96,10 +96,10 @@ public class Parser {
     }
 
     public void run() {
-        try {
+        try (Reader reader = new InputStreamReader(inStream)){
             StringBuilder builder = new StringBuilder();
             int c;
-            while ((c = inStream.read()) != -1) {
+            while ((c = reader.read()) != -1) {
                 if (c != '\n') {
                     builder.append((char)c);
                     continue;
@@ -120,7 +120,7 @@ public class Parser {
                         }
                     }
                 }
-                builder = new StringBuilder();
+                builder.delete(0, builder.length());
             }
         } catch (IOException e) {
             e.printStackTrace();

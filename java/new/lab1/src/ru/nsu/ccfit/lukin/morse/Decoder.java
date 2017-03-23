@@ -18,15 +18,17 @@ public class Decoder implements Handler{
                     if (Character.isWhitespace(c)) {
                         ++spaceCount;
                         if (spaceCount == 3) {
-                            String morse = builder.toString();
-                            String symbol = Parser.getSymbolByMorse(morse);
-                            if (symbol == null) {
-                                throw new HandlerException("Unknown morse code: '" + morse + "'");
+                            if (builder.length() > 0) {
+                                String morse = builder.toString();
+                                String symbol = Parser.getSymbolByMorse(morse);
+                                if (symbol == null) {
+                                    throw new HandlerException("Unknown morse code: '" + morse + "'");
+                                }
+                                symbolFrequency.put(symbol, symbolFrequency.containsKey(symbol) ?
+                                        symbolFrequency.get(symbol) + 1 : 1);
+                                System.out.print(symbol);
+                                builder = new StringBuilder();
                             }
-                            symbolFrequency.put(symbol, symbolFrequency.containsKey(symbol) ?
-                                    symbolFrequency.get(symbol) + 1 : 1);
-                            System.out.print(symbol);
-                            builder = new StringBuilder();
                         } else if (spaceCount % 7 == 0) {
                             System.out.print(" ");
                         }
@@ -40,16 +42,20 @@ public class Decoder implements Handler{
                     }
                     spaceCount = 0;
                 }
-                String morse = builder.toString();
-                String symbol = Parser.getSymbolByMorse(morse);
-                if (symbol == null) {
-                    throw new HandlerException("Unknown morse code: '" + morse + "'");
+                if (builder.length() > 0) {
+                    String morse = builder.toString();
+                    String symbol = Parser.getSymbolByMorse(morse);
+                    if (symbol == null) {
+                        throw new HandlerException("Unknown morse code: '" + morse + "'");
+                    }
+                    symbolFrequency.put(symbol, symbolFrequency.containsKey(symbol) ?
+                            symbolFrequency.get(symbol) + 1 : 1);
+                    System.out.println(symbol);
+                } else {
+                    System.out.println("");
                 }
-                symbolFrequency.put(symbol, symbolFrequency.containsKey(symbol) ?
-                        symbolFrequency.get(symbol) + 1 : 1);
-                System.out.println(symbol);
-                try (PrintStream ps = new PrintStream("symbolFrequency.log")) {
-                    symbolFrequency.forEach((s, count) -> ps.println("\"" + s + "\" : " + count));
+                try (PrintStream ps = new PrintStream("symbolFrequency.csv")) {
+                    symbolFrequency.forEach((s, count) -> ps.println("\"" + s + "\", " + count));
                 } catch (IOException e) {
                     throw new HandlerException("Can't write symbols frequency ", e);
                 }
@@ -60,8 +66,5 @@ public class Decoder implements Handler{
             throw new HandlerException("Wrong number of arguments, must be 1:"
                     + args.length);
         }
-    }
-    private static void printSymbolFrequency(Map<String, Long> symbolFrequency) {
-        symbolFrequency.forEach((s, count) -> System.out.println(s + " : " + count));
     }
 }

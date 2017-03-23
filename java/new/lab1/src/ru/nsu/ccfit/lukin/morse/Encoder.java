@@ -37,8 +37,8 @@ public class Encoder implements Handler {
                     System.out.print(morse + "   ");
                 }
                 System.out.println("");
-                try (PrintStream ps = new PrintStream("symbolFrequency.log")) {
-                    symbolFrequency.forEach((s, count) -> ps.println("\"" + s + "\" : " + count));
+                try (PrintStream ps = new PrintStream("symbolFrequency.csv")) {
+                    symbolFrequency.forEach((s, count) -> ps.println("\"" + s + "\"," + count));
                 } catch (IOException e) {
                     throw new HandlerException("Can't write symbols frequency ", e);
                 }
