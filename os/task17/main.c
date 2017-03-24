@@ -118,14 +118,14 @@ int printWchar(int terminal, wchar_t wc, wchar_t* curStr, size_t* strWidth, size
 
 }
 
-handler getHandler(wint_t wc,  termios* attributes) {
-    if      (btowc(attributes->c_cc[VERASE]) == wc) return eraseWchar;
-    else if (btowc(attributes->c_cc[VKILL])  == wc) return eraseLine;
-    else if (L'\27'                          == wc) return eraseWord;
-    else if (btowc(attributes->c_cc[VEOF])   == wc) return endOfRead;
-    else if (L'\n'                           == wc) return printNewLine;
-    else if (!iswprint(wc))                         return printHorn;
-    else                                            return printWchar;
+handler getHandler(wint_t wc) {
+    if      (L'\177'== wc)  return eraseWchar;
+    else if (L'\25' == wc)  return eraseLine;
+    else if (L'\27' == wc)  return eraseWord;
+    else if (L'\4'  == wc)  return endOfRead;
+    else if (L'\n'  == wc)  return printNewLine;
+    else if (!iswprint(wc)) return printHorn;
+    else                    return printWchar;
 }
 
 int editor(int terminal, size_t maxStrWidth, const char* locale) {
@@ -147,7 +147,7 @@ int editor(int terminal, size_t maxStrWidth, const char* locale) {
 
     // main loop
     while (read(terminal, &wc, sizeof(wchar_t)) > 0) {
-        int handleRet = getHandler(wc, attr)(terminal, wc, curStr, &strWidth, maxStrWidth);
+        int handleRet = getHandler(wc)(terminal, wc, curStr, &strWidth, maxStrWidth);
 
         if(handleRet == -1) {
 
