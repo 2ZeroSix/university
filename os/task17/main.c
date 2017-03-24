@@ -1,16 +1,15 @@
-#define _XOPEN_SOURCE
+#define _POSIX_C_SOURCE 200112L
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
 #include <wctype.h>
-#include <wchar.h>
 #include <locale.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
+#include <wchar.h>
 typedef int (*handler)(int terminal, wchar_t wc, wchar_t* curStr, size_t* strWidth, size_t maxStrWidth);
 typedef struct termios termios;
 
@@ -189,5 +188,6 @@ int main(int argc, char** argv) {
         close(terminal);
         return -1;
     }
+    setlocale(LC_ALL, "UTF-8");
     return editor(terminal, 40, NULL);
 }
