@@ -188,6 +188,5 @@ int main(int argc, char** argv) {
         close(terminal);
         return -1;
     }
-    setlocale(LC_ALL, "UTF-8");
     return editor(terminal, 40, NULL);
 }
