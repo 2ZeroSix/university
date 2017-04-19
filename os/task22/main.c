@@ -9,12 +9,13 @@
 #include <string.h>
 
 #define MPR_BUF_SIZE 256 // size of buffer for every file in multiplexRead
+#define TIME_OUT 5
 
-int waitForInput(struct timeval tv) {
+int waitForInput(int fd, struct timeval tv) {
     fd_set fd_s;
     FD_ZERO(&fd_s);
-    FD_SET(0, &fd_s);
-    switch (select(1, &fd_s, NULL, NULL, &tv)) {
+    FD_SET(fd, &fd_s);
+    switch (select(fd + 1, &fd_s, NULL, NULL, &tv)) {
         case -1:    return -1;
         case  0:    return  1;
         default:    return  0;
@@ -40,6 +41,7 @@ int multiplexRead(int fileCount, char** filenames) {
     }
 
     size_t* bufOffset = (size_t*)calloc(fileCount, sizeof(size_t));
+
     char** buffers = (char**)calloc(fileCount, sizeof(char*));
     for (int i = 0; i < fileCount; ++i) 
         buffers[i] = (char*) calloc(MPR_BUF_SIZE, sizeof(char));
@@ -48,9 +50,21 @@ int multiplexRead(int fileCount, char** filenames) {
     while (check) {
         check = 0;
         for (int i = 0; i < fileCount; ++i) {
-            usleep(100000);
             if(files[i] == -1) continue;
             check = 1;
+
+            switch (waitForInput(files[i], (struct timeval){(time_t)TIME_OUT,(suseconds_t)0})) {
+                case -1:
+                    close(files[i]);
+                    files[i] = -1;
+                    free(buffers[i]);
+                    continue;
+                case 0:
+                    break;
+                default:
+                    continue;
+            }
+
             if (bufOffset[i] == 0) {
                 int retval = read(files[i], buffers[i], MPR_BUF_SIZE - 1);
                 if (retval <= 0) {
@@ -59,11 +73,12 @@ int multiplexRead(int fileCount, char** filenames) {
                     free(buffers[i]);
                     continue;
                 }
-                buffers[retval] = 0;
+                buffers[i][retval] = '\0';
             }
 
             char* curPos = buffers[i] + bufOffset[i];
             char* newLinePos = strchr(curPos, '\n');
+
             if (newLinePos == NULL) {
                 size_t len = strlen(curPos);
                 write(1, curPos, len);
@@ -78,6 +93,10 @@ int multiplexRead(int fileCount, char** filenames) {
             }
         }
     }
+
+    free(bufOffset);
+    free(buffers);
+    free(files);
 
     return 0;
 }

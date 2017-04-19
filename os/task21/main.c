@@ -19,7 +19,7 @@ int setByKeyInput(void) {
     }
     new_settings            = stored_settings;
     new_settings.c_lflag    &= ~(ICANON | ECHO);
-    // new_settings.c_lflag    |= ISIG;
+    new_settings.c_lflag    |= ISIG;
 
     new_settings.c_cc[VTIME]= 0;
     new_settings.c_cc[VMIN] = 1;
@@ -61,8 +61,7 @@ int main(int argc, char** argv) {
     wint_t wc;
     while(read(0, &wc, sizeof(wc)) > 0) {
         if (wc == DEL_SEQUENCE) {
-            putchar('\007');
-            fflush(stdout);
+            write(1, "\a", sizeof("\a"));
             ++deleteCouter;
         }
     }
