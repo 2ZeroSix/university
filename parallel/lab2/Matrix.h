@@ -5,6 +5,7 @@
 #include "utility"
 #include "Vector.h"
 #include <ostream>
+#include <omp.h>
 namespace matrix {
 template<typename T>
 class Matrix {
@@ -43,55 +44,59 @@ public:
         return *this;
     }
 
-    Matrix<T>& operator*=(const Matrix<T>& mat) {
-        if(multable(mat)) {
-            std::vector<T> v;
-            for (std::size_t i; i < rows; ++i) {
-                for (std::size_t j = 0; j < colons; ++j) v[j] = 0.;
-                for (std::size_t j; j < colons; ++j) {
-                    T sum = 0.;
-                    for (std::size_t k; k < mat.rows; ++k)
-                        sum += data[i][j] * mat[j][k];
-                    v[j] = sum;
-                }
-                for (std::size_t j = 0; j < colons; ++j) data[i][j] = v[i];
-            }
-        }
-        return *this;
-    }
+    // Matrix<T>& operator*=(const Matrix<T>& mat) {
+    //     if(multable(mat)) {
+    //         std::vector<T> v;
+    //         for (std::size_t i; i < rows; ++i) {
+    //             for (std::size_t j = 0; j < colons; ++j) v[j] = 0.;
+    //             for (std::size_t j; j < colons; ++j) {
+    //                 T sum = 0.;
+    //                 for (std::size_t k; k < mat.rows; ++k)
+    //                     sum += data[i][j] * mat[j][k];
+    //                 v[j] = sum;
+    //             }
+    //             for (std::size_t j = 0; j < colons; ++j) data[i][j] = v[i];
+    //         }
+    //     }
+    //     return *this;
+    // }
 
-    friend Matrix<T>& operator*(const Matrix<T>& a, const Matrix<T>& b) {
-        Matrix<T> res(a.rows, a.colons);
-        if(a.multable(b))
-            for (std::size_t i; i < a.rows; ++i)
-                for (std::size_t j; j < a.colons; ++j)
-                    for (std::size_t k; k < b.rows; ++k)
-                        res[i][j] += a[i][j] * b[j][k];
-        return res;
-    }
+    // friend Matrix<T>& operator*(const Matrix<T>& a, const Matrix<T>& b) {
+    //     Matrix<T> res(a.rows, a.colons);
+    //     if(a.multable(b))
+    //         for (std::size_t i; i < a.rows; ++i)
+    //             for (std::size_t j; j < a.colons; ++j)
+    //                 for (std::size_t k; k < b.rows; ++k)
+    //                     res[i][j] += a[i][j] * b[j][k];
+    //     return res;
+    // }
 
     friend Vector<T> operator*(const Matrix<T>& mat, const Vector<T>& vec) {
         Vector<T> result(vec.getSize());
         //TODO add exception
         if(mat.colons == vec.getSize())
+            #pragma omp parralel for
             for(std::size_t i = 0; i < mat.rows; ++i)
                 result[i] = mat[i] * vec;
         return result;
     }
 
-    friend Vector<T> operator*(const Vector<T>& vec, const Matrix<T>& mat) {
-        Vector<T> result(vec.getSize(), T());
-        //TODO add exception
-        if(mat.colons == vec.getSize())
-            for(std::size_t i = 0; i < mat.colons; ++i)
-                for(std::size_t j = 0; j < mat.rows; ++j)
-                    result[i] += mat[i][j] * vec[j];
-        return result;
-    }
+    // friend Vector<T> operator*(const Vector<T>& vec, const Matrix<T>& mat) {
+    //     Vector<T> result(vec.getSize(), T());
+    //     //TODO add exception
+    //     if(mat.colons == vec.getSize())
+    //         for(std::size_t i = 0; i < mat.colons; ++i)
+    //             for(std::size_t j = 0; j < mat.rows; ++j)
+    //                 result[i] += mat[i][j] * vec[j];
+    //     return result;
+    // }
 
     Matrix<T> operator*=(const T& scalar) {
-        for(std::size_t i = 0; i < rows; ++i)
+        #pragma omp parralel for
+        for(std::size_t i = 0; i < rows; ++i) {
+            #pragma omp master
             data[i] *= scalar;
+        }
         return *this;
     }
 
@@ -107,7 +112,9 @@ public:
 
     Matrix<T>& operator+=(const Matrix<T>& mat) {
         if(sumable(mat))
+            #pragma omp parralel for
             for (std::size_t i = 0; i < rows; ++i)
+                #pragma omp parralel for
                 for (std::size_t j = 0; j < colons; ++j)
                     data[i][j] += mat[i][j];
         return *this;
@@ -115,7 +122,9 @@ public:
 
     Matrix<T>& operator-=(const Matrix<T>& mat) {
         if(sumable(mat))
+            #pragma omp parralel for
             for (std::size_t i = 0; i < rows; ++i)
+                #pragma omp parralel for
                 for (std::size_t j = 0; j < colons; ++j)
                     data[i][j] -= mat[i][j];
         return *this;
@@ -127,12 +136,12 @@ public:
     const Vector<T>& operator[](std::size_t row) const {
         return data[row];
     }
-    bool multable(const Matrix<T>& mat) const {
-        return rows == mat.colons;
-    }
-    bool sumable(const Matrix<T>& mat) const {
-        return rows == mat.rows && colons == mat.colons;
-    }
+    // bool multable(const Matrix<T>& mat) const {
+    //     return rows == mat.colons;
+    // }
+    // bool sumable(const Matrix<T>& mat) const {
+    //     return rows == mat.rows && colons == mat.colons;
+    // }
     ~Matrix() {}
 
     friend void swap(Matrix<T>&& a, Matrix<T>&& b) {
@@ -142,7 +151,9 @@ public:
     }
 
     friend std::ostream& operator<< (std::ostream& fout, const Matrix<T>& mat) {
+        #pragma omp parralel for
         for (std::size_t i = 0; i < mat.rows; ++i) {
+            #pragma omp parralel for
             for (std::size_t j = 0; j < mat.colons; ++j) fout << mat[i][j] << " ";
                 fout << std::endl;
         }

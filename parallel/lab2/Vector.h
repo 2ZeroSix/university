@@ -4,6 +4,7 @@
 #include <utility>
 #include <ostream>
 #include <cmath>
+#include <omp.h>
 namespace matrix {
     template<typename T>
     class Matrix;
@@ -50,6 +51,7 @@ public:
         //TODO add exception
         T result = T();
         if(size == vec.size) {
+        #pragma omp parralel for
             for(std::size_t i = 0; i < size; ++i) {
                 result += (*this)[i]*vec[i];
             }
@@ -58,6 +60,7 @@ public:
     }
 
     Vector<T>& operator*=(const T& scalar) {
+        #pragma omp parralel for
         for (std::size_t i = 0; i < size; ++i) data[i] *= scalar;
         return *this;
     }
@@ -75,6 +78,7 @@ public:
 
     Vector<T>& operator+=(const Vector<T>& vec) {
         if(size == vec.size) {
+            #pragma omp parralel for
             for(std::size_t i = 0; i < size; ++i) {
                 (*this)[i] += vec[i];
             }
@@ -89,6 +93,7 @@ public:
 
     Vector<T>& operator-=(const Vector<T>& vec) {
         if(size == vec.size) {
+            #pragma omp parralel for
             for(std::size_t i = 0; i < size; ++i) {
                 (*this)[i] -= vec[i];
             }
@@ -117,6 +122,7 @@ public:
         return std::sqrt(sumPow2);
     }
 
+    // T* data() {return data.data();}
     ~Vector() {}
 
     friend void swap(Vector<T>&& a, Vector<T>&& b) {
@@ -125,6 +131,7 @@ public:
     }
 
     friend std::ostream& operator<< (std::ostream& fout, const Vector<T>& vec) {
+        #pragma omp parralel for
         for (std::size_t i = 0; i < vec.size; ++i) fout << vec[i] << " ";
         fout << std::endl;
         return fout;
