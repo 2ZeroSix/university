@@ -213,7 +213,7 @@ public class GUI extends JFrame implements Runnable {
         createMenu();
     }
 
-    public void createMenu() {
+    private void createMenu() {
         JMenuBar menu = new JMenuBar();
         menu.setOpaque(true);
         menu.setBackground(secondaryA3);
@@ -235,7 +235,7 @@ public class GUI extends JFrame implements Runnable {
         setVisible(true);
     }
 
-    public void startMainMenu() {
+    private void startMainMenu() {
         remove(currentPanel);
         currentPanel = new startPanel();
         add(currentPanel);
