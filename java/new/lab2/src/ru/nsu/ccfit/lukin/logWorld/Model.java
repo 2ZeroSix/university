@@ -4,10 +4,10 @@ package ru.nsu.ccfit.lukin.logWorld;
  * Created by dzs on 22.03.17.
  */
 public class Model {
-    public static enum Point {
-        EMPTY(' '),
-        SHADED('S'),
-        CURRENT('C');
+    public enum Point {
+        EMPTY('_'),
+        SHADED('#'),
+        CURRENT('*');
         char ch;
         Point(char c) {
             ch = c;

@@ -21,12 +21,9 @@ public class Teleport implements Command {
             int y = Integer.parseInt(iterator.next());
             Model model = context.getModel();
             if (model == null) throw new CommandException("model isn't initialized");
-            int prevX = model.getColon();
-            int prevY = model.getRow();
             model.setColon(x);
             model.setRow(y);
-            context.updateAt(prevY, prevX);
-            context.updateAt(y, x);
+            context.updateAll();
         } catch (Throwable e) {
             if (e.getClass().equals(CommandException.class)) {
                 throw e;

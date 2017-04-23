@@ -19,7 +19,7 @@ public class Draw implements Command {
             if (model == null) throw new CommandException("model isn't initialized");
             model.setDrawable(true);
             model.setPoint(model.getRow(), model.getColon(), Model.Point.SHADED);
-            context.updateAt(model.getRow(), model.getColon());
+            context.updateAll();
         } catch (Throwable e) {
             if (e.getClass().equals(CommandException.class)) {
                 throw e;

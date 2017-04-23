@@ -9,7 +9,8 @@ import java.io.*;
  */
 public class MainRoutines {
     public static void main(String[] args) {
-        Interpreter interpreter = new Interpreter();
+        Interpreter interpreter = null;
+        interpreter = new Interpreter();
         interpreter.run();
     }
 }
