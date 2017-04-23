@@ -6,7 +6,7 @@
 int main() {
     srand(time(NULL));
     FILE* fd[2];
-    p2open("sort -n", fd);
+    if (p2open("sort -n", fd) == -1) return 1;
     for (int i = 0; i < 100; ++i) {
         fprintf(fd[0], "%d\n", rand()%100);
     }
@@ -15,9 +15,9 @@ int main() {
         for (int j = 0; j < 10; ++j) {
             int num;
             fscanf(fd[1], "%d", &num);
-            fprintf(stdout, "%4d ", num);
+            fprintf(stdout, "%3d ", num);
         }
-        fputs("\n", stdout);
+        fprintf(stdout, "\n");
     }
     p2close(fd);
     return 0;

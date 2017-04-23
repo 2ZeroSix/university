@@ -43,9 +43,27 @@ int multiplexRead(int fileCount, char** filenames) {
     size_t* bufOffset = (size_t*)calloc(fileCount, sizeof(size_t));
 
     char** buffers = (char**)calloc(fileCount, sizeof(char*));
-    for (int i = 0; i < fileCount; ++i) 
+    if (buffers == NULL) {
+        perror("can't allocate buffers");
+        for (int i = 0; i < fileCount; ++i) 
+            close(files[i]);
+        free(files);
+        return -1;
+    }
+    for (int i = 0; i < fileCount; ++i) {
         buffers[i] = (char*) calloc(MPR_BUF_SIZE, sizeof(char));
-
+        if (buffers[i] == NULL) {
+            perror("can't allocate buffers");
+            free(files);                
+            for (int j = 0; j < i; ++j)
+                free(buffers[i]);
+            free(buffers);
+            for (int i = 0; i < fileCount; ++i)
+                close(files[i]);
+            free(files);
+            break;
+        }
+    }
     int check = 1;
     while (check) {
         check = 0;

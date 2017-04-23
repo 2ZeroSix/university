@@ -58,11 +58,27 @@ int main(int argc, char** argv) {
         perror("Error while setting SIGQUIT");
         return -1;
     }
-    wint_t wc;
-    while(read(0, &wc, sizeof(wc)) > 0) {
-        if (wc == DEL_SEQUENCE) {
-            write(1, "\a", sizeof("\a"));
-            ++deleteCouter;
+    int c;
+    int status = 0;
+    while((c = fgetc(stdin)) != EOF) {
+        switch(c) {
+            case 27:
+                status = 1;
+                break;
+            case 91:
+                status = status == 1 ? 2 : 0;
+                break;
+            case 51:
+                status = status == 2 ? 3 : 0;
+                break;
+            case 126:
+                if (status == 3) {
+                    write(1, "\a", sizeof("\a"));
+                    ++deleteCouter;
+                }
+                status = 0;
+                break;
+            default: status = 0;
         }
     }
     finalize(1);

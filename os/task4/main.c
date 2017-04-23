@@ -1,7 +1,55 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "fifo.h"
-#include "lifo.h"
+#include <string.h>
+
+typedef struct _QueueNode {
+    char* data;
+    struct _QueueNode* next;
+} QueueNode;
+
+typedef struct _Queue {
+    QueueNode* head;
+    QueueNode* tail;
+} Queue;
+
+Queue* initQueue() {
+    return (Queue*)calloc(1, sizeof(Queue));
+}
+
+void pushQueue(Queue* que, char* data) {
+    if (!que)       return;
+    if (!que->head) {
+        que->head = que->tail = (QueueNode*)calloc(1, sizeof(QueueNode));
+    } else {
+        que->tail = que->tail->next = (QueueNode*)calloc(1, sizeof(QueueNode));
+    }
+    que->tail->data = data;
+}
+
+char* popQueue(Queue* que) {
+    if (!que)       return NULL;
+    if (!que->head) return NULL;
+    char* retVal = que->head->data;
+    QueueNode* tmp = que->head;
+    if (que->head == que->tail) que->tail = NULL;
+    que->head = que->head->next;
+    free(tmp);
+    return retVal;
+}
+
+void freeQueue(Queue** que) {
+    if (!que)       return;
+    if (!*que)       return;
+    QueueNode *cur = (*que)->head;
+    while(cur) {
+        QueueNode *tmp = cur;
+        cur = cur->next;
+        free(tmp->data);
+        free(tmp);
+    }
+    free(*que);
+}
+
 
 char* readString(FILE* fin) {
     size_t length = 255;
@@ -17,7 +65,7 @@ char* readString(FILE* fin) {
              str[realLength - 1] != '\n' &&
              !feof(fin)) {
             offset = length-1;
-            length = length*2 + 1;
+            length = length * 3 / 2;
             str = realloc(str, length);
         } else {
             if (str[realLength - 1] == '\n') str[realLength - 1] = '\0';
@@ -27,25 +75,17 @@ char* readString(FILE* fin) {
     return str;
 }
 
-#define Main(Queue, Init, Push, Pop, Free) {\
-    Queue* queue = Init(char*);\
-    char* str;\
-    while((str = readString(stdin))) {\
-        if(str[0] == '.') break;\
-        Push(queue, &str);\
-    }\
-    while(Pop(queue, &str) == 0) {\
-        printf("%s\n", str);\
-        free(str);\
-    }\
-    Free(queue);\
-}
-
 int main(int argc, char** argv) {
-    if (argc == 2 && strcmp(argv[1], "lifo") == 0) {
-        Main(Lifo, initLifo, LifoPush, LifoPop, freeLifo);
-    } else {
-        Main(Fifo, initFifo, FifoPush, FifoPop, freeFifo);
+    Queue* queue = initQueue();
+    char* str;
+    while((str = readString(stdin))) {
+        if(str[0] == '.') break;
+        pushQueue(queue, str);
     }
+    while((str = popQueue(queue)) != NULL) {
+        printf("%s\n", str);
+        free(str);
+    }
+    freeQueue(&queue);
     return 0;
 }
