@@ -78,21 +78,20 @@ double* slauSolveIteration(double* mat,
     double* tmp = new double[size]();
     multMPIMatrixVector(mat, x, size, size, tmp);
     vectorAssignSub(result, size, tmp);
-    double tauSign = 1.;
     if (procRank == 0) {
         epsilon = epsilon*epsilon;
         double prevCriterion = norm2(tmp, size) / norm2(result, size);
         double criterion = prevCriterion;
         while(true) {
             if ( criterion < epsilon ) {
-                tauSign = 0.;
-                MPI::COMM_WORLD.Bcast(&tauSign, 1, MPI::DOUBLE, 0);
+                tau = 0.;
+                MPI::COMM_WORLD.Bcast(&tau, 1, MPI::DOUBLE, 0);
                 break;
             } else if ( criterion > prevCriterion ) {
-                tauSign *= 0.1;
+                tau *= 0.1;
             }
-            MPI::COMM_WORLD.Bcast(&tauSign, 1, MPI::DOUBLE, 0);
-            vectorMulScalar(tmp, size, tau * tauSign);
+            MPI::COMM_WORLD.Bcast(&tau, 1, MPI::DOUBLE, 0);
+            vectorMulScalar(tmp, size, tau);
             vectorAssignSub(tmp, size, x);
             multMPIMatrixVector(mat, x, size, size, tmp);
             vectorAssignSub(result, size, tmp);
@@ -102,11 +101,11 @@ double* slauSolveIteration(double* mat,
         }
     } else {
         while(true) {
-            MPI::COMM_WORLD.Bcast(&tauSign, 1, MPI::DOUBLE, 0);
-            if (tauSign == 0.) {
+            MPI::COMM_WORLD.Bcast(&tau, 1, MPI::DOUBLE, 0);
+            if (tau == 0.) {
                 break;
             } else {
-                vectorMulScalar(tmp, size, tau * tauSign);
+                vectorMulScalar(tmp, size, tau);
                 vectorAssignSub(tmp, size, x);
                 multMPIMatrixVector(mat, x, size, size, tmp);
                 vectorAssignSub(result, size, tmp);

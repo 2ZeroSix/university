@@ -96,7 +96,6 @@ double* slauSolveIterationParallelVectors(  double* mat,
     double* tmp = new double[chunkSize]();
     multMPIMatrixMPIVector(mat, x, size, size, tmp);
     MPIVectorAssignSub(result, size, tmp);
-    double tauSign = 1.;
     epsilon = epsilon*epsilon;
     double prevCriterion = MPInorm2(tmp, size) / MPInorm2(result, size);
     double criterion = prevCriterion;
@@ -104,9 +103,9 @@ double* slauSolveIterationParallelVectors(  double* mat,
         if ( criterion < epsilon ) {
             break;
         } else if ( criterion > prevCriterion ) {
-            tauSign *= 0.1;
+            tau *= 0.1;
         }
-        MPIVectorMulScalar(tmp, size, tau * tauSign);
+        MPIVectorMulScalar(tmp, size, tau);
         MPIVectorAssignSub(tmp, size, x);
         multMPIMatrixMPIVector(mat, x, size, size, tmp);
         MPIVectorAssignSub(result, size, tmp);
