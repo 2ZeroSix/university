@@ -9,9 +9,9 @@ using namespace std;
 void multMatrixVector(const double* mat, const double* vec,
                          size_t rows, size_t colons,
                          double* res, bool setNull = true) {
-    if(setNull) fill_n(res, rows, 0);
     #pragma omp parallel for
     for (size_t row = 0; row < rows; ++row) {
+        if(setNull) res[row] = 0;
         for (size_t colon = 0; colon < colons; ++colon) {
             res[row] += mat[row*colons + colon] * vec[colon];
         }
@@ -54,11 +54,8 @@ double* slauSolveIteration(double* mat,
     double prevCriterion = norm2(tmp, size) / norm2(result, size);
     double criterion = prevCriterion;
     while(true) {
-        if ( criterion < epsilon ) {
-            break;
-        } else if ( criterion > prevCriterion ) {
-            tau *= 0.1;
-        }
+        if      ( criterion < epsilon )         break;
+        else if ( criterion > prevCriterion )   tau *= 0.1;
         vectorMulScalar(tmp, size, tau);
         vectorAssignSub(tmp, size, x);
         multMatrixVector(mat, x, size, size, tmp);
@@ -95,6 +92,11 @@ int main(int argc, char** argv) {
     size_t N = 200;
     double* mat = getMatrix(N);
     double* answer = getVector(N);
+    #pragma omp parallel
+    {
+        #pragma omp single
+        cout << "threads: " << omp_get_num_threads() << endl;
+    }
     cout << "real answer:" << endl;
     #pragma omp parallel for ordered
     for (int i = 0; i < N; ++i) {

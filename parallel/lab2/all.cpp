@@ -9,9 +9,9 @@ using namespace std;
 void multMatrixVector(const double* mat, const double* vec,
                          size_t rows, size_t colons,
                          double* res, bool setNull = true) {
-    if(setNull) fill_n(res, rows, 0);
-    #pragma omp parallel for
+    #pragma omp for
     for (size_t row = 0; row < rows; ++row) {
+        if(setNull) res[row] = 0;
         for (size_t colon = 0; colon < colons; ++colon) {
             res[row] += mat[row*colons + colon] * vec[colon];
         }
@@ -19,26 +19,38 @@ void multMatrixVector(const double* mat, const double* vec,
 }
 
 void vectorAssignSub(double* other, size_t size, double* res) {
-    #pragma omp parallel for
+    #pragma omp for
     for (size_t i = 0; i < size; ++i) {
         res[i] -= other[i];
     }
 }
 
 void vectorMulScalar(double* vec, size_t size, double scalar) {
-    #pragma omp parallel for
+    #pragma omp for
     for (size_t i = 0; i < size; ++i) {
         vec[i] *= scalar;
     }
 }
 
-double norm2(double* vec, size_t size) {
-    double sum = 0;
-    #pragma omp parallel for reduction(+:sum)
+void norm2(double* vec, size_t size, double& sum) {
+    #pragma omp for reduction(+:sum)
     for (size_t i = 0; i < size; ++i) {
         sum += vec[i]*vec[i];
     }
-    return sum;
+}
+
+void criterion(double* x, double* res, size_t size, double &crit, double &sum) {
+    #pragma omp master
+    {
+        sum = 0;
+        crit = 0;
+    }
+    norm2(x, size, crit);
+    norm2(res, size, sum);
+    #pragma omp master atomic
+    {
+        crit /= sum;
+    }
 }
 
 double* slauSolveIteration(double* mat,
@@ -49,28 +61,29 @@ double* slauSolveIteration(double* mat,
     double* x   = new double[size]();
     double* tmp = new double[size]();
     epsilon = epsilon*epsilon;
-    multMatrixVector(mat, x, size, size, tmp);
-    vectorAssignSub(result, size, tmp);
-    #pragma omp parallel private(tau)
+    double prevCriterion;
+    double crit;
+    double sum;
+    #pragma omp parallel firstprivate(tau)
     {
-        double prevCriterion = norm2(tmp, size) / norm2(result, size);
-        double criterion = prevCriterion;
+        #pragma omp master
+        cout << "tau: " << tau << endl;
+        multMatrixVector(mat, x, size, size, tmp);
+        vectorAssignSub(result, size, tmp);
+        criterion(x, result, size, crit, sum);
         while(true) {
-            if ( criterion < epsilon ) {
-                break;
-            } else if ( criterion > prevCriterion ) {
-                tau *= 0.1;
-            }
             vectorMulScalar(tmp, size, tau);
             vectorAssignSub(tmp, size, x);
             multMatrixVector(mat, x, size, size, tmp);
             vectorAssignSub(result, size, tmp);
-            prevCriterion = criterion;
-            criterion = norm2(tmp, size) / norm2(result, size);
-            #pragma omp single
-            {
-                cout << "criterion: " << criterion << endl;
-            }
+            #pragma omp master
+            prevCriterion = crit;
+            // #pragma omp barrier
+            criterion(x, result, size, crit, sum);
+            #pragma omp master
+            cout << "crit: " << crit << endl;
+            if ( crit < epsilon ) break;
+            else if ( crit > prevCriterion ) tau *= 0.1;
         }
     }
     delete[] tmp;
@@ -94,7 +107,10 @@ double* getVector(size_t N) {
 
 double* getResult(const double* mat, const double* answer, size_t N) {
     double* result = new double[N]();
-    multMatrixVector(mat, answer, N, N, result, false);
+    #pragma omp parallel
+    {
+        multMatrixVector(mat, answer, N, N, result, false);
+    }
     return result;
 }
 
@@ -102,24 +118,26 @@ int main(int argc, char** argv) {
     size_t N = 10;
     double* mat = getMatrix(N);
     double* answer = getVector(N);
-    cout << "real answer:" << endl;
-    #pragma omp parallel for ordered
+    #pragma omp parallel
+    {
+        #pragma omp single
+        cout << "threads: " << omp_get_num_threads() << endl;
+    }
     for (int i = 0; i < N; ++i) {
-        #pragma omp ordered
-        {
-            cout << answer[i] << " ";
-        }
+        for (int j = 0; j < N; ++j)
+            cout << mat[i*N + j] << " ";
+        cout << endl;
+    }
+    cout << "real answer:" << endl;
+    for (int i = 0; i < N; ++i) {
+        cout << answer[i] << " ";
     }
     cout << endl;
     double* result = getResult(mat, answer, N);
     double* x = slauSolveIteration(mat, result, N);
     cout << "answer:" << endl;
-    #pragma omp parallel for ordered
     for (int i = 0; i < N; ++i) {
-        #pragma omp ordered
-        {
-            cout << x[i] << " ";
-        }
+        cout << x[i] << " ";
     }
     cout << endl;
     delete[] mat;
