@@ -1,28 +1,17 @@
 #include <iostream>
-#include <cmath>
 #include <mpi.h>
-#include <cstdlib>
+#include <limits>
+using namespace std;
 
-//скалярное произведение векторов
-double  mul_v(double*  f, double* s, int size)
-{
+double  dotProduct(double*  f, double* s, int size) {
         double res = 0;
-
         for (int i = 0; i < size; i++)
                 res += f[i] * s[i];
         return res;
 }
 
-
-//норма вектора
-double squareNorm(double* vec, int size)
-{
-        double res = 0;
-
-        for (int i = 0; i < size; i++)
-                res += vec[i] * vec[i];
-
-        return res;
+double squareNorm(double* vec, int size) {
+        return dotProduct(vec, vec, size);
 }
 
 size_t getChunkSize(size_t realSize, int rank, int size) {
@@ -41,41 +30,44 @@ double* slauSolveIteration(double* matrix,
     int procSize = MPI::COMM_WORLD.Get_size();
 
     double* x = new double[N]();
-    //инициализация части вычислений для каждого процесса и значения нормы res_norm для 0 процесса
-    double* pr = new double[recv_counts[procRank]];;
+    double* part = new double[recv_counts[procRank]];
     double pr_norm;
     double res_norm;
 
-    //для 0 процесса вычисляем норму b
+    // computing square of the b norm
     double b_norm;
     if (procRank == 0)
         b_norm = squareNorm(b, N);
 
-    int check = 0;
     double crit;
-    double prevcrit = 99999999999999999999999999999;
-    epsilon = epsilon*epsilon;
+    double prevcrit = numeric_limits<double>::max();
+    epsilon *= epsilon;
     while (true) {
         pr_norm = 0;
 
         for (int i = 0; i < recv_counts[procRank]; i++) {
-            pr[i] = mul_v(matrix + i * N, x, N) - b[displs[procRank] + i];
-            pr_norm += pr[i] * pr[i];
+            part[i] = dotProduct(matrix + i * N, x, N) - b[displs[procRank] + i];
+            pr_norm += part[i] * part[i];
         }
 
-        MPI::COMM_WORLD.Reduce(&pr_norm, &res_norm, 1, MPI_DOUBLE, MPI_SUM, 0);
+        // check criterion
+        MPI::COMM_WORLD.Reduce(&pr_norm, &res_norm, 1, MPI::DOUBLE, MPI_SUM, 0);
+        if (procRank == 0) {
+            crit = res_norm / b_norm;
+            if      (crit < epsilon)    tau  = 0.0;
+            else if (crit > prevcrit)   tau *= 0.1;
+            prevcrit = crit;
+        }
+        MPI::COMM_WORLD.Bcast(&tau, 1, MPI::DOUBLE, 0);
+        if (tau == 0.) break;
 
-        if (procRank == 0 && (crit = res_norm / b_norm) < epsilon) check = 1;
-        MPI::COMM_WORLD.Bcast(&check, 1, MPI::INT, 0);
 
-        if (check == 1)         break;
-        if (crit > prevcrit)    tau *= 0.1;
-        prevcrit = crit;
         for (int i = 0; i < recv_counts[procRank]; i++)
-            pr[i] = x[displs[procRank] + i] - tau * pr[i];
+            part[i] = x[displs[procRank] + i] - tau * part[i];
 
-        MPI::COMM_WORLD.Allgatherv(pr, recv_counts[procRank], MPI::DOUBLE, x, recv_counts, displs, MPI::DOUBLE);
+        MPI::COMM_WORLD.Allgatherv(part, recv_counts[procRank], MPI::DOUBLE, x, recv_counts, displs, MPI::DOUBLE);
     }
+    delete[] part;
     return x;
 }
 
@@ -85,24 +77,22 @@ int main(int argc, char** argv) {
 
     int procRank = MPI::COMM_WORLD.Get_rank();
     int procSize = MPI::COMM_WORLD.Get_size();
-    //размер матрицы
+
+    double start, computing, finish;
+    if (procRank == 0) start = MPI::Wtime();
+
     int N = 4096;
-
-
-    double start, finish;
-
-    if (procRank == 0)
-        start = MPI::Wtime();
 
     int* recv_counts = new int[procSize];
     int* displs = new int[procSize];
 
+    // init tables for MPI exchanging
     for (int i = 0; i < procSize; i++) {
         recv_counts[i] = getChunkSize(N, i, procSize);
         displs[i] = (i == 0) ? 0 : displs[i - 1] + recv_counts[i - 1];
     }
 
-    //инициализация части матрицы для данного процесса, далее инициализация вектора b и начального значения вектора x
+    // init matrix
     double* matrix = new double[recv_counts[procRank] * N];
     for (int i = 0; i < recv_counts[procRank]; i++) {
         for (int j = 0; j < N; j++)
@@ -112,17 +102,25 @@ int main(int argc, char** argv) {
                 matrix[i*N + j] = 1;
     }
 
+    // init result vector
     double* b = new double[N];
     for (int i = 0; i < N; i++)
         b[i] = N + 1;
 
+    if (procRank == 0) computing = MPI::Wtime();
+
     double* x = slauSolveIteration(matrix, b, N, recv_counts, displs);
 
     if (procRank == 0) {
-        finish = MPI_Wtime();
-        std::cout << "Time taken: " << finish - start << std::endl;
+        finish = MPI::Wtime();
+        std::cout << "Time taken: " << finish - start << "; Only computing: " << finish - computing << std::endl;
     }
 
+    delete[] x;
+    delete[] recv_counts;
+    delete[] displs;
+    delete[] matrix;
+    delete[] b;
     MPI::Finalize();
     return 0;
 }

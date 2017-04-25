@@ -1,138 +1,158 @@
-#include <vector>
 #include <iostream>
-#include <cmath>
+#include <limits>
 #include <mpi.h>
-#include <cstdlib>
-#include <cstring>
 
-
-//скалярное произведение векторов
-double  mul_v(double*  f, double* s, int size)
-{
+using namespace std;
+double  dotProduct(double*  f, double* s, int size) {
         double res = 0;
-
         for (int i = 0; i < size; i++)
                 res += f[i] * s[i];
         return res;
 }
 
 
+double squareNorm(double* vec, int size) {
+        return dotProduct(vec, vec, size);
+}
 
-int main(int argc, char** argv)
-{
-    MPI_Init(&argc, &argv);
+size_t getChunkSize(size_t realSize, int procRank, int procSize) {
+    return realSize / procSize +
+            (procRank ? (realSize % procSize > procRank - 1 ? 1 : 0) : 0);
+}
+size_t maxChunkSize(size_t realSize, int procSize) {
+    return realSize / procSize + (realSize % procSize ? 1 : 0);
+}
 
-    int rank, size;
-
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-    //размер матрицы
-    int N = 32000;
-
-    //массивы количества обрабатываемых элементов и смещений по строке матрицы
-        int* recv_counts = (int*)malloc(sizeof(int) * size);
-        int* displs = (int*)malloc(sizeof(int) * size);
-
-        for (int i = 0; i < size; i++)
-        {
-                recv_counts[i] = N / size + ((i < (N % size)) ? 1 : 0);
-                displs[i] = (i == 0) ? 0 : displs[i - 1] + recv_counts[i - 1];
-        }
-
-    //инициализация части матрицы для данного процесса, далее инициализация частей вектора b и начального значения вектора x
-    double** matrix = (double**)malloc(sizeof(double*) * recv_counts[rank]);
-    for (int i = 0; i < recv_counts[rank]; i++)
-    {
-        matrix[i] = (double*)malloc(sizeof(double) * N);
-        for (int j = 0; j < N; j++)
-            if (displs[rank] + i  == j)
-                matrix[i][j] = 2;
-            else
-                matrix[i][j] = 1;
-    }
-
-    //максимальный размер х для пересылки между процессами, выделение памяти для части b, подсчет куска для нормы b
-    int x_size = N / size + ((N % size > 0) ? 1 : 0);
-    double* x = (double*)calloc(x_size, sizeof(double));
-
-    double* b = (double*)malloc(sizeof(double) * recv_counts[rank]);
-    double b_val = 0;
-    for (int i = 0; i < recv_counts[rank]; i++)
-    {
+double* slauSolveIteration(double* matrix,
+                                  double* b,
+                                  size_t N,
+                                  int* recv_counts,
+                                  int* displs,
+                                  double epsilon = 0.00001,
+                                  double tau = 0.01) {
+    int procRank = MPI::COMM_WORLD.Get_rank();
+    int procSize = MPI::COMM_WORLD.Get_size();
+    double part_b_norm = 0;
+    for (int i = 0; i < recv_counts[procRank]; i++) {
         b[i] = N + 1;
-        b_val += (b[i] * b[i]);
+        part_b_norm += (b[i] * b[i]);
     }
+    int x_size = maxChunkSize(N, procSize);
+    double* x = new double[x_size]();
 
-    //нужно собрать норму вектора b в нулевом процессе
-    double res_b_val;
-    MPI_Reduce(&b_val, &res_b_val, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-    //инициализация мессива, в который в конце соберем решение
-    double* result;
-        if (rank == 0)
-    {
-            result = (double*)malloc(sizeof(double) * N);
-        res_b_val = sqrt(res_b_val);
-    }
-    //инициализация части вычислений для каждого процесса, части ее нормы, а так же будущей суммы этих норм
-    double* pr = (double*)calloc(recv_counts[rank], sizeof(double));
-    double pr_val;
-    double res_val;
+    double b_norm;
+    MPI::COMM_WORLD.Reduce(&part_b_norm, &b_norm, 1, MPI::DOUBLE, MPI::SUM, 0);
 
-    //для выхода с помощью Bcast
-    int check = 0;
+    double* pr = new double[recv_counts[procRank]];
+    double pr_norm;
+    double res_norm;
 
-    //вычисляем, кому будем отправлять кусочек x, от кого получать
-    int whom_send = (rank - 1 >= 0) ? rank - 1 : size - 1;
-        int fr_wh_recv = (rank + 1 < size) ? rank + 1 : 0;
+    int whom_send = (procRank - 1 >= 0) ? procRank - 1 : procSize - 1;
+    int fr_wh_recv = (procRank + 1 < procSize) ? procRank + 1 : 0;
 
-    while (true)
-    {
-        pr_val = 0;
+    double crit;
+    double prevcrit = numeric_limits<double>::max();
+    epsilon *= epsilon;
+    while (true) {
+        pr_norm = 0;
 
-        int xp_size = recv_counts[rank];
+        int xp_size = recv_counts[procRank];
 
-        for (int i = 0; i < size; i++)
-        {
-            //получив новый кусочек x, перемножаем его с частью матрицы для всех доступных строк
-            for (int j = 0; j < recv_counts[rank]; j++)
-                pr[j] += mul_v(matrix[j] + displs[(rank + i) % size], x, xp_size);
+        for (int i = 0; i < procSize; i++) {
+            for (int j = 0; j < recv_counts[procRank]; j++)
+                pr[j] += dotProduct(matrix + j*N + displs[(procRank + i) % procSize], x, xp_size);
 
-            xp_size = recv_counts[(rank + i + 1) % size];
+            xp_size = recv_counts[(procRank + i + 1) % procSize];
 
-            if (size > 1)
-                MPI_Sendrecv_replace(x, x_size, MPI_DOUBLE, whom_send, 2, fr_wh_recv, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            if (procSize > 1)
+                MPI::COMM_WORLD.Sendrecv_replace(x, x_size, MPI::DOUBLE, whom_send, 0, fr_wh_recv, 0);
         }
 
-        //довычисляем pr для подсчета нормы, считаем часть норм
-        for (int i = 0; i < recv_counts[rank]; i++)
+        for (int i = 0; i < recv_counts[procRank]; i++)
         {
             pr[i] -=  b[i];
-            pr_val += (pr[i] * pr[i]);
+            pr_norm += (pr[i] * pr[i]);
         }
 
-        MPI_Reduce(&pr_val, &res_val, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        // check criterion
+        MPI::COMM_WORLD.Reduce(&pr_norm, &res_norm, 1, MPI::DOUBLE, MPI_SUM, 0);
+        if (procRank == 0) {
+            crit = res_norm / b_norm;
+            if      (crit < epsilon)    tau  = 0.0;
+            else if (crit > prevcrit)   tau *= 0.1;
+            prevcrit = crit;
+        }
+        MPI::COMM_WORLD.Bcast(&tau, 1, MPI::DOUBLE, 0);
+        if (tau == 0.) break;
 
-        if (rank == 0 && sqrt(res_val) / res_b_val < 1.0/1000000000)
-            check = 1;
-
-        MPI_Bcast(&check, 1, MPI_INT, 0, MPI_COMM_WORLD);
-        if (check == 1)
-            break;
-
-        for (int i = 0; i < recv_counts[rank]; i++)
+        for (int i = 0; i < recv_counts[procRank]; i++)
         {
-            x[i] = x[i] - 0.00001 * pr[i];
+            x[i] = x[i] - tau * pr[i];
             pr[i] = 0;
         }
     }
+    delete[] pr;
+    return x;
+}
 
-    MPI_Gatherv(x, recv_counts[rank], MPI_DOUBLE, result, recv_counts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+int main(int argc, char** argv) {
+    MPI::Init(argc, argv);
 
-    if (rank == 0)
-        std::cout << "result[0]=" << result[0] << std::endl;
+    int procRank = MPI::COMM_WORLD.Get_rank();
+    int procSize = MPI::COMM_WORLD.Get_size();
 
-    MPI_Finalize();
+    double start, computing, finish;
+    if (procRank == 0) start = MPI::Wtime();
+
+
+    int N = 4096;
+
+    int* recv_counts = new int[procSize];
+    int* displs = new int[procSize];
+
+    for (int i = 0; i < procSize; i++) {
+        recv_counts[i] = getChunkSize(N, i, procSize);
+        displs[i] = (i == 0) ? 0 : displs[i - 1] + recv_counts[i - 1];
+    }
+
+    double* matrix = new double[recv_counts[procRank] * N];
+    for (int i = 0; i < recv_counts[procRank]; i++) {
+        for (int j = 0; j < N; j++)
+            if (displs[procRank] + i == j)
+                matrix[i*N + j] = 2.;
+            else
+                matrix[i*N + j] = 1.;
+    }
+
+ 
+    double* b = new double[recv_counts[procRank]];
+    for (int i = 0; i < recv_counts[procRank]; i++) {
+        b[i] = N + 1;
+    }
+
+    double* result = 0;
+    if (procRank == 0) {
+        result = new double[N];
+    }
+
+    if (procRank == 0) computing = MPI::Wtime();
+
+    double* x = slauSolveIteration(matrix, b, N, recv_counts, displs);
+    MPI::COMM_WORLD.Gatherv(x, recv_counts[procRank], MPI::DOUBLE, result, recv_counts, displs, MPI::DOUBLE, 0);
+
+    if (procRank == 0) {
+        finish = MPI::Wtime();
+        std::cout << "Time taken: " << finish - start << "; Only computing: " << finish - computing << std::endl;
+    }
+
+    delete[] x;
+    delete[] recv_counts;
+    delete[] displs;
+    delete[] matrix;
+    delete[] b;
+    delete[] result;
+
+    MPI::Finalize();
     return 0;
 }

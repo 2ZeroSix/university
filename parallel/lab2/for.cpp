@@ -1,124 +1,82 @@
-#include <algorithm>
-#include <cmath>
 #include <iostream>
-#include <utility>
+#include <limits>
 #include <omp.h>
 using namespace std;
 
+double dotProduct(double* f, double* s, int N) {
+    double res = 0;
 
-void multMatrixVector(const double* mat, const double* vec,
-                         size_t rows, size_t colons,
-                         double* res, bool setNull = true) {
-    #pragma omp parallel for
-    for (size_t row = 0; row < rows; ++row) {
-        if(setNull) res[row] = 0;
-        for (size_t colon = 0; colon < colons; ++colon) {
-            res[row] += mat[row*colons + colon] * vec[colon];
-        }
-    }
+    for (int i = 0; i < N; i++)
+        res += f[i]*s[i];
+
+    return res;
 }
 
-void vectorAssignSub(double* other, size_t size, double* res) {
-    #pragma omp parallel for
-    for (size_t i = 0; i < size; ++i) {
-        res[i] -= other[i];
-    }
-}
-
-void vectorMulScalar(double* vec, size_t size, double scalar) {
-    #pragma omp parallel for
-    for (size_t i = 0; i < size; ++i) {
-        vec[i] *= scalar;
-    }
-}
-
-double norm2(double* vec, size_t size) {
-    double sum = 0;
-    #pragma omp parallel for reduction(+:sum)
-    for (size_t i = 0; i < size; ++i) {
-        sum += vec[i]*vec[i];
-    }
-    return sum;
-}
-
-double* slauSolveIteration(double* mat,
-                                  double* result,
-                                  size_t size,
-                                  double epsilon = 0.000000001,
+double* slauSolveIteration(double* matrix,
+                                  double* b,
+                                  size_t N,
+                                  double epsilon = 0.00001,
                                   double tau = 0.01) {
-    double* x   = new double[size]();
-    double* tmp = new double[size]();
-    multMatrixVector(mat, x, size, size, tmp);
-    vectorAssignSub(result, size, tmp);
-    epsilon = epsilon*epsilon;
-    double prevCriterion = norm2(tmp, size) / norm2(result, size);
-    double criterion = prevCriterion;
+    double bVal = 0;
+    #pragma omp parallel for reduction(+:bVal)
+    for (int i = 0; i < N; ++i) bVal += b[i] * b[i];
+
+    double* x = new double[N];
+    double* tmpRes = new double[N];
+    double tmpVal;
+
+    epsilon *= epsilon;
+    double crit;
+    double prevcrit = numeric_limits<double>::max();
     while(true) {
-        if      ( criterion < epsilon )         break;
-        else if ( criterion > prevCriterion )   tau *= 0.1;
-        vectorMulScalar(tmp, size, tau);
-        vectorAssignSub(tmp, size, x);
-        multMatrixVector(mat, x, size, size, tmp);
-        vectorAssignSub(result, size, tmp);
-        prevCriterion = criterion;
-        criterion = norm2(tmp, size) / norm2(result, size);
+        tmpVal = 0;
+        #pragma omp parallel for reduction(+:tmpVal)
+            for (int i = 0; i < N; i++)
+            {
+                tmpRes[i] = dotProduct(matrix + i*N, x, N) - b[i];
+                tmpVal += tmpRes[i] * tmpRes[i];
+            }
+        crit = tmpVal / bVal;
+        if (crit < epsilon) break;
+        if (crit > prevcrit) tau *= 0.1;
+        prevcrit = crit;
+        #pragma omp parallel for
+            for (int i = 0; i < N; ++i)
+            {
+                x[i] = x[i] - tau*tmpRes[i];
+                tmpRes[i] = 0;
+            }
+
     }
-    delete[] tmp;
+    delete[] tmpRes;
     return x;
 }
-double* getMatrix(size_t N) {
-    double* mat = new double[N*N]();
-    #pragma omp parallel for
-    for (size_t i = 0; i < N*N; ++i) mat[i] = 1.;
-    #pragma omp parallel for
-    for (size_t i = 0; i < N; ++i) mat[i*N + i] = 2.;
-    return mat;
-}
 
-double* getVector(size_t N) {
-    double* answer = new double[N]();
-    #pragma omp parallel for
-    for(size_t i = 0; i < N; ++i) answer[i] = 1. / (i + 1.);
-    return answer;
-}
+int main(void) {
+    int N = 32000;
 
-double* getResult(const double* mat, const double* answer, size_t N) {
-    double* result = new double[N]();
-    multMatrixVector(mat, answer, N, N, result, false);
-    return result;
-}
+    double* matrix = new double[N * N];
+    double* b = new double[N];
 
-int main(int argc, char** argv) {
-    size_t N = 200;
-    double* mat = getMatrix(N);
-    double* answer = getVector(N);
-    #pragma omp parallel
-    {
-        #pragma omp single
-        cout << "threads: " << omp_get_num_threads() << endl;
+    double st, cm, fn;
+    // int tn = omp_get_num_threads();
+
+    st = omp_get_wtime();
+
+    #pragma omp parallel for 
+    for (int i = 0; i < N; i++) {
+        b[i] = N + 1;
+        for (int j = 0; j < N; j++)
+            matrix[i * N + j] = (i == j)? 2 : 1;
     }
-    cout << "real answer:" << endl;
-    #pragma omp parallel for ordered
-    for (int i = 0; i < N; ++i) {
-        #pragma omp ordered
-        {
-            cout << answer[i] << " ";
-        }
-    }
-    cout << endl;
-    double* result = getResult(mat, answer, N);
-    double* x = slauSolveIteration(mat, result, N);
-    cout << "answer:" << endl;
-    #pragma omp parallel for ordered
-    for (int i = 0; i < N; ++i) {
-        #pragma omp ordered
-        {
-            cout << x[i] << " ";
-        }
-    }
-    cout << endl;
-    delete[] mat;
-    delete[] answer;
-    delete[] result;
+    cm = omp_get_wtime();
+
+    double* x = slauSolveIteration(matrix, b, N);
+
+    fn = omp_get_wtime();
+    cout << "time = " << fn - st << "; computing: " << fn - cm << endl;
+    delete[] matrix;
+    delete[] b;
     delete[] x;
+    return 0;
 }
