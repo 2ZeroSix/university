@@ -31,21 +31,19 @@ double* slauSolveIteration(double* matrix,
     while(true) {
         tmpVal = 0;
         #pragma omp parallel for reduction(+:tmpVal)
-            for (int i = 0; i < N; i++)
-            {
-                tmpRes[i] = dotProduct(matrix + i*N, x, N) - b[i];
-                tmpVal += tmpRes[i] * tmpRes[i];
-            }
+        for (int i = 0; i < N; i++) {
+            tmpRes[i] = dotProduct(matrix + i*N, x, N) - b[i];
+            tmpVal += tmpRes[i] * tmpRes[i];
+        }
         crit = tmpVal / bVal;
         if (crit < epsilon) break;
         if (crit > prevcrit) tau *= 0.1;
         prevcrit = crit;
         #pragma omp parallel for
-            for (int i = 0; i < N; ++i)
-            {
-                x[i] = x[i] - tau*tmpRes[i];
-                tmpRes[i] = 0;
-            }
+        for (int i = 0; i < N; ++i) {
+            x[i] = x[i] - tau*tmpRes[i];
+            tmpRes[i] = 0;
+        }
 
     }
     delete[] tmpRes;
