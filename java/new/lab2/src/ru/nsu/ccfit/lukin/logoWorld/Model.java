@@ -1,9 +1,14 @@
-package ru.nsu.ccfit.lukin.logWorld;
+package ru.nsu.ccfit.lukin.logoWorld;
+
+import java.util.Arrays;
 
 /**
- * Created by dzs on 22.03.17.
+ * logoworld model (model in MVC)
  */
 public class Model {
+    /**
+     * point in logoworld model
+     */
     public enum Point {
         EMPTY('_'),
         SHADED('#'),
@@ -23,18 +28,26 @@ public class Model {
     }
     private int rows;
     private int colons;
-    private int row;
-    private int colon;
+    private int currentRow;
+    private int currentColon;
     private boolean drawable;
     private Point[][] map;
-    public Model(int rows, int colons, int row, int colon) {
+
+    /**
+     * init model
+     * @param rows
+     * @param colons
+     * @param currentRow
+     * @param currentColon
+     */
+    public Model(int rows, int colons, int currentRow, int currentColon) {
         this.rows = rows;
         this.colons = colons;
-        this.row = row;
-        this.colon = colon;
+        this.currentRow = currentRow;
+        this.currentColon = currentColon;
         map = new Point[rows][colons];
-        for (row = 0; row < rows; ++row) {
-            for (colon = 0; colon < colons; ++colon) {
+        for (int row = 0; row < rows; ++row) {
+            for (int colon = 0; colon < colons; ++colon) {
                 map[row][colon] = Point.EMPTY;
             }
         }
@@ -56,20 +69,20 @@ public class Model {
         this.colons = colons;
     }
 
-    public int getRow() {
-        return row;
+    public int getCurrentRow() {
+        return currentRow;
     }
 
-    public synchronized void setRow(int row) {
-        this.row = row;
+    public synchronized void setCurrentRow(int row) {
+        this.currentRow = row;
     }
 
-    public int getColon() {
-        return colon;
+    public int getCurrentColon() {
+        return currentColon;
     }
 
-    public synchronized void setColon(int colon) {
-        this.colon = colon;
+    public synchronized void setCurrentColon(int currentColon) {
+        this.currentColon = currentColon;
     }
 
     public boolean isDrawable() {
@@ -85,9 +98,9 @@ public class Model {
     }
 
     public Point getPoint(int row, int colon) {
-        return row == this.row && colon == this.colon ? Point.CURRENT : map[row][colon];
+        return row == this.currentRow && colon == this.currentColon ? Point.CURRENT : map[row][colon];
     }
-    public void setPoint(int row, int colon, Point p) {
-        if (drawable) map[row][colon] = p;
+    public void shadePoint(int row, int colon) {
+        if (drawable) map[row][colon] = Point.SHADED;
     }
 }

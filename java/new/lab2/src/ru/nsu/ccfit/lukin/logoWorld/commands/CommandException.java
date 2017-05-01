@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.lukin.logWorld.commands;
+package ru.nsu.ccfit.lukin.logoWorld.commands;
 
 /**
  * Created by dzs on 22.03.17.

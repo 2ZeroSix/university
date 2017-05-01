@@ -1,7 +1,7 @@
-package ru.nsu.ccfit.lukin.logWorld.commands;
+package ru.nsu.ccfit.lukin.logoWorld.commands;
 
-import ru.nsu.ccfit.lukin.logWorld.Interpreter;
-import ru.nsu.ccfit.lukin.logWorld.Model;
+import ru.nsu.ccfit.lukin.logoWorld.Interpreter;
+import ru.nsu.ccfit.lukin.logoWorld.Model;
 
 import java.util.Collection;
 
@@ -18,7 +18,7 @@ public class Draw implements Command {
             Model model = context.getModel();
             if (model == null) throw new CommandException("model isn't initialized");
             model.setDrawable(true);
-            model.setPoint(model.getRow(), model.getColon(), Model.Point.SHADED);
+            model.shadePoint(model.getCurrentRow(), model.getCurrentColon());
             context.updateAll();
         } catch (Throwable e) {
             if (e.getClass().equals(CommandException.class)) {

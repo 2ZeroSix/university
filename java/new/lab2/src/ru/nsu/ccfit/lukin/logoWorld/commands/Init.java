@@ -1,7 +1,7 @@
-package ru.nsu.ccfit.lukin.logWorld.commands;
+package ru.nsu.ccfit.lukin.logoWorld.commands;
 
-import ru.nsu.ccfit.lukin.logWorld.Interpreter;
-import ru.nsu.ccfit.lukin.logWorld.Model;
+import ru.nsu.ccfit.lukin.logoWorld.Interpreter;
+import ru.nsu.ccfit.lukin.logoWorld.Model;
 
 import java.util.Collection;
 import java.util.Iterator;

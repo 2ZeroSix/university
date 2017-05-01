@@ -1,7 +1,7 @@
-package ru.nsu.ccfit.lukin.logWorld.commands;
+package ru.nsu.ccfit.lukin.logoWorld.commands;
 
-import ru.nsu.ccfit.lukin.logWorld.Interpreter;
-import ru.nsu.ccfit.lukin.logWorld.Model;
+import ru.nsu.ccfit.lukin.logoWorld.Interpreter;
+import ru.nsu.ccfit.lukin.logoWorld.Model;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -21,8 +21,8 @@ public class Teleport implements Command {
             int y = Integer.parseInt(iterator.next());
             Model model = context.getModel();
             if (model == null) throw new CommandException("model isn't initialized");
-            model.setColon(x);
-            model.setRow(y);
+            model.setCurrentColon(x);
+            model.setCurrentRow(y);
             context.updateAll();
         } catch (Throwable e) {
             if (e.getClass().equals(CommandException.class)) {

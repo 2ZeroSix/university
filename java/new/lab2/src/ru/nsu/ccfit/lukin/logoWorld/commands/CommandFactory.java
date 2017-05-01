@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.lukin.logWorld.commands;
+package ru.nsu.ccfit.lukin.logoWorld.commands;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
