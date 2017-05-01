@@ -15,10 +15,5 @@ int execvpe(const char* file, char *const argv[], char *const envp[]) {
 }
 
 int main(int argc, char** argv) {
-    if (argc >= 2) {
-        return execvpe(argv[1], argv + 1, (char**){NULL});
-    } else {
-        printf("using: %s <command> [args]\n", argv[0]);
-    }
-    return 0;
+    return execvpe("env", (char* []){"env", (char*)NULL}, argv + 1) ? 1 : 1;
 }
