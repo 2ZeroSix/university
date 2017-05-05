@@ -27,7 +27,6 @@ double* slauSolveIteration(double* matrix,
                                   double epsilon = 0.00001,
                                   double tau = 0.01) {
     int procRank = MPI::COMM_WORLD.Get_rank();
-    int procSize = MPI::COMM_WORLD.Get_size();
 
     double* x = new double[N]();
     double* part = new double[recv_counts[procRank]];
