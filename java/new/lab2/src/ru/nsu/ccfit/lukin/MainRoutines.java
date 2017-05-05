@@ -2,15 +2,14 @@ package ru.nsu.ccfit.lukin;
 
 import ru.nsu.ccfit.lukin.logoWorld.Interpreter;
 
-import java.io.*;
+import java.io.IOException;
 
 /**
- * Created by dzs on 16.03.17.
+ * Run interpreter with default streams
  */
 public class MainRoutines {
     public static void main(String[] args) throws IOException {
-        Interpreter interpreter = null;
-        interpreter = new Interpreter();
+        Interpreter interpreter = new Interpreter();
         interpreter.run();
     }
 }

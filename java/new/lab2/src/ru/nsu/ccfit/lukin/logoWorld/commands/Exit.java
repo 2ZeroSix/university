@@ -5,7 +5,8 @@ import ru.nsu.ccfit.lukin.logoWorld.Interpreter;
 import java.util.Collection;
 
 /**
- * Created by dzs on 26.04.17.
+ * command to exit from interpreter
+ * Doesn't expect arguments
  */
 public class Exit implements Command {
     @Override

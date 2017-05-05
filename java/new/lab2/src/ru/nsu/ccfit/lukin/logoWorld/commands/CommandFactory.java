@@ -7,15 +7,24 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by dzs on 22.03.17.
+ * @author Bogdan Lukin
+ * factory of commands
+ * to add new command add its description to ru.nsu.ccfit.lukin.logoWorld.commandFactoryConfig.xml
+ * in the folowing format (case sensitive):
+ *      <Command name="command name" class="full class name"/>
+ * all commands must impement interface ru.nsu.ccfit.lukin.logoWorld.commands.Command
  */
 public class CommandFactory {
     private static Map<String, Class<Command>> commands;
 
+    /**
+     * Error to signalize fault in static initialization in command factory
+     */
     public static class initFault extends Error {
         public initFault() {}
         public initFault(String var1) {
@@ -55,6 +64,19 @@ public class CommandFactory {
             throw new initFault(e);
         }
     }
+
+    /**
+     * @return collection of string representations of commands
+     */
+    static public Collection<String> getPossibleCommands() {
+        return commands.keySet();
+    }
+
+    /**
+     * @param commandName name of command
+     * @return object of command with the specified name
+     * @throws CommandException on errors with command
+     */
     public Command getCommand(String commandName) throws CommandException {
         Class<Command> commandClass = commands.getOrDefault(commandName, null);
         if (commandClass == null) throw new CommandException("Unknown command name: '" + commandName + "'");

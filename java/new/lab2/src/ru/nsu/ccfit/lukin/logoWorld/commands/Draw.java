@@ -6,7 +6,8 @@ import ru.nsu.ccfit.lukin.logoWorld.Model;
 import java.util.Collection;
 
 /**
- * Created by dzs on 22.03.17.
+ * command to set drawable to true
+ * Doesn't expect arguments
  */
 public class Draw implements Command {
     @Override

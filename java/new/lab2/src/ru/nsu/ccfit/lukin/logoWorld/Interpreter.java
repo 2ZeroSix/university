@@ -13,10 +13,7 @@ import java.util.Scanner;
  * @author Bogdan Lukin
  * Simple Interpreter for logoworld game (controller in MVC)
  * default commands contained in package ru.nsu.ccfit.lukin.logoWorld.commands
- * to add new command add its description to ru.nsu.ccfit.lukin.logoWorld.commandFactoryConfig.xml
- * in the folowing format (case sensitive):
- *      <Command name="command name" class="full class name"/>
- * all commands must impement interface ru.nsu.ccfit.lukin.logoWorld.commands.Command
+ * to add new command see ru.nsu.ccfit.lukin.logoWorld.commands.logoWorld.commands.CommandFactory
  * using:
  *      Interpreter interpreter = new Interpreter(inputStream, outputStream);
  *      interpreter.run();
@@ -26,7 +23,6 @@ public class Interpreter implements Runnable {
     private InputStream ins;
     private OutputStream ous;
     private boolean runnable;
-
     /**
      * class for getting and changing interpreter state
      */

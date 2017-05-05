@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Created by dzs on 22.03.17.
- * INIT <width> <height> <x> <y>
+ * command to init logoworld
+ * using: 'INIT' <width> <height> <x> <y>
  */
 public class Init implements Command {
     @Override
@@ -16,7 +16,7 @@ public class Init implements Command {
         try {
             if (args.size() != 4) throw new CommandException("wrong number of arguments: " +
                                                              args.size() +
-                                                             "; using: INIT <width> <height> <x> <y>");
+                                                             "; using: 'INIT' <width> <height> <x> <y>");
             Iterator<String> iterator = args.iterator();
             int width   = Integer.parseInt(iterator.next());
             int height  = Integer.parseInt(iterator.next());

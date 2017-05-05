@@ -1,7 +1,7 @@
 package ru.nsu.ccfit.lukin.logoWorld.commands;
 
 /**
- * Created by dzs on 22.03.17.
+ * Exception to signalize problems related to commands
  */
 public class CommandException extends Exception {
     public CommandException() {

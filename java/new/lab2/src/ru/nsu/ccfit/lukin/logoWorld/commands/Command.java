@@ -5,8 +5,13 @@ import ru.nsu.ccfit.lukin.logoWorld.Interpreter;
 import java.util.Collection;
 
 /**
- * Created by dzs on 22.03.17.
+ * Basic interface for commands
  */
 public interface Command {
+    /**
+     * @param context context of work
+     * @param args arguments given to command
+     * @throws CommandException
+     */
     void act(Interpreter.Context context, Collection<String> args) throws CommandException;
 }

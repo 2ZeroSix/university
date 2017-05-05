@@ -1,6 +1,6 @@
 package ru.nsu.ccfit.lukin.logoWorld;
 
-import java.util.Arrays;
+import java.util.stream.Stream;
 
 /**
  * logoworld model (model in MVC)
@@ -10,20 +10,17 @@ public class Model {
      * point in logoworld model
      */
     public enum Point {
-        EMPTY('_'),
-        SHADED('#'),
-        CURRENT('*');
-        char ch;
-        Point(char c) {
-            ch = c;
+        EMPTY("_"),
+        SHADED("#"),
+        CURRENT("*");
+        String str;
+        Point(String c) {
+            str = c;
         }
 
         @Override
         public String toString() {
-            return String.valueOf(ch);
-        }
-        public char toChar() {
-            return ch;
+            return str;
         }
     }
     private int rows;
@@ -35,10 +32,10 @@ public class Model {
 
     /**
      * init model
-     * @param rows
-     * @param colons
-     * @param currentRow
-     * @param currentColon
+     * @param rows width of map
+     * @param colons height of map
+     * @param currentRow start row
+     * @param currentColon start colon
      */
     public Model(int rows, int colons, int currentRow, int currentColon) {
         this.rows = rows;
@@ -53,53 +50,76 @@ public class Model {
         }
     }
 
+    /**
+     * @return width of map
+     */
     public int getRows() {
         return rows;
     }
 
-    public synchronized void setRows(int rows) {
-        this.rows = rows;
-    }
-
+    /**
+     * @return height of map
+     */
     public int getColons() {
         return colons;
     }
 
-    public synchronized void setColons(int colons) {
-        this.colons = colons;
-    }
-
+    /**
+     * @return current row
+     */
     public int getCurrentRow() {
         return currentRow;
     }
 
-    public synchronized void setCurrentRow(int row) {
-        this.currentRow = row;
+    /**
+     * @param currentRow new current row
+     */
+    public synchronized void setCurrentRow(int currentRow) {
+        this.currentRow = currentRow;
     }
 
+    /**
+     * @return current colon
+     */
     public int getCurrentColon() {
         return currentColon;
     }
 
+    /**
+     * @param currentColon new current colon
+     */
     public synchronized void setCurrentColon(int currentColon) {
         this.currentColon = currentColon;
     }
 
+    /**
+     * @return true if map is drawable, else false
+     */
     public boolean isDrawable() {
         return drawable;
     }
 
+    /**
+     * @param drawable new state of drawable feature
+     */
     public synchronized void setDrawable(boolean drawable) {
         this.drawable = drawable;
     }
 
-    public synchronized void setMap(Point[][] map) {
-        this.map = map;
-    }
-
+    /**
+     * @param row row of point
+     * @param colon colon of point
+     * @return Point on position (row, colon)
+     */
     public Point getPoint(int row, int colon) {
         return row == this.currentRow && colon == this.currentColon ? Point.CURRENT : map[row][colon];
     }
+
+    /**
+     * shades Point at position (row, colon)
+     * @param row row of point
+     * @param colon colon of point
+     */
     public void shadePoint(int row, int colon) {
         if (drawable) map[row][colon] = Point.SHADED;
     }

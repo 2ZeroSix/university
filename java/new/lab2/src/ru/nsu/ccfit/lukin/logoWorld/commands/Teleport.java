@@ -7,7 +7,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Created by dzs on 22.03.17.
+ * command to teleport to the new position
+ * using: 'TELEPORT' <x> <y>
  */
 public class Teleport implements Command {
     @Override
@@ -15,7 +16,7 @@ public class Teleport implements Command {
         try {
             if (args.size() != 2) throw new CommandException("wrong number of arguments: " +
                                                              args.size() +
-                                                             "; using: TELEPORT <x> <y>");
+                                                             "; using: 'TELEPORT' <x> <y>");
             Iterator<String> iterator = args.iterator();
             int x = Integer.parseInt(iterator.next());
             int y = Integer.parseInt(iterator.next());
