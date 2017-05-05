@@ -13,21 +13,15 @@
 
     #define MSG_PERMISSIONS 0660
 
-    #define MSG_DATA_SIZE 256
+    #define MSG_DATA_SIZE 256 + sizeof(pid_t)
     #define MSG_RECV_SIZE sizeof(long)
 
     #define MSG_RECV_TYPE 1
     #define MSG_MAX_TYPE  1
-
-
-    typedef struct _RecvQueueNode {
-        long id;
-        struct _RecvQueueNode* next;    
-    } RecvQueueNode;
-
-    typedef struct _RecvQueue {
-        struct _RecvQueueNode* head;
-        struct _RecvQueueNode* tail;    
-    } RecvQueue;
+    struct msg {
+        long mtype;
+        pid_t pid;
+        char mtext[MSG_DATA_SIZE - sizeof(pid_t)];
+    };
 
 #endif
