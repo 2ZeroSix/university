@@ -37,16 +37,24 @@ public class Ship extends RoundDetail {
         this.health = health;
     }
 
-    public void setHealth(double health) {
-        this.health = health;
+    public double getPreferredAngle() {
+        return preferredAngle;
+    }
+
+    public void setPreferredAngle(double preferredAngle) {
+        this.preferredAngle = preferredAngle;
     }
 
     public double getHealth() {
         return health;
     }
 
-    public void makeDamage(double damage) {
-        health -= damage;
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    public void harm(double damage) {
+        health -= Math.max(damage, 0);
         if (health <= 0) destroyed = true;
     }
 

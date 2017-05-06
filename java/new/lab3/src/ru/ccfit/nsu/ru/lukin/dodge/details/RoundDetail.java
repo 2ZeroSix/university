@@ -86,8 +86,8 @@ public abstract class RoundDetail implements Detail {
         return destroyed;
     }
     @Override
-    public boolean isInside(double x, double y) {
-        return Math.abs(position.getX() - x) < radius &&
-                Math.abs(position.getY() - y) < radius;
+    public boolean isContains(Position position) {
+        return Math.abs(this.position.x - position.x) < radius &&
+                Math.abs(this.position.x - position.x) < radius;
     }
 }

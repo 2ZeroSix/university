@@ -8,6 +8,6 @@ public interface Detail {
     void setPosition(Position position);
     void destroy();
     boolean isDestroyed();
-    boolean isInside(double x, double y);
+    boolean isContains(Position position);
     void move();
 }
