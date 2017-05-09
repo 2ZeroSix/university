@@ -26,7 +26,7 @@ public class ArmedShipController {
 
     public void step() {
         ship.move();
-        ship.setPreferredAngle(ship.getPosition().bestAngleTo(target.getPosition()));
+        ship.setPreferredAngle(ship.getPosition().angleTo(target.getPosition()));
         ++step;
         if (step % stepsToFire == 0) {
             ship.fire();

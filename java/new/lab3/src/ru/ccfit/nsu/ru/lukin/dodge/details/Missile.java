@@ -21,8 +21,9 @@ public class Missile extends RoundDetail {
     public void move() {
         Model model = this.model.get();
         Position targetPosition = model.getPlayerShip().getPosition();
-        setPosition(new Position(position.x + speed * Math.cos(angle), position.y + speed * Math.sin(angle)));
-        double preferredAngle = position.bestAngleTo(targetPosition);
+        setPosition(new Position(position.x + speed * Math.cos(angle),
+                                position.y + speed * Math.sin(angle)));
+        double preferredAngle = position.angleTo(targetPosition);
         angle = circularSpeed >= Math.abs(preferredAngle - angle)
                 ? preferredAngle
                 : angle + circularSpeed * Math.signum(angle - preferredAngle);
