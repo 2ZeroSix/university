@@ -3,93 +3,159 @@
 #include <iostream>
 using namespace std;
 
-int procSize[2] = {0};
-int procRank[2] = {0};
-MPI::Cartcomm cartcomm;
-
-size_t getChunkSize(size_t realSize, int dim, const int * const rank=procRank) {
-    int size = procSize[dim];
-    return realSize / size +
-            (rank[dim]
-             ? (realSize % size > rank[dim] - 1
-                ? 1
-                : 0)
-             : 0);
-}
 
 namespace MPI {
-    double* multMatrix(double* A, double* B, size_t n1, size_t n2, size_t n3) {
-        double* result = new double[getChunkSize(n1, 0) * getChunkSize(n3, 1)]();
-        for (int i = 0; i < getChunkSize(n1, 0); ++i) {
-            for (int j = 0; j < n2; ++j) {
-                for (int k = 0; k < getChunkSize(n3, 1); ++k) {
-                    result[i*getChunkSize(n3,1) + k] += A[i*n2 + j] * B[j*getChunkSize(n3, 1) + k];
-                }
-            }
-        }
+    int getChunkSize(int realSize, int dim, const Cartcomm& comm_2D) {
+        int ranks[2];
+        int sizes[2];
+        bool tmp[2];
+        comm_2D.Get_topo(2, sizes, tmp, ranks);
+        int size = sizes[dim];
+        int rank = ranks[dim];
+        return realSize / size +
+                (rank ? (realSize % size > rank - 1 ? 1 : 0) : 0);
+    }
+
+    void createTypes(const int *n, Datatype &typeb, Datatype &typec,
+                     const int *chunkSizes) {
+        Datatype types;
+        types = MPI::DOUBLE.Create_vector(n[1], chunkSizes[1], n[2]);
+        typeb = types.Create_resized(0, chunkSizes[1] * sizeof(double));
+        typeb.Commit();
+        types = MPI::DOUBLE.Create_vector(chunkSizes[0], chunkSizes[1], n[2]);
+        typec = types.Create_resized(0, chunkSizes[1] * sizeof(double));
+        typec.Commit();
+    }
+
+    double* multParalleledMatrix(const double* A, const double* B,
+                                 const int *n, const int *chunkSizes) {
+        double* result = new double[chunkSizes[0] * chunkSizes[1]]();
+        for (int i = 0; i < chunkSizes[0]; ++i)
+            for (int j = 0; j < n[1]; ++j)
+                for (int k = 0; k < chunkSizes[1]; ++k)
+                    result[i*chunkSizes[1] + k] += A[i*n[1] + j] * B[j*chunkSizes[1] + k];
         return result;
     }
-}
 
-void init(int argc, char** argv) {
-    MPI::Init(argc, argv);
-    MPI::Compute_dims(MPI::COMM_WORLD.Get_size(), 2, procSize);
-    bool tmp[2] = {false, false};
-    cartcomm = MPI::COMM_WORLD.Create_cart(2, procSize, tmp, true);
-    cartcomm.Get_coords(cartcomm.Get_rank(), 2, procRank);
-    // for (int p1 = 0; p1 < procSize[0]; ++p1) {
-    //     for (int p2 = 0; p2 < procSize[1]; ++p2) {
-    //         if (p1 == procRank[0] && p2 == procRank[1])
-    //             cout << "rows: " << procRank[0] << "; colons: " << procRank[1] << endl;
-    //         cout.flush();
-    //         cartcomm.Barrier();
-    //     }
-    // }
-}
-
-void printMatrix(double* C, size_t n1, size_t n3) {
-    size_t *rowOffset = new size_t[procSize[0]]();
-    for (int p = 1; p < procSize[0]; ++p) {
-        int rank[2] = {p, 0};
-        rowOffset[p] = rowOffset[p - 1] + getChunkSize(n1, 0, rank); 
-    }
-    for (int p1 = 0; p1 < procSize[0]; ++p1) {
-        for (size_t i = 0; i < n1; ++i) {
-            int rank[2] = {p1, 0};
-            if (rowOffset[p1] <= i && i < rowOffset[p1] + getChunkSize(n1, 0, rank)) {
-                for (int p2 = 0; p2 < procSize[1]; ++p2) {
-                    if (p1 == procRank[0] && p2 == procRank[1])
-                        for(size_t j = 0; j < getChunkSize(n3, 1); ++j)
-                            cout << C[(i - rowOffset[p1])*getChunkSize(n3, 1) + j] << " ";
-                    cout.flush();
-                    cartcomm.Barrier();
-                }
-                if (procRank[0] == p1 && procRank[1] == 0) cout << endl;
-            } else {
-                for (int p2 = 0; p2 < procSize[1]; ++p2) {
-                    cout.flush();
-                    cartcomm.Barrier();
-                }
+    void calcSubmatrix(int *dispb, int *countb, int *dispc, int *countc,
+                       const int *sizes, const int *chunkSizes) {
+        for (int j = 0; j < sizes[1]; j++) {
+            dispb[j] = j;
+            countb[j] = 1;
+        }
+        for (int i = 0; i < sizes[0]; i++) {
+            for (int j = 0; j < sizes[1]; j++) {
+                dispc[i * sizes[1] + j] = (i * sizes[1] * chunkSizes[0] + j);
+                countc[i * sizes[1] + j] = 1;
             }
-            cout.flush();
-            cartcomm.Barrier();
         }
     }
-    delete[] rowOffset;
+
+    double* multMatrix(const double* A, const double* B, const int *n) {
+        int sizes[2] = {};
+        int ranks[2] = {};
+        int rank = COMM_WORLD.Get_rank();
+        int size = COMM_WORLD.Get_size();
+        Compute_dims(size, 2, sizes);
+
+        Cartcomm comm_2D;
+        {
+            bool tmp[2] = {false, false};
+            comm_2D = COMM_WORLD.Create_cart(2, sizes, tmp, true);
+        }
+        comm_2D.Get_coords(comm_2D.Get_rank(), 2, ranks);
+
+        Intercomm comm_1D[2];
+        for(int i = 0; i < 2; i++) {
+            bool remains[] = {i == 0, i == 1};
+            comm_1D[i] = comm_2D.Sub(remains);
+        }
+
+        Datatype typeb, typec;
+        int *dispa = NULL, *dispb = NULL, *dispc = NULL,
+                *counta = NULL, *countb = NULL, *countc = NULL;
+
+        int chunkSizes[2] = {getChunkSize(n[0], 0, comm_2D),
+                            getChunkSize(n[2], 1, comm_2D)};
+
+        if (rank == 0) {
+            createTypes(n, typeb, typec, chunkSizes);
+
+            dispa  = new int[sizes[1]];
+            counta = new int[sizes[1]];
+            dispb  = new int[sizes[1]];
+            countb = new int[sizes[1]];
+            dispc  = new int[sizes[0] * sizes[1]];
+            countc = new int[sizes[0] * sizes[1]];
+            calcSubmatrix(/*dispa, counta, */dispb, countb, dispc, countc, sizes, chunkSizes);
+        }
+
+        ////+broadcast
+        double *subA = new double[chunkSizes[0] * n[1]];
+        double *subB = new double[chunkSizes[1] * n[1]];
+
+        if (ranks[1] == 0)
+            comm_1D[0].Scatter(A, chunkSizes[0] * n[1], MPI::DOUBLE, subA,
+                               chunkSizes[0] * n[1], MPI::DOUBLE, 0);
+        if (ranks[0] == 0)
+            comm_1D[1].Scatterv(B, countb, dispb, typeb, subB,
+                                n[1] * chunkSizes[1], MPI::DOUBLE, 0);
+
+        comm_1D[1].Bcast(subA, chunkSizes[0] * n[1], MPI::DOUBLE, 0);
+        comm_1D[0].Bcast(subB, n[1] * chunkSizes[1], MPI::DOUBLE, 0);
+        ////-broadcast
+        double *subC = multParalleledMatrix(subA, subB, n, chunkSizes);
+        ////+gather
+        double* C = new double[n[0] * n[2]];
+        comm_2D.Gatherv(subC, chunkSizes[0] * chunkSizes[1], MPI::DOUBLE,
+                        C, countc, dispc, typec, 0);
+        ////-gather
+        delete[] dispa;
+        delete[] counta;
+        delete[] dispb;
+        delete[] countb;
+        delete[] dispc;
+        delete[] countc;
+        delete[] subA;
+        delete[] subB;
+        delete[] subC;
+        return C;
+    }
+}
+
+
+void printMatrix(double* C, int rows, int colons) {
+    for (int row = 0; row < rows; ++row) {
+        for (int colon = 0; colon < colons; ++colon)
+            cout << C[row * colons + colon] << " ";
+        cout << endl;
+    }
 }
 
 int main(int argc, char** argv) {
-    init(argc, argv);
-    size_t n1 = 30, n2 = 15, n3 = 15;
-    double* A = new double[getChunkSize(n1, 0) * n2]();
-    double* B = new double[n2 * getChunkSize(n3, 1)]();
+    MPI::Init(argc, argv);
 
-    fill_n(A, getChunkSize(n1, 0) * n2, 1.5);
-    fill_n(B, n2 * getChunkSize(n3, 1), 2);
+    int n[] = {atoi(argv[1]), atoi(argv[2]), atoi(argv[3])};
+    int rank = MPI::COMM_WORLD.Get_rank();
+    if (rank == 0) {
+        double *A = new double[n[0] * n[1]]();
+        double *B = new double[n[1] * n[2]]();
+        fill_n(A, n[0] * n[1], 1.5);
+        fill_n(B, n[1] * n[2], 2);
 
-    double* C = MPI::multMatrix(A, B, n1, n2, n3);
-    printMatrix(C, n1, n3);
+        double start = MPI::Wtime();
+        double* C = MPI::multMatrix(A, B, n);
+        double final = MPI::Wtime();
+
+        cout << final - start << endl;
+        printMatrix(C, n[0], n[2]);
+        delete[] A;
+        delete[] B;
+        delete[] C;
+    } else {
+        MPI::multMatrix(NULL, NULL, n);
+    }
 
     MPI::Finalize();
     return 0;
-} 
+}
