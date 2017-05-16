@@ -1,13 +1,14 @@
 package ru.nsu.ccfit.lukin.dodge.details.missiles;
 
+import ru.nsu.ccfit.lukin.dodge.DodgeException;
 import ru.nsu.ccfit.lukin.dodge.Model;
 import ru.nsu.ccfit.lukin.dodge.details.Position;
 
 /**
  * Created by dzs on 10.05.17.
  */
-public class UFOMissle extends Missile{
-    public UFOMissle(Model model, Position position) {
+public class UFOMissile extends Missile{
+    public UFOMissile(Model model, Position position) throws DodgeException {
         super(model, position);
         setRadius(0.02);
         setSpeed(0.005);

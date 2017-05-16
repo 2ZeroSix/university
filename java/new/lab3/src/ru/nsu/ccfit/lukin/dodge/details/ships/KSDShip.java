@@ -1,15 +1,15 @@
 package ru.nsu.ccfit.lukin.dodge.details.ships;
 
+import ru.nsu.ccfit.lukin.dodge.DodgeException;
 import ru.nsu.ccfit.lukin.dodge.Model;
 import ru.nsu.ccfit.lukin.dodge.details.Position;
-import ru.nsu.ccfit.lukin.dodge.details.missiles.KSDMissle;
+import ru.nsu.ccfit.lukin.dodge.details.missiles.KSDMissile;
 
 /**
  * Created by dzs on 10.05.17.
  */
-public class KSDShip extends ArmedShip {
-
-    public KSDShip(Model model) {
+public class KSDShip extends EnemyShip {
+    public KSDShip(Model model) throws DodgeException {
         super(model);
         double rand = Math.random();
         if (rand > 0.75)        setPosition(new Position(Math.random(), 0, -Math.PI/2));
@@ -20,6 +20,8 @@ public class KSDShip extends ArmedShip {
         setSpeed(0.01);
         setCircularSpeed(Math.PI/8);
         setHealth(400);
-        setMissileClass(KSDMissle.class);
+        setMissileClass(KSDMissile.class);
+        setStepsToFire(30);
+        setStepsToChangeTarget(300);
     }
 }

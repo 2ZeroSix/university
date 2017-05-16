@@ -1,40 +1,82 @@
 package ru.nsu.ccfit.lukin.dodge;
 
-import ru.nsu.ccfit.lukin.dodge.components.DetailViewFactory;
+import ru.nsu.ccfit.lukin.dodge.sprites.Sprite;
+import ru.nsu.ccfit.lukin.dodge.sprites.SpriteFactory;
 import ru.nsu.ccfit.lukin.dodge.details.Detail;
 import ru.nsu.ccfit.lukin.dodge.details.Position;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by dzs on 03.05.17.
  */
-public class View extends JPanel {
-    DetailViewFactory dvf = new DetailViewFactory();
-    Map<Detail, JComponent> componentMap;
+public class View extends JPanel implements Runnable {
+    private final Controller controller;
+    SpriteFactory dvf = new SpriteFactory();
+    Map<Detail, Sprite> componentMap = new HashMap<>();
+    Timer timer;
 
-    public View(Controller controller) {
+    public View(Controller controller) throws DodgeException {
         super();
-        setLayout(new OverlayLayout(this));
+        this.controller = controller;
+        setLayout(new FlowLayout());
+//        setLayout(new OverlayLayout(this));
+        controller.getModel().setView(this);
+        timer = new Timer(333, actionEvent -> {
+            try {
+                controller.step();
+            } catch (DodgeException e) {
+                e.printStackTrace();
+                stop();
+            }
+        });
     }
 
     public void add(Detail detail) throws DodgeException {
-        JComponent component = dvf.get(detail);
+        Sprite component = dvf.get(detail);
         componentMap.put(detail, component);
+        add(component);
         update(component, detail);
     }
 
-    private void updatePosition(JComponent component, Position position) {
-        ((Graphics2D)component.getGraphics()).rotate(position.getAngle());
+    public void remove(Detail detail) {
+        remove(componentMap.remove(detail));
     }
 
-    public void update(Detail detail) {
-        update(componentMap.get(detail), detail);
+    private void updatePosition(Sprite component, Position position) {
+        component.setAlignmentX((float)position.getX());
+        component.setAlignmentY((float)position.getY());
+        component.setAngle(position.getAngle());
     }
 
-    protected void update(JComponent component, Detail detail) {
+    final public void update(Detail detail) throws DodgeException {
+        Sprite component = componentMap.get(detail);
+        if (component == null)  add(detail);
+        else                    update(component, detail);
+    }
+
+    protected void update(Sprite component, Detail detail) {
         updatePosition(component, detail.getPosition());
+        repaint();
+    }
+
+    @Override
+    public void run() {
+        new Timer(33, act -> {
+            try {
+                controller.step();
+            } catch(Controller.GameOverException e) {
+                stop();
+            } catch (DodgeException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public void stop() {
+        timer.stop();
     }
 }

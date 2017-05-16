@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.lukin.dodge;
 
+import ru.nsu.ccfit.lukin.dodge.details.Detail;
 import ru.nsu.ccfit.lukin.dodge.details.missiles.Missile;
 import ru.nsu.ccfit.lukin.dodge.details.ships.ArmedShip;
 import ru.nsu.ccfit.lukin.dodge.details.ships.Ship;
@@ -12,37 +13,27 @@ import java.util.Set;
  * Created by dzs on 03.05.17.
  */
 public class Model {
-    private int height;
-    private int width;
     final private Ship player;
-    final private Set<ArmedShip> enemies;
+    final private Set<ArmedShip> enemies = new HashSet<>();
     final private Set<Missile> missiles = new HashSet<>();
-    final private ShipFactory shipFactory = new ShipFactory();
-    public Model(int height, int width) throws DodgeException {
-        this(height, width, null);
+
+    public Set<Detail> getDetails() {
+        return details;
     }
 
-    public Model(int height, int width, Ship ship) throws DodgeException {
-        this.height = height;
-        this.width = width;
-        enemies = new HashSet<>();
-        player = ship != null ? ship : shipFactory.get("player");
+    final private Set<Detail> details = new HashSet<>();
+    private View view;
+
+    public Model() throws DodgeException {
+        this(null);
     }
 
-    public int getHeight() {
-        return height;
+    public Model(Ship ship) throws DodgeException {
+        player = ship != null ? ship : new ShipFactory(this).get("player");
     }
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
+    public void setView(View view) {
+        this.view = view;
     }
 
     public Ship getPlayerShip() {
@@ -51,6 +42,12 @@ public class Model {
 
     public Set<ArmedShip> getEnemiesShips() {
         return enemies;
+    }
+
+    public void add(Detail detail) {
+        if (detail instanceof ArmedShip)    enemies.add((ArmedShip)detail);
+        else if (detail instanceof Missile) missiles.add((Missile)detail);
+        else                                details.add(detail);
     }
 
     public void addEnemyShip(ArmedShip asc) {
@@ -71,5 +68,9 @@ public class Model {
 
     public void removeMissile(Missile missile) {
         missiles.remove(missile);
+    }
+
+    public View getView() {
+        return view;
     }
 }

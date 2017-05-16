@@ -1,41 +1,64 @@
 package ru.nsu.ccfit.lukin.dodge.details;
 
+import ru.nsu.ccfit.lukin.dodge.DodgeException;
+
 /**
  * Created by dzs on 03.05.17.
  */
 public class Position implements Cloneable, Comparable<Position> {
-    double x;
-    double y;
-    double angle;
+    private double x;
+    private double y;
+    private double angle;
 
-    public Position() {
+    public static class PositionException extends DodgeException {
+        public PositionException() {
+        }
+        public PositionException(String var1) {
+            super(var1);
+        }
+        public PositionException(String var1, Throwable var2) {
+            super(var1, var2);
+        }
+        public PositionException(Throwable var1) {
+            super(var1);
+        }
+        public PositionException(String var1, Throwable var2, boolean var3, boolean var4) {
+            super(var1, var2, var3, var4);
+        }
+    }
+
+    public Position() throws PositionException {
         this(0, 0);
     }
 
-    public Position(double x, double y) {
+    public Position(double x, double y) throws PositionException {
         this(x, y, Math.PI / 2.);
     }
 
-    public Position(double x, double y, double angle) {
-        this.x = x <= 1 && x >= 0 ? x : 0;
-        this.y = y <= 1 && y >= 0 ? y : 0;
-        this.angle = angle;
+    public Position(double x, double y, double angle) throws PositionException {
+        setX(x);
+        setY(y);
+        setAngle(angle);
     }
 
     public double getX() {
         return x;
     }
 
-    public void setX(double x) {
-        this.x = x;
+    public void setX(double x) throws PositionException {
+        if (0 <= x && x <= 1)
+            this.x = x;
+        else throw new PositionException("wrong x");
     }
 
     public double getY() {
         return y;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public void setY(double y) throws PositionException {
+        if (0 <= y && y <= 1)
+            this.y = y;
+        else throw new PositionException("wrong y");
     }
 
     public double getAngle() {
@@ -47,7 +70,7 @@ public class Position implements Cloneable, Comparable<Position> {
         return this;
     }
 
-    public Position nearestAfterMove(Position pos, double move) {
+    public Position nearestAfterMove(Position pos, double move) throws PositionException {
         double xside = pos.x - x;
         double yside = pos.y - y;
         double hypo = Math.sqrt(xside * xside + yside * yside);
@@ -63,8 +86,12 @@ public class Position implements Cloneable, Comparable<Position> {
     }
 
 
-    public Position clone() {
-        return new Position(x, y, angle);
+    public Position clone() throws CloneNotSupportedException {
+        try {
+            return new Position(x, y, angle);
+        } catch (PositionException e) {
+            throw new CloneNotSupportedException("Can't create new Position");
+        }
     }
 
     @Override
