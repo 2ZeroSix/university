@@ -1,12 +1,10 @@
-package ru.nsu.ccfit.lukin.dodge.components;
+package ru.nsu.ccfit.lukin.dodge.sprites;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * Created by dzs on 10.05.17.
@@ -45,7 +43,7 @@ public class RotatableImageIcon extends ImageIcon {
         Graphics2D g = ((Graphics2D)graphics);//.rotate(Math.PI/2 - angle);
         g.translate((neww - w) / 2, (newh - h) / 2);
         g.rotate(angle, w / 2, h / 2);
-        graphics.drawImage(this.getImage(), i, i1, observer);
+        super.paintIcon(component, graphics, i, i1);
     }
 //    public static BufferedImage rotate(BufferedImage image, Graphics graphics, double angle) {
 //        double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));

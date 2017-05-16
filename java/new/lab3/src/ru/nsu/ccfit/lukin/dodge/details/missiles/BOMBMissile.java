@@ -7,12 +7,12 @@ import ru.nsu.ccfit.lukin.dodge.details.Position;
 /**
  * Created by dzs on 10.05.17.
  */
-public class ABLMissile extends Missile{
-    public ABLMissile(Model model, Position position) throws DodgeException {
+public class BOMBMissile extends Missile{
+    public BOMBMissile(Model model, Position position) throws DodgeException {
         super(model, position);
-        setRadius(0.015);
+        setRadius(0.005);
         setSpeed(0.01);
         setCircularSpeed(Math.PI/32);
-        setDamage(500);
+        setDamage(100);
     }
 }

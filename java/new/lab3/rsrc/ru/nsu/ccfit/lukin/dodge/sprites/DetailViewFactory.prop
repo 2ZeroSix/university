@@ -1,0 +1,10 @@
+ru.nsu.ccfit.lukin.dodge.details.ships.ABLShip=ru.nsu.ccfit.lukin.dodge.sprites.ships.ABLComponent
+ru.nsu.ccfit.lukin.dodge.details.ships.KSDShip=ru.nsu.ccfit.lukin.dodge.sprites.ships.KSDComponent
+ru.nsu.ccfit.lukin.dodge.details.ships.NSFShip=ru.nsu.ccfit.lukin.dodge.sprites.ships.NSFComponent
+ru.nsu.ccfit.lukin.dodge.details.ships.UFOShip=ru.nsu.ccfit.lukin.dodge.sprites.ships.UFOComponent
+ru.nsu.ccfit.lukin.dodge.details.ships.BOMBShip=ru.nsu.ccfit.lukin.dodge.sprites.ships.BOMBComponent
+ru.nsu.ccfit.lukin.dodge.details.missiles.ABLMissile=ru.nsu.ccfit.lukin.dodge.sprites.missiles.ABLComponent
+ru.nsu.ccfit.lukin.dodge.details.missiles.KSDMissile=ru.nsu.ccfit.lukin.dodge.sprites.missiles.KSDComponent
+ru.nsu.ccfit.lukin.dodge.details.missiles.UFOMissile=ru.nsu.ccfit.lukin.dodge.sprites.missiles.UFOComponent
+ru.nsu.ccfit.lukin.dodge.details.missiles.BOMBMissile=ru.nsu.ccfit.lukin.dodge.sprites.missiles.BOMBComponent
+ru.nsu.ccfit.lukin.dodge.details.Explosion=ru.nsu.ccfit.lukin.dodge.sprites.ExplosionComponent
