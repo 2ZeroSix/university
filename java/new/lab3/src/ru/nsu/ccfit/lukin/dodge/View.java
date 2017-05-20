@@ -20,9 +20,9 @@ public class View extends JPanel implements Runnable {
     Timer timer;
 
     public View(Controller controller) throws DodgeException {
-        super();
+        super(null);
         this.controller = controller;
-        setLayout(new FlowLayout());
+//        setLayout(new FlowLayout());
 //        setLayout(new OverlayLayout(this));
         controller.getModel().setView(this);
         timer = new Timer(333, actionEvent -> {
@@ -47,9 +47,11 @@ public class View extends JPanel implements Runnable {
     }
 
     private void updatePosition(Sprite component, Position position) {
-        component.setAlignmentX((float)position.getX());
-        component.setAlignmentY((float)position.getY());
         component.setAngle(position.getAngle());
+        component.setBounds((int)(position.getX() - position.getRadius())*getWidth(),
+                (int)(position.getY() - position.getRadius())*getHeight(),
+                (int)(position.getRadius())*getWidth(),
+                (int)(position.getRadius())*getHeight());
     }
 
     final public void update(Detail detail) throws DodgeException {
@@ -60,7 +62,8 @@ public class View extends JPanel implements Runnable {
 
     protected void update(Sprite component, Detail detail) {
         updatePosition(component, detail.getPosition());
-        repaint();
+        component.revalidate();
+        component.repaint();
     }
 
     @Override

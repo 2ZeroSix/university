@@ -17,11 +17,11 @@ public class Ship extends Detail {
     }
 
     public Ship(Model model, Position position) throws DodgeException {
-        this(model, position, 10.);
+        this(model, position, .01);
     }
 
     public Ship(Model model, Position position, double radius) throws DodgeException {
-        this(model, position, radius, radius);
+        this(model, position, radius, radius / 2);
     }
 
     public Ship(Model model, Position position, double radius, double speed) throws DodgeException {

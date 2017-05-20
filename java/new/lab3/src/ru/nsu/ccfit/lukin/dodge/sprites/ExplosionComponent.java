@@ -18,7 +18,7 @@ public class ExplosionComponent extends Sprite {
             image = null;
         }
     }
-    public ExplosionComponent(BufferedImage image) throws DodgeException {
+    public ExplosionComponent() throws DodgeException {
         super(image);
     }
 }

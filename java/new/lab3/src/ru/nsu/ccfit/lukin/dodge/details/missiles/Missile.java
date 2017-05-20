@@ -48,7 +48,7 @@ public class Missile extends Detail {
     protected void hitIfTouched(Stream<Ship> ships) {
         ships.filter(ship -> {
             try {
-                return isContains(position.nearestAfterMove(ship.getPosition(), radius));
+                return isContains(position.nearestAfterMove(ship.getPosition(), getRadius()));
             } catch (Position.PositionException e) {
                 return false;
             }

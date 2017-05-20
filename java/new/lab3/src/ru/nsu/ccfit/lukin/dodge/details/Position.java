@@ -9,6 +9,15 @@ public class Position implements Cloneable, Comparable<Position> {
     private double x;
     private double y;
     private double angle;
+    private double radius;
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
 
     public static class PositionException extends DodgeException {
         public PositionException() {

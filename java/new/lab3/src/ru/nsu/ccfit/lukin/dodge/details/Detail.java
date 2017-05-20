@@ -11,7 +11,6 @@ import java.lang.ref.WeakReference;
  */
 public abstract class Detail{
     protected Position position;
-    protected double radius;
     protected double speed;
     protected double circularSpeed;
     protected boolean destroyed = false;
@@ -20,7 +19,7 @@ public abstract class Detail{
     public Detail(Model model, Position position, double radius, double speed, double circularSpeed) throws DodgeException {
         this.model = new WeakReference<>(model);
         this.position = position != null ? position : new Position();
-        this.radius = radius;
+        this.position.setRadius(radius);
         this.speed = speed;
         this.circularSpeed = circularSpeed;
         update();
@@ -35,11 +34,11 @@ public abstract class Detail{
     }
 
     public double getRadius() {
-        return radius;
+        return position.getRadius();
     }
 
     public void setRadius(double radius) {
-        this.radius = radius;
+        position.setRadius(radius);
     }
 
     public double getSpeed() {
@@ -71,8 +70,8 @@ public abstract class Detail{
     }
 
     public boolean isContains(Position position) {
-        return Math.abs(this.position.getX() - position.getX()) < radius &&
-                Math.abs(this.position.getY() - position.getY()) < radius;
+        return Math.abs(this.position.getX() - position.getX()) < getRadius() &&
+                Math.abs(this.position.getY() - position.getY()) < getRadius();
     }
 
     public abstract void move();

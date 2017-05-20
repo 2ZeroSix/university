@@ -20,7 +20,7 @@ public class ABLComponent extends Sprite {
             image = null;
         }
     }
-    public ABLComponent(double angle) throws DodgeException {
+    public ABLComponent() throws DodgeException {
         super(image);
     }
 }
