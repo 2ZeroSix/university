@@ -20,7 +20,6 @@ public class NSFComponent extends Sprite {
             image = null;
         }
     }
-    private RotatableImageIcon rotatableImageIcon;
     public NSFComponent() throws DodgeException {
         super(image);
     }

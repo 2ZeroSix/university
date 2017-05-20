@@ -20,7 +20,7 @@ public class BOMBComponent extends Sprite {
             image = null;
         }
     }
-    public BOMBComponent(double angle) throws DodgeException {
+    public BOMBComponent() throws DodgeException {
         super(image);
     }
 }

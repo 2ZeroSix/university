@@ -38,9 +38,9 @@ public class ArmedShip extends Ship implements Armed{
     public void fire() throws DodgeException {
         Model model = this.model.get();
         try {
-            Position missilePosition = new Position(position.getX() + radius * Math.cos(position.getAngle()),
-                                                    position.getY() + radius * Math.sin(position.getAngle()),
-                                                    position.getAngle());
+            Position missilePosition = new Position(Math.min(1, Math.max(0, position.getX() + getRadius() * Math.cos(position.getAngle()))),
+                    Math.min(1, Math.max(0, position.getY() + getRadius() * Math.sin(position.getAngle()))),
+                    position.getAngle());
             model.addMissile(this.missileClass.getConstructor(Model.class, Position.class).newInstance(model, missilePosition));
         } catch (Exception e) {
             throw new DodgeException("Can't create missile: " + missileClass.getName(), e);
