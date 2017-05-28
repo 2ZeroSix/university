@@ -13,18 +13,24 @@ import java.util.Properties;
  * Created by dzs on 09.05.17.
  */
 public class SpriteFactory {
-    private static Map<String, Class<? extends Sprite>> components = new HashMap<>();
+    private final static Map<String, Class<? extends Sprite>> components = new HashMap<>();
 
     static {
         Properties props = new Properties();
         try {
-            props.load(SpriteFactory.class.getResourceAsStream("DetailViewFactory.prop"));
+            props.load(SpriteFactory.class.getResourceAsStream("SpriteFactory.prop"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         props.stringPropertyNames().forEach(str -> {
             try {
-                components.put(str, (Class<? extends Sprite>) Class.forName(props.getProperty(str)));
+                Class spriteClass = Class.forName(props.getProperty(str));
+                if (Sprite.class.isAssignableFrom(spriteClass))
+                    components.put(str, (Class<? extends Sprite>) spriteClass);
+                else
+                    System.err.println("class \""
+                            + props.getProperty(str)
+                            + "\" isn't inherited from Sprite");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -32,17 +38,17 @@ public class SpriteFactory {
     }
 
     public Sprite get(Detail detail) throws DodgeException {
-        Sprite component= null;
+        Class<? extends Sprite> componentClass = null;
         try {
-            component = components.get(detail.getClass().getName()).newInstance();
-            if (component == null)
+            componentClass = components.getOrDefault(detail.getClass().getName(), null);
+            if (componentClass == null)
                 throw new DodgeException("Can't find component for detail: "
                                             + detail.getClass().getName());
+            return componentClass.newInstance();
         } catch (Throwable e) {
             if (e instanceof DodgeException) throw (DodgeException) e;
-            throw new DodgeException("Can't find component for detail: "
-                                        + detail.getClass().getName(), e);
+            throw new DodgeException("Can't instantiate sprite: "
+                                        + componentClass.getName(), e);
         }
-        return component;
     }
 }

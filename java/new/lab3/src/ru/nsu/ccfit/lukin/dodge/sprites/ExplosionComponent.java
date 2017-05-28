@@ -11,6 +11,7 @@ import java.io.IOException;
  * Created by dzs on 13.05.17.
  */
 public class ExplosionComponent extends Sprite {
+    private static BufferedImage image;
     static {
         try {
             image = ImageIO.read(ExplosionComponent.class.getResource("explosion.png"));

@@ -60,14 +60,13 @@ public class ShipFactory {
         return ship;
     }
 
-    public Ship getEnemy() throws DodgeException {
-        int index = random.nextInt(enemyShipMap.size());
-        EnemyShip ship;
+    public EnemyShip getEnemy() throws DodgeException {
         try {
+            EnemyShip ship;
             ship = enemyShipMap
                     .values()
                     .stream()
-                    .skip(index)
+                    .skip(random.nextInt(enemyShipMap.size()))
                     .findFirst()
                     .get()
                     .getConstructor(Model.class)

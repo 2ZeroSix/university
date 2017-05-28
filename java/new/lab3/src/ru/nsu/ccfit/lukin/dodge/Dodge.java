@@ -61,6 +61,8 @@ public class Dodge extends JFrame implements Runnable {
     }
 
     private void changeCurrentPanel(JPanel panel) {
+        if (getContentPane() instanceof View)
+            ((View)getContentPane()).stop();
         panel.setPreferredSize(new Dimension(properties.sizeX, properties.sizeY));
         setContentPane(panel);
         pack();
@@ -74,7 +76,7 @@ public class Dodge extends JFrame implements Runnable {
             Controller controller = new Controller(model, properties.difficulty);
             View view = new View(controller);
             changeCurrentPanel(view);
-            view.run();
+            view.start();
         } catch (DodgeException e) {
             JOptionPane.showMessageDialog( this,
                     e.getLocalizedMessage(),

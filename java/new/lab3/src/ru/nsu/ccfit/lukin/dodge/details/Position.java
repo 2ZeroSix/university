@@ -36,8 +36,10 @@ public class Position implements Cloneable, Comparable<Position> {
         }
     }
 
-    public Position() throws PositionException {
-        this(0, 0);
+    public Position() {
+        try {   setX(0); setY(0);
+        } catch (PositionException ignore) {}
+        setAngle(Math.PI/2.);
     }
 
     public Position(double x, double y) throws PositionException {

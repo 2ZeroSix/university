@@ -13,45 +13,44 @@ import java.util.Map;
 /**
  * Created by dzs on 03.05.17.
  */
-public class View extends JPanel implements Runnable {
+public class View extends JPanel {
     private final Controller controller;
-    SpriteFactory dvf = new SpriteFactory();
-    Map<Detail, Sprite> componentMap = new HashMap<>();
-    Timer timer;
+    private final SpriteFactory spriteFactory = new SpriteFactory();
+    private final Map<Detail, Sprite> componentMap = new HashMap<>();
+    private final Timer timer;
 
     public View(Controller controller) throws DodgeException {
         super(null);
         this.controller = controller;
-//        setLayout(new FlowLayout());
-//        setLayout(new OverlayLayout(this));
+        setBackground(Color.CYAN);
         controller.getModel().setView(this);
-        timer = new Timer(333, actionEvent -> {
+        timer = new Timer(33, actionEvent -> {
             try {
-                controller.step();
+                this.controller.step();
+            } catch (Controller.GameOverException e) {
+                View.this.stop();
             } catch (DodgeException e) {
                 e.printStackTrace();
-                stop();
+                View.this.stop();
             }
         });
     }
 
     public void add(Detail detail) throws DodgeException {
-        Sprite component = dvf.get(detail);
-        componentMap.put(detail, component);
-        add(component);
-        update(component, detail);
+//        Sprite component = spriteFactory.get(detail);
+//        componentMap.put(detail, component);
+//        add(component);
+//        update(component, detail);
     }
 
     public void remove(Detail detail) {
-        remove(componentMap.remove(detail));
+//        remove(componentMap.remove(detail));
     }
 
-    private void updatePosition(Sprite component, Position position) {
-        component.setAngle(position.getAngle());
-        component.setBounds((int)(position.getX() - position.getRadius())*getWidth(),
-                (int)(position.getY() - position.getRadius())*getHeight(),
-                (int)(position.getRadius())*getWidth(),
-                (int)(position.getRadius())*getHeight());
+    private void updatePosition(Sprite sprite, Position position) {
+//        sprite.setAngle(position.getAngle());
+//        sprite.setLocation(new Point((int)(position.getX() - position.getRadius())*getWidth(),
+//                (int)(position.getY() - position.getRadius())*getHeight()));
     }
 
     final public void update(Detail detail) throws DodgeException {
@@ -61,25 +60,24 @@ public class View extends JPanel implements Runnable {
     }
 
     protected void update(Sprite component, Detail detail) {
-        updatePosition(component, detail.getPosition());
-        component.revalidate();
-        component.repaint();
+//        updatePosition(component, detail.getPosition());
+//        // TODO
+//        component.revalidate();
+//        component.repaint();
+//        revalidate();
+//        repaint();
     }
 
-    @Override
-    public void run() {
-        new Timer(33, act -> {
-            try {
-                controller.step();
-            } catch(Controller.GameOverException e) {
-                stop();
-            } catch (DodgeException e) {
-                e.printStackTrace();
-            }
-        }).start();
+    public void start() {
+        setVisible(true);
+        timer.start();
     }
 
     public void stop() {
         timer.stop();
+    }
+
+    public Controller getController() {
+        return controller;
     }
 }
