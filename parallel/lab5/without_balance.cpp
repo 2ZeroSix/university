@@ -17,7 +17,7 @@ double solveTask(const Task &task) {
 }
 
 std::size_t getTasksCount(std::size_t shift) {
-    std::size_t total = 100000;
+    std::size_t total = 160;
     std::size_t add_weight = total / 10;
     std::size_t size = (std::size_t)MPI::COMM_WORLD.Get_size();
     std::size_t rank = ((std::size_t)MPI::COMM_WORLD.Get_rank() + shift) % size;
@@ -34,7 +34,7 @@ bool getTasks(std::queue<Task> &tasks) {
         std::queue<Task> queue;
         for (std::size_t i = 0; i < getTasksCount(iteration); ++i) {
             Task task = {.start_value = 0.987654321 / (1 + iteration),
-                         .iterations = 100 * (1 + iteration % total)};
+                         .iterations = 100000 * (1 + iteration % total)};
             queue.push(task);
         }
         tasks = queue;
@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
         std::cout << result << ", ";
         std::valarray<double> time_vals = std::valarray<double>(time, (std::size_t)proc_size);
         std::cout << time_vals.sum() << ", ";
+        std::cout << time_vals.max() << std::endl;
     }
     else {
         MPI::COMM_WORLD.Reduce(&sub_result, NULL, 1, MPI::DOUBLE, MPI::SUM, 0);
