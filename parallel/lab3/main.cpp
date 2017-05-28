@@ -72,8 +72,8 @@ namespace MPI {
         }
 
         Datatype typeb, typec;
-        int *dispa = NULL, *dispb = NULL, *dispc = NULL,
-                *counta = NULL, *countb = NULL, *countc = NULL;
+        int *dispb = NULL, *dispc = NULL,
+                *countb = NULL, *countc = NULL;
 
         int chunkSizes[2] = {getChunkSize(n[0], 0, comm_2D),
                             getChunkSize(n[2], 1, comm_2D)};
@@ -81,13 +81,11 @@ namespace MPI {
         if (rank == 0) {
             createTypes(n, typeb, typec, chunkSizes);
 
-            dispa  = new int[sizes[1]];
-            counta = new int[sizes[1]];
             dispb  = new int[sizes[1]];
             countb = new int[sizes[1]];
             dispc  = new int[sizes[0] * sizes[1]];
             countc = new int[sizes[0] * sizes[1]];
-            calcSubmatrix(/*dispa, counta, */dispb, countb, dispc, countc, sizes, chunkSizes);
+            calcSubmatrix(dispb, countb, dispc, countc, sizes, chunkSizes);
         }
 
         ////+broadcast
@@ -110,8 +108,6 @@ namespace MPI {
         comm_2D.Gatherv(subC, chunkSizes[0] * chunkSizes[1], MPI::DOUBLE,
                         C, countc, dispc, typec, 0);
         ////-gather
-        delete[] dispa;
-        delete[] counta;
         delete[] dispb;
         delete[] countb;
         delete[] dispc;
