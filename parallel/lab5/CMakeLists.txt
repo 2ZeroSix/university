@@ -3,9 +3,10 @@ project(lab5)
 
 set(CMAKE_CXX_STANDARD 98)
 #set(SOURCE_FILES without_balance.cpp)
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -O3)
 find_package(MPI REQUIRED)
 include_directories(${MPI_INCLUDE_PATH})
+
 
 add_executable(with_balance with_balance.cpp)
 target_link_libraries(with_balance pthread ${MPI_LIBRARIES})
