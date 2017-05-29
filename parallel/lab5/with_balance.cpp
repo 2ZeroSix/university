@@ -28,35 +28,21 @@ private:
         pthread_mutex_lock(&empty_mutex);
         bool result = is_empty;
         if (!is_empty) {
-//            std::cout << MPI::COMM_WORLD.Get_rank() << ":" << count << std::endl;
-            pthread_mutex_lock(&new_task_mutex);
-//            pthread_mutex_lock(&main_mutex);
             if ((result = !count)) {
-//                pthread_mutex_unlock(&main_mutex);
-//                std::cout << "signal" << std::endl;
                 pthread_mutex_lock(&need_new_task_mutex);
-                pthread_cond_signal(&need_new_task);
+                pthread_cond_broadcast(&need_new_task);
                 pthread_mutex_unlock(&need_new_task_mutex);
-//                std::cout << "-signal" << std::endl;
                 pthread_cond_wait(&new_task, &new_task_mutex);
                 result = !count;
-//                std::cout << "~signal" << std::endl;
             } else if (count <= 1 + full_count / 10) {
-//                pthread_mutex_unlock(&main_mutex);
-//                std::cout << "warning" << std::endl;
                 pthread_mutex_lock(&need_new_task_mutex);
-                pthread_cond_signal(&need_new_task);
+                pthread_cond_broadcast(&need_new_task);
                 pthread_mutex_unlock(&need_new_task_mutex);
-//                std::cout << "warning" << std::endl;
-            } else {
-//                pthread_mutex_unlock(&main_mutex);
+                pthread_cond_wait(&new_task, &new_task_mutex);
             }
-            pthread_mutex_unlock(&new_task_mutex);
-//            std::cout << "~hi" << std::endl;
             is_empty = result;
         }
         pthread_mutex_unlock(&empty_mutex);
-//        std::cout << result << std::endl;
         return result;
     }
 
@@ -84,15 +70,14 @@ private:
 
     bool getTasks() {
         static std::size_t iteration = 0;
-        static std::size_t total = 3;
-        std::cout << MPI::COMM_WORLD.Get_rank() << ":" << iteration << std::endl;
+        static std::size_t total = 23;
+//        std::cout << MPI::COMM_WORLD.Get_rank() << ":" << iteration << std::endl;
         if (iteration < total) {
             ++iteration;
             std::queue<Task> queue;
             std::size_t count =  getTasksCount(iteration);
             for (std::size_t i = 0; i < count; ++i) {
-                Task task = {.start_value = 0.987654321 / (1 + iteration),
-                        .iterations = 10000 * (1 + iteration % total)};
+                Task task = {0.987654321 / (1 + iteration), 100000 * (1 + iteration % total)};
                 queue.push(task);
             }
             pthread_mutex_lock(&main_mutex);
@@ -110,59 +95,42 @@ private:
         Tasks& tasks = *(Tasks*)tasks_p;
         int size = MPI::COMM_WORLD.Get_size();
         int rank = MPI::COMM_WORLD.Get_rank();
-        std::cout << MPI::COMM_WORLD.Get_rank() << ":"  << "receiver started" << std::endl;
+//        std::cout << MPI::COMM_WORLD.Get_rank() << ":"  << "receiver started" << std::endl;
+        pthread_cond_wait(&tasks.need_new_task, &tasks.need_new_task_mutex);
         while(tasks.getTasks()) {
             pthread_mutex_lock(&tasks.new_task_mutex);
             pthread_cond_broadcast(&tasks.new_task);
             pthread_mutex_unlock(&tasks.new_task_mutex);
+            pthread_cond_wait(&tasks.need_new_task, &tasks.need_new_task_mutex);
+            int str = 0;
             for (int i = 1; i < size; ++i) {
-                int str = 0;
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
-                pthread_mutex_lock(&tasks.need_new_task_mutex);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
-                pthread_cond_wait(&tasks.need_new_task, &tasks.need_new_task_mutex);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
-                pthread_mutex_unlock(&tasks.need_new_task_mutex);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
+//                pthread_mutex_lock(&tasks.need_new_task_mutex);
+//                pthread_mutex_unlock(&tasks.need_new_task_mutex);
                 int from = (rank + i) % size;
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
                 int code = 1;
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
                 MPI::COMM_WORLD.Send(&code, 1, MPI::INT, from, 1);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
                 MPI::COMM_WORLD.Recv(&code, 1, MPI::INT, from, 2);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
                 if (code == 0) {
                     continue;
                 } else {
                     --i;
                 }
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
                 Task task;
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
                 MPI::COMM_WORLD.Recv(&task, 1, getTaskInfo(), from, 3);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
                 tasks.push(task);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
-                pthread_mutex_lock(&tasks.new_task_mutex);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
-                pthread_cond_broadcast(&tasks.new_task);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
-                pthread_mutex_unlock(&tasks.new_task_mutex);
-                std::cout << MPI::COMM_WORLD.Get_rank() << ":" << str++ << std::endl;
-            }
-//            pthread_mutex_lock(&tasks.main_mutex);
-            while (tasks.count) {
-//                pthread_mutex_unlock(&tasks.main_mutex);
                 pthread_mutex_lock(&tasks.new_task_mutex);
                 pthread_cond_broadcast(&tasks.new_task);
                 pthread_mutex_unlock(&tasks.new_task_mutex);
-                pthread_mutex_lock(&tasks.need_new_task_mutex);
                 pthread_cond_wait(&tasks.need_new_task, &tasks.need_new_task_mutex);
-                pthread_mutex_unlock(&tasks.need_new_task_mutex);
-//                pthread_mutex_lock(&tasks.main_mutex);
             }
-//            pthread_mutex_unlock(&tasks.main_mutex);
+            while (tasks.count) {
+                pthread_mutex_lock(&tasks.new_task_mutex);
+                pthread_cond_broadcast(&tasks.new_task);
+                pthread_mutex_unlock(&tasks.new_task_mutex);
+                pthread_cond_wait(&tasks.need_new_task, &tasks.need_new_task_mutex);
+//                pthread_mutex_lock(&tasks.need_new_task_mutex);
+//                pthread_mutex_unlock(&tasks.need_new_task_mutex);
+            }
             MPI::COMM_WORLD.Barrier();
         }
         pthread_mutex_lock(&tasks.new_task_mutex);
@@ -170,49 +138,34 @@ private:
         pthread_mutex_unlock(&tasks.new_task_mutex);
         int code = 0;
         MPI::COMM_WORLD.Send(&code, 1, MPI::INT, MPI::COMM_WORLD.Get_rank(), 1);
-//        pthread_mutex_lock(&tasks.empty_mutex);
+//        pthread_mutex_lock(&tasks.need_new_task_mutex);
         while (!tasks.is_empty) {
-//            pthread_mutex_unlock(&tasks.empty_mutex);
-//            pthread_mutex_lock(&tasks.need_new_task_mutex);
-//            pthread_cond_wait(&tasks.need_new_task, &tasks.need_new_task_mutex);
-//            pthread_mutex_unlock(&tasks.need_new_task_mutex);
-//            std::cout  << MPI::COMM_WORLD.Get_rank() << ":" << "signaled" << std::endl;
+            pthread_cond_wait(&tasks.need_new_task, &tasks.need_new_task_mutex);
             pthread_mutex_lock(&tasks.new_task_mutex);
             pthread_cond_broadcast(&tasks.new_task);
             pthread_mutex_unlock(&tasks.new_task_mutex);
-//            pthread_mutex_lock(&tasks.empty_mutex);
         }
-//        pthread_mutex_unlock(&tasks.empty_mutex);
+//        pthread_mutex_unlock(&tasks.need_new_task_mutex);
+//        std::cout << MPI::COMM_WORLD.Get_rank() << ":"  << "receiver finalized" << std::endl;
         pthread_mutex_unlock(&tasks.need_new_task_mutex);
-        std::cout << MPI::COMM_WORLD.Get_rank() << ":"  << "receiver finalized" << std::endl;
         return NULL;
     }
     static void* sender(void* tasks_p) {
         Tasks& tasks = *(Tasks*)tasks_p;
         int size = MPI::COMM_WORLD.Get_size();
         int rank = MPI::COMM_WORLD.Get_rank();
-        std::cout  << MPI::COMM_WORLD.Get_rank() << ":" << "sender started" << std::endl;
+//        std::cout  << MPI::COMM_WORLD.Get_rank() << ":" << "sender started" << std::endl;
         while(true) {
             MPI::Status status;
             int code;
             int str = 0;
-            std::cout << MPI::COMM_WORLD.Get_rank() << "::" << str++ << std::endl;
             MPI::COMM_WORLD.Probe(MPI::ANY_SOURCE, 1, status);
-            std::cout << MPI::COMM_WORLD.Get_rank() << "::" << str++ << std::endl;
             int proc = status.Get_source();
-            std::cout << MPI::COMM_WORLD.Get_rank() << "::" << str++ << std::endl;
             MPI::COMM_WORLD.Recv(&code, 1, MPI::INT, proc, 1, status);
-            std::cout << MPI::COMM_WORLD.Get_rank() << "::" << str++ << std::endl;
             if (code == 0)
                 break;
-            std::cout << MPI::COMM_WORLD.Get_rank() << "::" << str++ << std::endl;
 
-//            pthread_mutex_lock(&tasks.empty_mutex);
-            std::cout << MPI::COMM_WORLD.Get_rank() << "::" << str++ << std::endl;
-//            pthread_mutex_lock(&tasks.main_mutex);
             if (!tasks.count) {
-//                pthread_mutex_unlock(&tasks.main_mutex);
-//                pthread_mutex_unlock(&tasks.empty_mutex);
                 code = 0;
                 MPI::COMM_WORLD.Send(&code, 1, MPI::INT, proc, 2);
             } else {
@@ -221,32 +174,33 @@ private:
                 tasks.tasks.pop();
                 --tasks.count;
                 pthread_mutex_unlock(&tasks.main_mutex);
-//                pthread_mutex_unlock(&tasks.empty_mutex);
 
                 MPI::COMM_WORLD.Send(&code, 1, MPI::INT, proc, 2);
                 MPI::COMM_WORLD.Send(&task, 1, getTaskInfo(), proc, 3);
             }
         }
-        std::cout << MPI::COMM_WORLD.Get_rank() << ":"  << "sender finalized" << std::endl;
+//        std::cout << MPI::COMM_WORLD.Get_rank() << ":"  << "sender finalized" << std::endl;
         return NULL;
     }
 public:
     Tasks() {
-        count = 0;
-        full_count = 0;
-        pthread_mutex_init(&main_mutex, NULL);
-        pthread_mutex_init(&empty_mutex, NULL);
-        pthread_mutex_init(&new_task_mutex, NULL);
-        pthread_mutex_init(&need_new_task_mutex, NULL);
-        pthread_cond_init(&new_task, NULL);
-        pthread_cond_init(&need_new_task, NULL);
         pthread_attr_t attr;
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-        pthread_create(&receiver_thread, &attr, Tasks::receiver, this);
-        pthread_create(&sender_thread, &attr, Tasks::sender, this);
+        need_new_task_mutex = PTHREAD_MUTEX_INITIALIZER;
+        pthread_mutex_lock(&need_new_task_mutex);
+        need_new_task = PTHREAD_COND_INITIALIZER;
+        pthread_mutex_lock(&new_task_mutex);
+        new_task_mutex = PTHREAD_MUTEX_INITIALIZER;
+        new_task = PTHREAD_COND_INITIALIZER;
+        count = 0;
+        full_count = 0;
+        main_mutex = PTHREAD_MUTEX_INITIALIZER;
+        empty_mutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_attr_destroy(&attr);
         is_empty = false;
+        pthread_create(&receiver_thread, &attr, Tasks::receiver, this);
+        pthread_create(&sender_thread, &attr, Tasks::sender, this);
     }
 
     bool pop(Task& task) {
@@ -272,6 +226,7 @@ public:
     }
     ~Tasks() {
 //        std::cout << "~Tasks" << std::endl;
+        pthread_mutex_unlock(&new_task_mutex);
         pthread_join(receiver_thread, NULL);
         pthread_join(sender_thread, NULL);
         pthread_cond_destroy(&new_task);
@@ -302,7 +257,7 @@ double worker() {
 
 
 int main(int argc, char *argv[]) {
-    int provided = MPI::Init_thread(MPI::THREAD_MULTIPLE);
+    int provided = MPI::Init_thread(argc, argv, MPI::THREAD_MULTIPLE);
     if (provided < MPI::THREAD_MULTIPLE) {
         std::cout << "wrong level provided" << std::endl;
         return 1;

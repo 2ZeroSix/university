@@ -27,15 +27,14 @@ std::size_t getTasksCount(std::size_t shift) {
 
 bool getTasks(std::queue<Task> &tasks) {
     static std::size_t iteration = 0;
-    std::cout << MPI::COMM_WORLD.Get_rank() << ":" << iteration << std::endl;
-    static std::size_t total = 3;
+//    std::cout << MPI::COMM_WORLD.Get_rank() << ":" << iteration << std::endl;
+    static std::size_t total = 23;
     MPI::COMM_WORLD.Barrier();
     if (iteration < total) {
         ++iteration;
         std::queue<Task> queue;
         for (std::size_t i = 0; i < getTasksCount(iteration); ++i) {
-            Task task = {.start_value = 0.987654321 / (1 + iteration),
-                         .iterations = 10000 * (1 + iteration % total)};
+            Task task = {0.987654321 / (1 + iteration), 100000 * (1 + iteration % total)};
             queue.push(task);
         }
         tasks = queue;
