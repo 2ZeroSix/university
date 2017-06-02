@@ -1,15 +1,14 @@
-#include <iostream>
-#include <valarray>
-#include <iterator>
-#include <queue>
 #include <mpi.h>
+#include <iostream>
+#include <cmath>
+#include <queue>
 
-struct Task {
+typedef struct Task {
     double start_value;
-    std::size_t iterations;
-};
+    size_t iterations;
+} Task;
 
-double solveTask(const Task &task) {
+double solveTask(const Task& task) {
     double result = task.start_value;
     for (size_t i = 0; i < task.iterations; ++i)
         result = sqrt(result * result);
@@ -45,7 +44,7 @@ bool getTasks(std::queue<Task> &tasks) {
 }
 
 double worker() {
-    std::queue<Task> tasks;
+    std::queue <Task> tasks;
     double result = 0;
     while (getTasks(tasks))
         while (!tasks.empty()) {
@@ -57,31 +56,35 @@ double worker() {
 }
 
 int main(int argc, char *argv[]) {
-    int provided = MPI::Init_thread(MPI::THREAD_SINGLE);
-    if (provided < MPI::THREAD_SINGLE) {
+    int provided;
+    MPI_Init_thread(&argc, &argv, MPI_THREAD_SINGLE, &provided);
+    if (provided < MPI_THREAD_SINGLE) {
         std::cout << "wrong level provided" << std::endl;
         return 1;
     }
 
-    double start = MPI::Wtime();
+    double start = MPI_Wtime();
     double sub_result = worker();
-    double end = MPI::Wtime();
+    double end = MPI_Wtime();
     double sub_time = end - start;
-    if (MPI::COMM_WORLD.Get_rank() == 0) {
-        int proc_size = MPI::COMM_WORLD.Get_size();
-        double *time = new double[proc_size];
+    int proc_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &proc_rank);
+    if (proc_rank == 0) {
+        int proc_size;
+        MPI_Comm_size(MPI_COMM_WORLD, &proc_size);
+        double time;
         double result;
-        MPI::COMM_WORLD.Reduce(&sub_result, &result, 1, MPI::DOUBLE, MPI::SUM, 0);
-        MPI::COMM_WORLD.Gather(&sub_time, 1, MPI::DOUBLE, time, 1, MPI::DOUBLE, 0);
-        std::cout << result << ", ";
-        std::valarray<double> time_vals = std::valarray<double>(time, (std::size_t)proc_size);
-        std::cout << time_vals.sum() << ", ";
-        std::cout << time_vals.max() << std::endl;
-    }
-    else {
-        MPI::COMM_WORLD.Reduce(&sub_result, NULL, 1, MPI::DOUBLE, MPI::SUM, 0);
-        MPI::COMM_WORLD.Gather(&sub_time, 1, MPI::DOUBLE, NULL, 1, MPI::DOUBLE, 0);
+        MPI_Reduce(&sub_result, &result, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        printf("%6.6lf, ", result);
+        MPI_Reduce(&sub_time, &time, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        printf("%6.6lf, ", time);
+        MPI_Reduce(&sub_time, &time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+        printf("%6.6lf\n", time);
+    } else {
+        MPI_Reduce(&sub_result, NULL, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&sub_time, NULL, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&sub_time, NULL, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
     }
 
-    MPI::Finalize();
+    MPI_Finalize();
 }
