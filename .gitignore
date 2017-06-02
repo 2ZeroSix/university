@@ -9,3 +9,5 @@ in
 out
 in.txt
 out.txt
+cmake-build-debug
+
