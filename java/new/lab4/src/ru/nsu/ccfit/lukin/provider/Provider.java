@@ -13,14 +13,13 @@ public abstract class Provider<P extends Product> implements Runnable {
     private AtomicLong delay;
     private Storage<P> stock;
     private AtomicLong total = new AtomicLong(0);
-    private AtomicBoolean runnable = new AtomicBoolean(true);
     public Provider(Storage<P> stock, long delay) {
         this.stock = stock;
         this.delay = new AtomicLong(delay);
     }
 
     public void run() {
-        while (runnable.get()) {
+        while (!Thread.interrupted()) {
             try {
                 Thread.sleep(delay.get());
                 stock.put(createProduct());
@@ -38,10 +37,6 @@ public abstract class Provider<P extends Product> implements Runnable {
     public Provider setDelay(long delay) {
         this.delay.set(delay);
         return this;
-    }
-
-    public void stop() {
-        runnable.set(false);
     }
 
     public long getTotal() {

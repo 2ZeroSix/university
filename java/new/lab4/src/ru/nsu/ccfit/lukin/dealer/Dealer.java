@@ -13,7 +13,6 @@ public class Dealer implements Runnable {
     private Storage<Auto> autoStorage;
 
     private AtomicLong delay;
-    private AtomicBoolean runnable = new AtomicBoolean(true);
 
     public Dealer(Storage<Auto> autoStorage, long delay) {
         this.autoStorage = autoStorage;
@@ -31,7 +30,7 @@ public class Dealer implements Runnable {
 
     @Override
     public void run() { // TODO runnable -> interrupted
-        while(runnable.get()) {
+        while(!Thread.interrupted()) {
             try {
                 Thread.sleep(delay.get());
                 autoStorage.poll();
@@ -39,7 +38,4 @@ public class Dealer implements Runnable {
         }
     }
 
-    public void stop() {
-        runnable.set(false);
-    }
 }

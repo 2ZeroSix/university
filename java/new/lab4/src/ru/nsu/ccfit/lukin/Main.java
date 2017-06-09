@@ -105,20 +105,6 @@ public class Main extends JFrame {
         addWindowListener(new WindowListener() {
                               public void windowOpened(WindowEvent windowEvent) {}
                               public void windowClosing(WindowEvent event) {
-                                  if (timer != null)
-                                      timer.stop();
-                                  if (autoFactory != null)
-                                      autoFactory.stop();
-                                  if (motorProvider != null)
-                                      motorProvider.stop();
-                                  if (bodyProvider != null)
-                                      bodyProvider.stop();
-                                  if (accessoryProvider != null)
-                                      accessoryProvider.stop();
-                                  if (dealers != null)
-                                      for (Dealer dealer : dealers)
-                                          if (dealer != null)
-                                              dealer.stop();
                                   if (threads != null)
                                       for (Thread thread: threads)
                                           if (thread != null)

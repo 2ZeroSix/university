@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ThreadPool {
     private Queue<Runnable> tasks = new ConcurrentLinkedDeque<>();
     private Thread[] workers;
-    private AtomicBoolean runnable = new AtomicBoolean(true);
     public ThreadPool(int threads) {
         workers = new Thread[threads];
         for (int i = 0; i < threads; ++i) {
@@ -28,7 +27,7 @@ public class ThreadPool {
     }
 
     private void worker() {
-        while (runnable.get()) {
+        while (!Thread.interrupted()) {
             Runnable task;
             synchronized (this) {
             task = tasks.poll();
@@ -45,7 +44,6 @@ public class ThreadPool {
     }
 
     public void stop() {
-        runnable.set(false);
         for (Thread thread : workers) {
             thread.interrupt();
             try {

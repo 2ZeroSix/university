@@ -34,7 +34,6 @@ public class AutoFactory implements Runnable {
     private AtomicLong produced = new AtomicLong(0);
     private static final int workers;
     private static final boolean log;
-    private AtomicBoolean runnable = new AtomicBoolean(true);
     private DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 
     static {
@@ -62,7 +61,7 @@ public class AutoFactory implements Runnable {
     private <P extends Product> P getProduct(Storage<P> storage) {
         synchronized (storage) {
             P product;
-            while (runnable.get()) {
+            while (!Thread.interrupted()) {
                 try {
                     product = storage.poll();
                     if (product != null) {
@@ -78,11 +77,11 @@ public class AutoFactory implements Runnable {
 
     @Override
     public void run() {
-        while (runnable.get()) {
+        while (!Thread.interrupted()) {
             Body body = getProduct(bodyStorage);
             Motor motor = getProduct(motorStorage);
             Accessory accessory = getProduct(accessoryStorage);
-            if (runnable.get()) {
+            if (!Thread.interrupted()) {
                 threadPool.addTask(() -> {
                     try {
                         Thread.sleep(delay.get());
@@ -93,6 +92,7 @@ public class AutoFactory implements Runnable {
                 });
             }
         }
+        threadPool.stop();
     }
 
     public long getDelay() {
@@ -102,10 +102,5 @@ public class AutoFactory implements Runnable {
     public AutoFactory setDelay(long delay) {
         this.delay.set(delay);
         return this;
-    }
-
-    public void stop() {
-        threadPool.stop();
-        runnable.set(false);
     }
 }
