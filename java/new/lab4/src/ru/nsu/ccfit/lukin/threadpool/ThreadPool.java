@@ -29,17 +29,18 @@ public class ThreadPool {
 
     private void worker() {
         while (runnable.get()) {
-            try {
-                synchronized (this) {
-                    wait();
+            Runnable task;
+            synchronized (this) {
+            task = tasks.poll();
+                if (task == null) {
+                    try {
+                        wait();
+                    } catch (InterruptedException ignore) {
+                    }
+                    continue;
                 }
-            } catch (InterruptedException e) {
-                continue;
             }
-            Runnable task = tasks.poll();
-            if (task != null) {
-                task.run();
-            }
+            task.run();
         }
     }
 

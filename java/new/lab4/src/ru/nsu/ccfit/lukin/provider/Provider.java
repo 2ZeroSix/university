@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class Provider<P extends Product> implements Runnable {
     private AtomicLong delay;
     private Storage<P> stock;
-    private long total = 0;
+    private AtomicLong total = new AtomicLong(0);
     private AtomicBoolean runnable = new AtomicBoolean(true);
     public Provider(Storage<P> stock, long delay) {
         this.stock = stock;
@@ -24,6 +24,7 @@ public abstract class Provider<P extends Product> implements Runnable {
             try {
                 Thread.sleep(delay.get());
                 stock.put(createProduct());
+                total.addAndGet(1);
             } catch (InterruptedException ignored) {}
         }
     }
@@ -44,6 +45,6 @@ public abstract class Provider<P extends Product> implements Runnable {
     }
 
     public long getTotal() {
-        return total;
+        return total.get();
     }
 }

@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Created by dzs on 03.06.17.
  */
-public class Dealer implements Runnable{
+public class Dealer implements Runnable {
     private Storage<Auto> autoStorage;
 
     private AtomicLong delay;
@@ -30,7 +30,7 @@ public class Dealer implements Runnable{
     }
 
     @Override
-    public void run() {
+    public void run() { // TODO runnable -> interrupted
         while(runnable.get()) {
             try {
                 Thread.sleep(delay.get());

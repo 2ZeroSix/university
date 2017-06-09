@@ -1,9 +1,6 @@
 package ru.nsu.ccfit.lukin.factory;
 
-import ru.nsu.ccfit.lukin.products.Accessory;
-import ru.nsu.ccfit.lukin.products.Auto;
-import ru.nsu.ccfit.lukin.products.Body;
-import ru.nsu.ccfit.lukin.products.Motor;
+import ru.nsu.ccfit.lukin.products.*;
 import ru.nsu.ccfit.lukin.storage.AutoStorage;
 import ru.nsu.ccfit.lukin.storage.Storage;
 import ru.nsu.ccfit.lukin.threadpool.ThreadPool;
@@ -13,8 +10,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by dzs on 03.06.17.
@@ -26,6 +26,12 @@ public class AutoFactory implements Runnable {
     private final Storage<Motor> motorStorage;
     private final Storage<Accessory> accessoryStorage;
     private AtomicLong delay;
+
+    public AtomicLong getProduced() {
+        return produced;
+    }
+
+    private AtomicLong produced = new AtomicLong(0);
     private static final int workers;
     private static final boolean log;
     private AtomicBoolean runnable = new AtomicBoolean(true);
@@ -53,50 +59,35 @@ public class AutoFactory implements Runnable {
         this.threadPool = new ThreadPool(workers);
     }
 
+    private <P extends Product> P getProduct(Storage<P> storage) {
+        synchronized (storage) {
+            P product;
+            while (runnable.get()) {
+                try {
+                    product = storage.poll();
+                    if (product != null) {
+                        return product;
+                    } else {
+                        storage.wait();
+                    }
+                } catch (InterruptedException ignore) {}
+            }
+            return null;
+        }
+    }
+
     @Override
     public void run() {
         while (runnable.get()) {
-            Body body = null;
-            Motor motor = null;
-            Accessory accessory = null;
-            while (runnable.get()) {
-                try {
-                    body = bodyStorage.poll();
-                } catch (InterruptedException e) {
-                    continue;
-                }
-                if (body != null) {
-                    break;
-                }
-            }
-            while (runnable.get()) {
-                try {
-                    motor = motorStorage.poll();
-                } catch (InterruptedException e) {
-                    continue;
-                }
-                if (motor != null) {
-                    break;
-                }
-            }
-            while (runnable.get()) {
-                try {
-                    accessory = accessoryStorage.poll();
-                } catch (InterruptedException e) {
-                    continue;
-                }
-                if (accessory != null) {
-                    break;
-                }
-            }
+            Body body = getProduct(bodyStorage);
+            Motor motor = getProduct(motorStorage);
+            Accessory accessory = getProduct(accessoryStorage);
             if (runnable.get()) {
-                Body finalBody = body;
-                Motor finalMotor = motor;
-                Accessory finalAccessory = accessory;
                 threadPool.addTask(() -> {
                     try {
-                        autoStorage.put(new Auto(df.format(new Date()), finalBody, finalMotor, finalAccessory));
                         Thread.sleep(delay.get());
+                        autoStorage.put(new Auto(df.format(new Date()), body, motor, accessory));
+                        produced.addAndGet(1);
                     } catch (InterruptedException ignored) {
                     }
                 });

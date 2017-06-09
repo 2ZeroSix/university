@@ -12,22 +12,25 @@ import java.util.concurrent.SynchronousQueue;
 public class Storage<P extends Product> {
     private final Queue<P> queue = new ConcurrentLinkedQueue<>();
     private long capacity;
+
+    public long getProducts() {
+        return products;
+    }
+
     private long products = 0;
     public Storage(long capacity) {
         this.capacity = capacity;
     }
     public void put(P product) throws InterruptedException {
-        synchronized (queue) {
+        synchronized (this) {
             while (true) {
-                synchronized (this) {
                     if (capacity > products) {
                         queue.add(product);
                         ++products;
                         notifyAll();
                         break;
                     }
-                }
-                queue.wait();
+                wait();
             }
         }
     }
@@ -36,11 +39,9 @@ public class Storage<P extends Product> {
         P product;
         product = queue.poll();
         if (product != null) {
-            synchronized (queue) {
-                synchronized (this) {
+            synchronized (this) {
                     --products;
-                }
-                queue.notify();
+                notify();
             }
         }
         return product;

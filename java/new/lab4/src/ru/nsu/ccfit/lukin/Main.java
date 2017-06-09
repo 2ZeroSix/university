@@ -52,26 +52,30 @@ public class Main extends JFrame {
     private final JLabel bodyLabel;
     private final JLabel motorLabel;
     private final JLabel accessoryLabel;
+    private final Timer timer;
 
 
     private AccessoryProvider accessoryProvider;
     private MotorProvider motorProvider;
     private BodyProvider bodyProvider;
     private AutoFactory autoFactory;
-    Thread[] threads;
+    private Thread[] threads;
     private Dealer[] dealers;
+    private Storage bodyStorage;
+    private Storage motorStorage;
+    private Storage accessoryStorage;
+    private AutoStorage autoStorage;
 
     public static void main(String[] args) {
         Main frame = new Main();
     }
 
     private void start() {
-        System.out.println("starting");
         threads = new Thread[4 + dealersCount];
-        Storage<Body> bodyStorage = new Storage<>(bodyStorageSize);
-        Storage<Motor> motorStorage= new Storage<>(motorStorageSize);
-        Storage<Accessory> accessoryStorage = new Storage<>(accessoryStorageSize);
-        AutoStorage autoStorage = new AutoStorage(autoStorageSize);
+        bodyStorage = new Storage<>(bodyStorageSize);
+        motorStorage= new Storage<>(motorStorageSize);
+        accessoryStorage = new Storage<>(accessoryStorageSize);
+        autoStorage = new AutoStorage(autoStorageSize);
         autoFactory = new AutoFactory(autoStorage, bodyStorage, motorStorage,
                                                     accessoryStorage, autoSpeed.getValue());
         bodyProvider = new BodyProvider(bodyStorage, bodySpeed.getValue());
@@ -92,6 +96,7 @@ public class Main extends JFrame {
         for (int i = 0; i < 4 + dealersCount; ++i) {
             threads[i].start();
         }
+        timer.start();
     }
 
     private Main() {
@@ -100,6 +105,8 @@ public class Main extends JFrame {
         addWindowListener(new WindowListener() {
                               public void windowOpened(WindowEvent windowEvent) {}
                               public void windowClosing(WindowEvent event) {
+                                  if (timer != null)
+                                      timer.stop();
                                   if (autoFactory != null)
                                       autoFactory.stop();
                                   if (motorProvider != null)
@@ -116,6 +123,7 @@ public class Main extends JFrame {
                                       for (Thread thread: threads)
                                           if (thread != null)
                                               try {
+                                                  thread.interrupt();
                                                   thread.join();
                                               } catch (InterruptedException ignored) {}
                                   System.exit(0);
@@ -128,30 +136,30 @@ public class Main extends JFrame {
                           });
         setLayout(new GridBagLayout());
         autoSpeed = new JSlider();
-        autoSpeed.setMinimum(500);
+        autoSpeed.setMinimum(0);
         autoSpeed.setMaximum(10000);
         autoSpeed.setValue(1000);
         bodySpeed = new JSlider();
-        bodySpeed.setMinimum(500);
+        bodySpeed.setMinimum(0);
         bodySpeed.setMaximum(10000);
         bodySpeed.setValue(1000);
         motorSpeed = new JSlider();
-        motorSpeed.setMinimum(500);
+        motorSpeed.setMinimum(0);
         motorSpeed.setMaximum(10000);
         motorSpeed.setValue(1000);
         accessorySpeed = new JSlider();
-        accessorySpeed.setMinimum(500);
+        accessorySpeed.setMinimum(0);
         accessorySpeed.setMaximum(10000);
         accessorySpeed.setValue(1000);
         dealersSpeed = new JSlider();
-        dealersSpeed.setMinimum(500);
+        dealersSpeed.setMinimum(0);
         dealersSpeed.setMaximum(10000);
         dealersSpeed.setValue(1000);
         JButton start = new JButton("start");
         start.addActionListener(actionEvent -> {
             this.remove(start);
-            JButton update = new JButton("update");
-            update.addActionListener(actionEvent1 -> this.update());
+            JButton update = new JButton("update delays");
+            update.addActionListener(actionEvent1 -> this.updateDelays());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 3;
             gbc.gridy = 1;
@@ -200,11 +208,17 @@ public class Main extends JFrame {
         gbc.gridx = 5;
         add(dealersSpeed, gbc);
         pack();
+        timer = new Timer(100, actionEvent -> {
+            autoLabel.setText("Auto: " + autoStorage.getProducts() + ":" + autoFactory.getProduced());
+            bodyLabel.setText("Body: "+ bodyStorage.getProducts() + ":" + bodyProvider.getTotal());
+            motorLabel.setText("Engine: "+ motorStorage.getProducts() + ":" + motorProvider.getTotal());
+            accessoryLabel.setText("Accessory: "+ accessoryStorage.getProducts() + ":" + accessoryProvider.getTotal());
+//            repaint();
+        });
         setVisible(true);
-
     }
 
-    private void update() {
+    private void updateDelays() {
         autoFactory.setDelay(autoSpeed.getValue());
         bodyProvider.setDelay(bodySpeed.getValue());
         motorProvider.setDelay(motorProvider.getDelay());
