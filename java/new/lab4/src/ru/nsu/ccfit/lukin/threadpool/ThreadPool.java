@@ -26,18 +26,37 @@ public class ThreadPool {
         }
     }
 
+    public void addTaskBlocking(Runnable task) {
+        synchronized (this) {
+            while (!Thread.currentThread().isInterrupted()) {
+                if (tasks.isEmpty()) {
+                    addTask(task);
+                    return;
+                } else {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+    }
+
     private void worker() {
-        while (!Thread.interrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             Runnable task;
             synchronized (this) {
-            task = tasks.poll();
+                task = tasks.poll();
                 if (task == null) {
                     try {
                         wait();
-                    } catch (InterruptedException ignore) {
+                    } catch (InterruptedException e) {
+                        break;
                     }
                     continue;
                 }
+                notifyAll();
             }
             task.run();
         }

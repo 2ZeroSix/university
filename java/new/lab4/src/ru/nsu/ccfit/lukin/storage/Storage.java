@@ -5,6 +5,7 @@ import ru.nsu.ccfit.lukin.products.Product;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by dzs on 03.06.17.
@@ -14,19 +15,19 @@ public class Storage<P extends Product> {
     private long capacity;
 
     public long getProducts() {
-        return products;
+        return products.get();
     }
 
-    private long products = 0;
+    private AtomicLong products = new AtomicLong(0);
     public Storage(long capacity) {
         this.capacity = capacity;
     }
     public void put(P product) throws InterruptedException {
         synchronized (this) {
             while (true) {
-                    if (capacity > products) {
+                    if (capacity > products.get()) {
                         queue.add(product);
-                        ++products;
+                        products.incrementAndGet();
                         notifyAll();
                         break;
                     }
@@ -40,8 +41,8 @@ public class Storage<P extends Product> {
         product = queue.poll();
         if (product != null) {
             synchronized (this) {
-                    --products;
-                notify();
+                    products.decrementAndGet();
+                notifyAll();
             }
         }
         return product;

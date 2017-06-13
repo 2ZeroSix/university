@@ -61,9 +61,9 @@ public class Main extends JFrame {
     private AutoFactory autoFactory;
     private Thread[] threads;
     private Dealer[] dealers;
-    private Storage bodyStorage;
-    private Storage motorStorage;
-    private Storage accessoryStorage;
+    private Storage<Body> bodyStorage;
+    private Storage<Motor> motorStorage;
+    private Storage<Accessory> accessoryStorage;
     private AutoStorage autoStorage;
 
     public static void main(String[] args) {
@@ -196,9 +196,9 @@ public class Main extends JFrame {
         pack();
         timer = new Timer(100, actionEvent -> {
             autoLabel.setText("Auto: " + autoStorage.getProducts() + ":" + autoFactory.getProduced());
-            bodyLabel.setText("Body: "+ bodyStorage.getProducts() + ":" + bodyProvider.getTotal());
-            motorLabel.setText("Engine: "+ motorStorage.getProducts() + ":" + motorProvider.getTotal());
-            accessoryLabel.setText("Accessory: "+ accessoryStorage.getProducts() + ":" + accessoryProvider.getTotal());
+            bodyLabel.setText("Body: "+ bodyStorage.getProducts() + ":" + bodyProvider.getProduced());
+            motorLabel.setText("Engine: "+ motorStorage.getProducts() + ":" + motorProvider.getProduced());
+            accessoryLabel.setText("Accessory: "+ accessoryStorage.getProducts() + ":" + accessoryProvider.getProduced());
 //            repaint();
         });
         setVisible(true);
@@ -207,7 +207,7 @@ public class Main extends JFrame {
     private void updateDelays() {
         autoFactory.setDelay(autoSpeed.getValue());
         bodyProvider.setDelay(bodySpeed.getValue());
-        motorProvider.setDelay(motorProvider.getDelay());
+        motorProvider.setDelay(motorSpeed.getValue());
         accessoryProvider.setDelay(accessorySpeed.getValue());
         for (Dealer dealer : dealers) {
             dealer.setDelay(dealersSpeed.getValue());

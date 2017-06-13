@@ -61,7 +61,7 @@ public class AutoFactory implements Runnable {
     private <P extends Product> P getProduct(Storage<P> storage) {
         synchronized (storage) {
             P product;
-            while (!Thread.interrupted()) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
                     product = storage.poll();
                     if (product != null) {
@@ -69,7 +69,9 @@ public class AutoFactory implements Runnable {
                     } else {
                         storage.wait();
                     }
-                } catch (InterruptedException ignore) {}
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
             return null;
         }
@@ -77,17 +79,18 @@ public class AutoFactory implements Runnable {
 
     @Override
     public void run() {
-        while (!Thread.interrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             Body body = getProduct(bodyStorage);
             Motor motor = getProduct(motorStorage);
             Accessory accessory = getProduct(accessoryStorage);
-            if (!Thread.interrupted()) {
-                threadPool.addTask(() -> {
+            if (!Thread.currentThread().isInterrupted()) {
+                threadPool.addTaskBlocking(() -> {
                     try {
                         Thread.sleep(delay.get());
                         autoStorage.put(new Auto(df.format(new Date()), body, motor, accessory));
                         produced.addAndGet(1);
-                    } catch (InterruptedException ignored) {
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
                 });
             }

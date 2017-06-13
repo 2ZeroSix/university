@@ -29,12 +29,14 @@ public class Dealer implements Runnable {
     }
 
     @Override
-    public void run() { // TODO runnable -> interrupted
-        while(!Thread.interrupted()) {
+    public void run() {
+        while(!Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(delay.get());
                 autoStorage.poll();
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 

@@ -19,12 +19,14 @@ public abstract class Provider<P extends Product> implements Runnable {
     }
 
     public void run() {
-        while (!Thread.interrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(delay.get());
                 stock.put(createProduct());
                 total.addAndGet(1);
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -39,7 +41,7 @@ public abstract class Provider<P extends Product> implements Runnable {
         return this;
     }
 
-    public long getTotal() {
+    public long getProduced() {
         return total.get();
     }
 }
