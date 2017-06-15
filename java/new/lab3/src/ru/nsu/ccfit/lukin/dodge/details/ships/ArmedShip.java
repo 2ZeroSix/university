@@ -11,15 +11,14 @@ import ru.nsu.ccfit.lukin.dodge.details.Position;
 public class ArmedShip extends Ship implements Armed{
     private Class<? extends Missile> missileClass = null;
 
-    protected int step = 0;
 
     public ArmedShip(Model model) throws DodgeException {
         super(model);
     }
 
-    public ArmedShip(Model model, Position position, double radius, double speed,
+    public ArmedShip(Model model, Position position, double speed,
                      double circularSpeed, int health, Class<Missile> missileClass) throws DodgeException {
-        super(model, position, radius,  speed, circularSpeed, health);
+        super(model, position, speed, circularSpeed, health);
         this.missileClass = missileClass;
     }
     public Class<? extends Missile> getMissileClass() {
@@ -31,17 +30,14 @@ public class ArmedShip extends Ship implements Armed{
         return this;
     }
 
-    public int getStep() {
-        return step;
-    }
-
     public void fire() throws DodgeException {
         Model model = this.model.get();
+        if (model == null) return;
         try {
-            Position missilePosition = new Position(Math.min(1, Math.max(0, position.getX() + getRadius() * Math.cos(position.getAngle()))),
-                    Math.min(1, Math.max(0, position.getY() + getRadius() * Math.sin(position.getAngle()))),
+            Position missilePosition = new Position(Math.min(1, Math.max(0, position.getX() - (getRadius() + 1E-5) * Math.cos(position.getAngle()))),
+                    Math.min(1, Math.max(0, position.getY() + (getRadius() + 1E-5) * Math.sin(position.getAngle()))),
                     position.getAngle());
-            model.addMissile(this.missileClass.getConstructor(Model.class, Position.class).newInstance(model, missilePosition));
+            model.add(this.missileClass.getConstructor(Model.class, Position.class).newInstance(model, missilePosition));
         } catch (Exception e) {
             throw new DodgeException("Can't create missile: " + missileClass.getName(), e);
         }

@@ -16,10 +16,9 @@ public abstract class Detail{
     protected boolean destroyed = false;
     protected WeakReference<Model> model;
 
-    public Detail(Model model, Position position, double radius, double speed, double circularSpeed) throws DodgeException {
+    public Detail(Model model, Position position, double speed, double circularSpeed) throws DodgeException {
         this.model = new WeakReference<>(model);
         this.position = position != null ? position : new Position();
-        this.position.setRadius(radius);
         this.speed = speed;
         this.circularSpeed = circularSpeed;
         update();
@@ -62,7 +61,17 @@ public abstract class Detail{
     }
 
     public void destroy() {
-        destroyed = true;
+        if (!isDestroyed()) {
+            Model model = getModel();
+            if (model == null) return;
+            try {
+                model.add(new Explosion(getModel(), position));
+            } catch (DodgeException e) {
+                e.printStackTrace();
+            }
+            destroyed = true;
+            model.getView().remove(this);
+        }
     }
 
     public boolean isDestroyed() {
@@ -70,14 +79,16 @@ public abstract class Detail{
     }
 
     public boolean isContains(Position position) {
-        return Math.abs(this.position.getX() - position.getX()) < getRadius() &&
-                Math.abs(this.position.getY() - position.getY()) < getRadius();
+        return Math.sqrt((this.position.getX() - position.getX())*(this.position.getX() - position.getX()) +
+                (this.position.getY() - position.getY())*(this.position.getY() - position.getY()))< getRadius();
     }
 
-    public abstract void move();
+    public abstract void move() throws DodgeException;
 
     public void update() throws DodgeException {
-        View view = getModel().getView();
+        Model model = getModel();
+        if (model == null) return;
+        View view = model.getView();
         if (view != null) view.update(this);
     }
 

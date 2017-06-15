@@ -14,7 +14,7 @@ public class ABLComponent extends Sprite {
     private static BufferedImage image;
     static {
         try {
-            image = ImageIO.read(ru.nsu.ccfit.lukin.dodge.sprites.ships.ABLComponent.class.getResource("abl.png"));
+            image = ImageIO.read(ru.nsu.ccfit.lukin.dodge.sprites.missiles.ABLComponent.class.getResource("abl-missile.png"));
         } catch (IOException e) {
             image = null;
         }

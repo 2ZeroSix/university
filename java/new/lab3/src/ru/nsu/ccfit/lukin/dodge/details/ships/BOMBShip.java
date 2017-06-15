@@ -17,7 +17,7 @@ public class BOMBShip extends EnemyShip {
         else if (rand > 0.5)    setPosition(new Position(Math.random(), 1, Math.PI/2));
         else if (rand > 0.25)   setPosition(new Position(0, Math.random(), 0));
         else                    setPosition(new Position(1, Math.random(), Math.PI));
-        setRadius(0.075);
+        setRadius(0.05);
         setSpeed(0.005);
         setCircularSpeed(0);
         setHealth(1500);

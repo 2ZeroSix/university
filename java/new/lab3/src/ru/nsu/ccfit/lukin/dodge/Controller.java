@@ -1,7 +1,9 @@
 package ru.nsu.ccfit.lukin.dodge;
 
 import ru.nsu.ccfit.lukin.dodge.details.Detail;
+import ru.nsu.ccfit.lukin.dodge.details.missiles.Missile;
 import ru.nsu.ccfit.lukin.dodge.details.ships.ArmedShip;
+import ru.nsu.ccfit.lukin.dodge.details.ships.EnemyShip;
 import ru.nsu.ccfit.lukin.dodge.details.ships.Ship;
 import ru.nsu.ccfit.lukin.dodge.details.ships.ShipFactory;
 
@@ -60,7 +62,6 @@ public class Controller {
     }
 
     public synchronized void step() throws DodgeException {
-//        Function<Void, Detail> fun = new
         Consumer<Detail> consumer = detail -> {
             try {
                 detail.act();
@@ -68,9 +69,18 @@ public class Controller {
                 e.printStackTrace();
             }
         };
-        model.getEnemiesShips().stream().forEach(consumer);
-        model.getMissiles().stream().forEach(consumer);
-        model.getDetails().stream().forEach(consumer);
+        for (ArmedShip armedShip : model.getEnemiesShips()) {
+            consumer.accept(armedShip);
+        }
+        model.getEnemiesShips().removeIf(Detail::isDestroyed);
+        for (Missile missile : model.getMissiles()) {
+            consumer.accept(missile);
+        }
+        model.getMissiles().removeIf(Detail::isDestroyed);
+        for (Detail detail : model.getDetails()) {
+            consumer.accept(detail);
+        }
+        model.getDetails().removeIf(Detail::isDestroyed);
 
         movePlayer();
         if (step++ % (updateRate * difficulty.getEnemiesAppearanceRate()) == 0) {
@@ -85,13 +95,22 @@ public class Controller {
         }
     }
 
-    public void startMove(double angle) {
+    public void startMove(int direction) {
         Ship ship = model.getPlayerShip();
-        ship.setPreferredAngle(angle);
+        if (moving)
+            ship.setPreferredAngle(Math.PI / 2 * direction);
+        else
+            ship.setPreferredAngle(
+                    (ship.getPreferredAngle() +  Math.PI / 2 * direction) / 2);
         moving = true;
     }
 
-    public void stopMove(double angle) {
+    public void stopMove(int direction) {
+        Ship ship = model.getPlayerShip();
+        if (ship.getPreferredAngle() - Math.PI / 2 * direction <= 1E-6)
+            moving = false;
+        else
+
         moving = false;
     }
 }

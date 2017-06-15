@@ -14,7 +14,7 @@ public class UFOComponent extends Sprite {
     private static BufferedImage image;
     static {
         try {
-            image = ImageIO.read(ru.nsu.ccfit.lukin.dodge.sprites.ships.ABLComponent.class.getResource("ufo.png"));
+            image = ImageIO.read(ru.nsu.ccfit.lukin.dodge.sprites.missiles.ABLComponent.class.getResource("ufo-missile.png"));
         } catch (IOException e) {
             image = null;
         }

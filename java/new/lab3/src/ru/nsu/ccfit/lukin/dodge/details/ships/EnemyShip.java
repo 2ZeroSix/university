@@ -9,6 +9,8 @@ import ru.nsu.ccfit.lukin.dodge.details.Position;
  */
 public class EnemyShip extends ArmedShip {
     private int stepsToFire = 0;
+    private int stepToChangeTarget = 0;
+    private int stepToFire = 0;
 
     public int getStepsToChangeTarget() {
         return stepsToChangeTarget;
@@ -19,8 +21,7 @@ public class EnemyShip extends ArmedShip {
     }
 
     private int stepsToChangeTarget = 0;
-    private int steps = 0;
-    Position target = new Position();
+    private Position target = new Position(Math.random(), Math.random());
     public EnemyShip(Model model) throws DodgeException {
         super(model);
     }
@@ -33,30 +34,26 @@ public class EnemyShip extends ArmedShip {
         this.stepsToFire = stepsToFire;
     }
 
-    public void act() throws DodgeException {
-        if (step++ % stepsToChangeTarget == 0) {
-            target.setX(Math.random());
-            target.setY(Math.random());
-        }
-        super.act();
-        if (step % stepsToFire == 0) {
-            fire();
-        }
-    }
-
-    public void move() {
+    public void move() throws DodgeException {
         if (!position.equals(target)) {
             preferredAngle = position.angleTo(target);
             try {
-                setPosition(new Position(position.getX() + speed * Math.cos(position.getAngle()),
-                        position.getY() + speed * Math.sin(position.getAngle())));
+                setPosition(position.nearestAfterMove(target, speed, circularSpeed));
             } catch (Position.PositionException ignore) {
             }
         } else {
+            if (stepToChangeTarget % stepsToChangeTarget == 0) {
+                target.setX(Math.random());
+                target.setY(Math.random());
+                stepToChangeTarget++;
+            }
             preferredAngle = position.angleTo(getModel().getPlayerShip().getPosition());
+            position.setAngle(preferredAngle);
+            stepToChangeTarget++;
+            stepToFire++;
+            if (stepToFire % stepsToFire == 0) {
+                fire();
+            }
         }
-        position.setAngle(circularSpeed >= Math.abs(preferredAngle - position.getAngle())
-                ? preferredAngle
-                : position.getAngle() + circularSpeed * Math.signum(position.getAngle() - preferredAngle));
     }
 }

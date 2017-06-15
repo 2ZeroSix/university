@@ -15,7 +15,7 @@ public class NSFShip extends Ship {
         else if (rand > 0.5)    setPosition(new Position(Math.random(), 1, Math.PI/2));
         else if (rand > 0.25)   setPosition(new Position(0, Math.random(), 0));
         else                    setPosition(new Position(1, Math.random(), Math.PI));
-        setRadius(0.05);
+        setRadius(0.01);
         setSpeed(0.01);
         setCircularSpeed(Math.PI*2);
         setHealth(5000);

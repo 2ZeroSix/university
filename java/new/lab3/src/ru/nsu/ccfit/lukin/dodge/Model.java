@@ -16,13 +16,10 @@ public class Model {
     final private Ship player;
     final private Set<ArmedShip> enemies = new HashSet<>();
     final private Set<Missile> missiles = new HashSet<>();
-
-    public Set<Detail> getDetails() {
-        return details;
-    }
-
     final private Set<Detail> details = new HashSet<>();
     private View view;
+
+
 
     public Model() throws DodgeException {
         this(null);
@@ -32,9 +29,6 @@ public class Model {
         player = ship != null ? ship : new ShipFactory(this).get("player");
     }
 
-    public void setView(View view) {
-        this.view = view;
-    }
 
     public Ship getPlayerShip() {
         return player;
@@ -48,6 +42,12 @@ public class Model {
         if (detail instanceof ArmedShip)    enemies.add((ArmedShip)detail);
         else if (detail instanceof Missile) missiles.add((Missile)detail);
         else                                details.add(detail);
+    }
+
+    public void remove(Detail detail) {
+        if (detail instanceof ArmedShip)    enemies.remove((ArmedShip)detail);
+        else if (detail instanceof Missile) missiles.remove((Missile)detail);
+        else                                details.remove(detail);
     }
 
     public void addEnemyShip(ArmedShip asc) {
@@ -70,7 +70,31 @@ public class Model {
         missiles.remove(missile);
     }
 
+    public void setView(View view) {
+        this.view = view;
+        try {
+            player.update();
+            for (ArmedShip enemy : enemies) {
+                enemy.update();
+            }
+            for (Missile missile : missiles) {
+                missile.update();
+            }
+            for (Detail detail : details) {
+                detail.update();
+            }
+        } catch (DodgeException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public View getView() {
         return view;
     }
+
+    public Set<Detail> getDetails() {
+        return details;
+    }
+
 }

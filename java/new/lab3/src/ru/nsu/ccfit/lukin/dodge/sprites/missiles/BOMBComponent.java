@@ -14,7 +14,7 @@ public class BOMBComponent extends Sprite {
     private static BufferedImage image;
     static {
         try {
-            image = ImageIO.read(ru.nsu.ccfit.lukin.dodge.sprites.ships.ABLComponent.class.getResource("bomb.png"));
+            image = ImageIO.read(ru.nsu.ccfit.lukin.dodge.sprites.missiles.ABLComponent.class.getResource("bomb-missile.png"));
         } catch (IOException e) {
             image = null;
         }

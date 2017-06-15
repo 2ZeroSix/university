@@ -10,7 +10,7 @@ public class Explosion extends Detail {
     int timeToLive = 60;
     int tick = 0;
     public Explosion(Model model, Position position) throws DodgeException {
-        super(model, position, 0, 0, 0);
+        super(model, position, 0, 0);
     }
 
     public int getTimeToLive() {
@@ -19,6 +19,15 @@ public class Explosion extends Detail {
 
     public void setTimeToLive(int timeToLive) {
         this.timeToLive = timeToLive;
+    }
+
+    @Override
+    public void destroy() {
+        if (!isDestroyed()) {
+            destroyed = true;
+            getModel().getView().remove(this);
+        }
+
     }
 
     @Override

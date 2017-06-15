@@ -11,14 +11,16 @@ import java.io.IOException;
 /**
  * Created by dzs on 10.05.17.
  */
-public class Sprite extends ImageIcon {
+public class Sprite extends JLabel {
     private Position pos;
+    private BufferedImage bi;
     public Sprite(BufferedImage bi) {
         this(bi, new Position());
     }
 
     public Sprite(BufferedImage bi, Position pos) {
-        super(bi);
+        setBounds(new Rectangle(0,0,1,1));
+        this.bi = bi;
         this.pos = pos;
     }
 
@@ -38,46 +40,24 @@ public class Sprite extends ImageIcon {
     }
 
     @Override
-    public synchronized void paintIcon(Component component, Graphics graphics, int i, int i1) {
-        ImageObserver observer = component;
-        if(this.getImageObserver() != null) {
-            observer = this.getImageObserver();
-        }
-        double angle = -this.pos.getAngle();
-        double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
-        int w = getImage().getWidth(observer), h = getImage().getHeight(observer);
-        int neww = (int)Math.floor(w*cos+h*sin), newh = (int) Math.floor(h * cos + w * sin);
-        Graphics2D g = ((Graphics2D)graphics);//.rotate(Math.PI/2 - angle);
-        System.out.println(component.getWidth() + " " + component.getHeight());
-        System.out.println(getImage().getWidth(observer) + " " + getImage().getHeight(observer));
-//        g.translate((neww - w) / 2, (newh - h) / 2);
-        g.rotate(angle, w / 2, h / 2);
-        g.scale(2*pos.getRadius()*(double)component.getWidth() / (double)getImage().getWidth(observer),
-                2*pos.getRadius()*(double)component.getHeight() / (double)getImage().getHeight(observer));
-//        g.translate(-(neww - w) / 2, -(newh - h) / 2);
-//        g.translate((pos.getX() - pos.getRadius())*component.getWidth(),
-//                (pos.getY() - pos.getRadius())*component.getHeight());
-//        g.drawImage(getImage(), 0, 0, observer);
-        super.paintIcon(component, graphics, 0, 0);
+    public void paint(Graphics g) {
+        setBounds(getParent().getBounds());
+        super.paint(g);
     }
-//    public static BufferedImage rotate(BufferedImage image, Graphics graphics, double angle) {
-//        double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
-//        int w = image.getWidth(), h = image.getHeight();
-//        int neww = (int)Math.floor(w*cos+h*sin), newh = (int) Math.floor(h * cos + w * sin);
-//        GraphicsConfiguration gc = getDefaultConfiguration();
-//        BufferedImage result = gc.createCompatibleImage(neww, newh, Transparency.TRANSLUCENT);
-//        Graphics2D g = result.createGraphics();
-//        g.translate((neww - w) / 2, (newh - h) / 2);
-//        g.rotate(angle, w / 2, h / 2);
-//        g.drawRenderedImage(image, null);
-//        g.dispose();
-//        return result;
-//    }
-//
-//    private static GraphicsConfiguration getDefaultConfiguration() {
-//        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//        GraphicsDevice gd = ge.getDefaultScreenDevice();
-//        return gd.getDefaultConfiguration();
-//    }
 
+    @Override
+    protected void paintComponent(Graphics g1) {
+        super.paintComponent(g1);
+        double angle = Math.PI - this.pos.getAngle();
+        int w = bi.getWidth(null), h = bi.getHeight(null);
+        int pw = getWidth(), ph = getHeight();
+
+        Graphics2D g = (Graphics2D)g1;
+        g.translate((pos.getX() - pos.getRadius())*pw,
+                (pos.getY() - pos.getRadius())*ph);
+        g.scale(2*pos.getRadius()*pw / w,
+                2*pos.getRadius()*pw / h);
+        g.rotate(angle, w/2, h/2);
+        g.drawImage(bi, 0, 0, this);
+    }
 }

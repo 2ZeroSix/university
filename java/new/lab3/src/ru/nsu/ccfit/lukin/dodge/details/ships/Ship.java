@@ -17,23 +17,19 @@ public class Ship extends Detail {
     }
 
     public Ship(Model model, Position position) throws DodgeException {
-        this(model, position, .01);
+        this(model, position, position != null ? position.getRadius() / 2 : 0);
     }
 
-    public Ship(Model model, Position position, double radius) throws DodgeException {
-        this(model, position, radius, radius / 2);
+    public Ship(Model model, Position position, double speed) throws DodgeException {
+        this(model, position, speed, 2*Math.PI);
     }
 
-    public Ship(Model model, Position position, double radius, double speed) throws DodgeException {
-        this(model, position, radius, speed, 2*Math.PI);
+    public Ship(Model model, Position position, double speed, double circularSpeed) throws DodgeException {
+        this(model, position, speed, circularSpeed, 1000);
     }
 
-    public Ship(Model model, Position position, double radius, double speed, double circularSpeed) throws DodgeException {
-        this(model, position, radius, speed, circularSpeed, 1000);
-    }
-
-    public Ship(Model model, Position position, double radius, double speed, double circularSpeed, int health) throws DodgeException {
-        super(model, position, radius, speed, circularSpeed);
+    public Ship(Model model, Position position, double speed, double circularSpeed, int health) throws DodgeException {
+        super(model, position, speed, circularSpeed);
         this.health = health;
     }
 
@@ -53,18 +49,14 @@ public class Ship extends Detail {
         this.health = health;
     }
 
-    public void destroy() {
-        super.destroy();
-    }
-
     public void harm(double damage) {
         health -= Math.max(damage, 0);
         if (health <= 0) destroy();
     }
 
-    public void move() {
+    public void move() throws DodgeException {
         try {
-            setPosition(new Position(position.getX() + speed * Math.cos(position.getAngle()),
+            setPosition(new Position(position.getX() - speed * Math.cos(position.getAngle()),
                                         position.getY() + speed * Math.sin(position.getAngle())));
         } catch (Position.PositionException ignore) {
         }
