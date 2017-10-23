@@ -12,15 +12,29 @@ public class Client {
         }
         File file = new File(args[0]);
         try (   InputStream inputStream = new FileInputStream(file);
-                Socket socket = new Socket(args[1], 6666);
-                OutputStream outputStream = socket.getOutputStream();
-                PrintWriter writer = new PrintWriter(outputStream)) {
-            ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-            buffer.putLong(file.getTotalSpace());
-            byte[] nameLen = file.getName().getBytes();
-            outputStream.write();
-            outputStream.write('\n');
-            outputStream.write(buffer.array());
+                Socket socket = new Socket(args[1], 7777);
+                OutputStream outputStream = socket.getOutputStream()) {
+            {
+                byte[] nameBytes = file.getName().getBytes();
+                if (nameBytes.length > 4096) {
+                    System.err.println("name of file is too long (max 4096 bytes)");
+                    return;
+                }
+                if (file.length() > 2L << 40) {
+                    System.err.println("file size is too big (max 1T)");
+                    return;
+                }
+                ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+                buffer.putInt(nameBytes.length);
+                outputStream.write(buffer.array());
+
+                outputStream.write(nameBytes);
+
+                buffer = ByteBuffer.allocate(Long.BYTES);
+                buffer.putLong(file.length());
+                outputStream.write(buffer.array());
+                outputStream.flush();
+            }
             byte[] tmp = new byte[4096];
             while(inputStream.available() > 0) {
                 int len = inputStream.read(tmp);
