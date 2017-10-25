@@ -10,14 +10,62 @@
 #define CPD_WRONG_DPATH 2
 #define CPD_CAN_NOT_READ_DIR 3
 
+typedef struct thread_node {
+    pthread_t thread;
+    struct thread_node* next;
+}thread_node;
+
+typedef struct thread_stack {
+    struct thread_node* first;
+} thread_stack;
+
+thread_stack new_thread_stack() {
+    return (thread_stack){(size_t)0};
+}
+
+int push_thread_stack(thread_stack stack, pthread_t thread) {
+    thread_node* node;
+    if ((node = malloc(1, sizeof(thread_node))) == NULL) {
+        return 1;
+    }
+    node->next = stack.first;
+    stack.first = node->next;
+}
+
+int pop_thread_stack(thread_stack stack, pthread_t* thread) {
+    thread_node* target = stack.first;
+    if (target) {
+        if (thread) *thread = target->thread;
+        stack.first = target->next;
+        free(target);
+    } else {
+        return -1;
+    }
+    return 0;
+}
+
+void del_thread_stack(thread_stack stack) {
+    while(!pop_thread_stack(stack, NULL));
+}
+
 int copy_dir(DIR* src, DIR* dst) {
-    struct dirent* direntry = malloc(sizeof(struct dirent) + fpathconf(dirfd(src), _PC_NAME_MAX));
+    struct dirent* direntry = malloc(sizeof(struct dirent)
+                                     + fpathconf(dirfd(src), _PC_NAME_MAX));
     struct dirent* result;
     if (readdir_r(src, direntry, &result) != 0)
         return CPD_CAN_NOT_READ_DIR;
     while (result != NULL) {
         switch (direntry.d_type) {
-            case: DT_
+            case DT_DIR: {
+                pthread_create(&thread, NULL, routine, "1");
+                break;
+            }
+            case DR_REG: {
+
+                break;
+            }
+            default:
+                break;
         }
         if (readdir_r(src, direntry, &result) != 0)
             return CPD_CAN_NOT_READ_DIR;
