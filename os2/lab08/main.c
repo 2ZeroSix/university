@@ -25,7 +25,7 @@ void* subpi(void* start_end) {
              pi -= 1.0/(iteration*4.0 + 3.0);
              iteration += task.count_of_threads;
         }
-    printf("%llu\n", iteration);
+    // printf("%llu\n", iteration);
     double* p_pi = (double*)malloc(sizeof(double));
     *p_pi = pi;
     return p_pi;
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
             exit(1);
         }
     }
-    double pi;
+    double pi = 0;
     for (ul i = 0; i < count_of_threads; ++i) {
         double* tmp;
         pthread_join(threads[i], (void**)&tmp);

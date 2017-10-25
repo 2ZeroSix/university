@@ -23,6 +23,8 @@ void get_fork (int, int, char *);
 void down_forks (int, int);
 pthread_mutex_t foodlock;
 pthread_mutex_t eatinglock;
+pthread_cond_t eatingcond;
+int current_philosopher = 0;
 int sleep_seconds = 0;
 
 int
@@ -30,10 +32,10 @@ main (int argn,
       char **argv)
 {
   int i;
+  // if (argn == 2)
+  //   sleep_seconds = atoi (argv[1]);
 
-  if (argn == 2)
-    sleep_seconds = atoi (argv[1]);
-
+  pthread_cond_init(&eatingcond, NULL);
   pthread_mutex_init(&eatinglock, NULL);
   pthread_mutex_init (&foodlock, NULL);
   for (i = 0; i < PHILO; i++)
@@ -56,22 +58,19 @@ philosopher (void *num)
   right_fork = id;
   left_fork = (id + 1) % PHILO;
   
-  while (f = food_on_table ()) {
+  while ((f = food_on_table ())) {
 
     /* Thanks to philosophers #1 who would like to 
      * take a nap before picking up the forks, the other
      * philosophers may be able to eat their dishes and 
      * not deadlock.
      */
-    if (id == 1)
-      sleep (sleep_seconds);
+    // if (id == 1)
+    //   sleep (sleep_seconds);
 
     printf ("Philosopher %d: get dish %d.\n", id, f);
-    pthread_mutex_lock(&eatinglock);
     get_fork (id, left_fork, "left ");
     get_fork (id, right_fork, "right");
-    pthread_mutex_unlock(&eatinglock);
-
     printf ("Philosopher %d: eating.\n", id);
     usleep (DELAY * (FOOD - f + 1));
     down_forks (left_fork, right_fork);
@@ -100,7 +99,12 @@ get_fork (int phil,
           int fork,
           char *hand)
 {
-  pthread_mutex_lock (&forks[fork]);
+  pthread_mutex_lock (&eatinglock);
+  while (current_philosopher != phil) {
+    pthread_cond_wait(&eatingcond, &eatinglock);
+  }
+  pthread_mutex_unlock(&eatinglock);
+  pthread_mutex_lock(&forks[fork]);
   printf ("Philosopher %d: got %s fork %d\n", phil, hand, fork);
 }
 
@@ -108,6 +112,8 @@ void
 down_forks (int f1,
             int f2)
 {
-  pthread_mutex_unlock (&forks[f1]);
-  pthread_mutex_unlock (&forks[f2]);
+  pthread_mutex_unlock(&forks[f1]);
+  pthread_mutex_unlock(&forks[f2]);
+  pthread_cond_broadcast(&eatingcond);
+  current_philosopher = (current_philosopher + 1) % PHILO;
 }

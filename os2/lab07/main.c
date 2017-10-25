@@ -15,14 +15,14 @@ void* subpi(void* start_end) {
     struct Task task = *(struct Task*)start_end;
     double pi = 0;
     ull i = task.offset;
-    printf("%llu\n", i);
-    fflush(stdout);
+    // printf("%llu\n", i);
+    // fflush(stdout);
     for (; i < ITER_COUNT; i += task.count_of_threads) {
          pi += 1.0/(i*4.0 + 1.0);
          pi -= 1.0/(i*4.0 + 3.0);
     }
-    printf("%llu\n", i);
-    fflush(stdout);
+    // printf("%llu\n", i);
+    // fflush(stdout);
     double* p_pi = (double*)malloc(sizeof(double));
     *p_pi = pi;
     return p_pi;
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
             exit(1);
         }
     }
-    double pi;
+    double pi = 0;
     for (ul i = 0; i < count_of_threads; ++i) {
         double* tmp;
         pthread_join(threads[i], (void**)&tmp);

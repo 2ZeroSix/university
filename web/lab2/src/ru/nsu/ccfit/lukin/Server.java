@@ -3,6 +3,7 @@ package ru.nsu.ccfit.lukin;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class Server extends Thread {
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("usage: <port>");
+            return;
         }
         try {
             int port = new Integer(args[0]);
@@ -39,35 +41,45 @@ public class Server extends Thread {
                             });
                         }
                     }
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
+                } catch (NumberFormatException e) {
+                    System.out.println("usage: <port>");
                 }
             });
             while (System.in.available() == 0) {
                 Socket socket = serverSocket.accept();
                 readers.add(new Server(socket));
             }
+            closer.interrupt();
+            closer.join();
         } catch (NumberFormatException e) {
             System.err.println(e.getLocalizedMessage());
             System.err.println("usage: <port>");
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException ignore) {
         }
     }
 
     @Override
     public void run() {
-        try (   InputStream inStream= socket.getInputStream();
-                /*Reader inReader = new InputStreamReader(inStream);
-                BufferedReader bufReader = new BufferedReader(inReader)*/){
-            inStream.read(4096);
-            FileOutputStream fileOutputStream = new FileOutputStream(bufReader.readLine());
-            long size = new Long(bufReader.readLine());
-            if (size > (long)2 << 40) {
-                System.err.println("File is too big; max size == " + String.valueOf((long)2 << 40));
-            }
-            long received = 0;
-            while (received < size) {
-                bufReader.read
+        try (InputStream inStream= socket.getInputStream()){
+            byte[] tmp = new byte[8192];
+            int len = inStream.read(tmp);
+            String[] strs = new String(tmp, StandardCharsets.UTF_8).split("\\n", 3);
+            String fileName = strs[0];
+            long fileSize = new Integer(strs[1]);
+            try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
+                if (fileSize > (long) 2 << 40) {
+                    System.err.println("File is too big; max size == " + String.valueOf((long) 2 << 40));
+                }
+                long received = strs[0].getBytes().length + strs[1].getBytes().length + "\n\n".getBytes().length;
+                fileOutputStream.write(tmp, (int)received, len - (int)received);
+                while (received < fileSize) {
+                    System.out.println("\r");
+                    len = inStream.read(tmp);
+                    fileOutputStream.write(tmp, 0, len);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

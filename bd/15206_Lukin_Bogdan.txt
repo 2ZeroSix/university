@@ -1,0 +1,43 @@
+-- postgresql
+-- 1 Добавить внешние ключи в схему
+-- 2 Добавить в order_items поле price и total. Добавить условие на равенства цены, умноженной на количество значению в total
+-- 4 Создать первичные ключи
+-- 5 Добавить поля min_price и max_price для таблицы items
+-- 8 Добавить таблицу warehouse с полями (item_id, amount), связать ее отношением один-к-одному с таблицей items (предполагается указывать в новой таблице остаток на складе)
+CREATE TABLE items (
+id integer PRIMARY KEY,                             --4
+name text,
+min_price integer,                                  --5
+max_price integer                                   --5
+);
+
+CREATE TABLE customers (
+id integer PRIMARY KEY,                             --4
+lastname text,
+firstname text
+);
+
+CREATE TABLE orders (
+id integer PRIMARY KEY,                             --4
+customer_id integer,
+order_date date,
+FOREIGN KEY(customer_id) references customers(id)   --1
+);
+
+CREATE TABLE order_items (
+order_id integer,
+item_id integer,
+amount integer,
+price integer,                                      --2
+total integer,                                      --2
+CHECK (total = price * amount),                     --2
+PRIMARY KEY(order_id, item_id),                     --4
+FOREIGN KEY(order_id) references orders(id),        --1
+FOREIGN KEY(item_id) references items(id)           --1
+);
+
+CREATE TABLE warehouse (                            --8
+item_id integer PRIMARY KEY,                        --4
+amount integer,
+FOREIGN KEY(item_id) references items(id)           --1
+);
