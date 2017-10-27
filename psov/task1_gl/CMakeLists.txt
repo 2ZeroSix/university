@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 project(Task1_GL20)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -lGLU)
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 
 set(SOURCE_FILES
         Sources/main.cpp

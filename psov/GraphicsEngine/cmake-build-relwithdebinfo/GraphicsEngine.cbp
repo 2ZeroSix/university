@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="GraphicsEngine"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="GraphicsEngine">
+				<Option output="/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/GraphicsEngine" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/dzs/Projects/university/psov/GraphicsEngine/Sources"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 GraphicsEngine"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="GraphicsEngine/fast">
+				<Option output="/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/GraphicsEngine" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/dzs/Projects/university/psov/GraphicsEngine/Sources"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 GraphicsEngine/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/dzs/Projects/university/psov/GraphicsEngine/cmake-build-relwithdebinfo/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Application.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Application.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Camera.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Camera.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Component.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Directory.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Directory.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/File.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GUI.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GUI.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11ConstantBuffer.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11ConstantBuffer.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11GUI.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11GUI.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11GraphicsEngine.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11GraphicsEngine.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11GraphicsEngineContext.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11GraphicsEngineFabric.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11GraphicsEngineFabric.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11Material.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11Material.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11Mesh.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11Mesh.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11PixelShader.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11PixelShader.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11Texture2D.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11Texture2D.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11VertexShader.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11VertexShader.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9Convert.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9FixedFunctionPipeline.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9FixedFunctionPipeline.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9GUI.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9GUI.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9GraphicsEngine.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9GraphicsEngine.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9GraphicsEngineContext.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9GraphicsEngineFabric.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9GraphicsEngineFabric.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9Material.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9Material.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9Mesh.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9Mesh.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9PixelShader.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9PixelShader.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9Texture2D.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9Texture2D.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9VertexShader.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/DirectX9/DX9VertexShader.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/FixedFunctionPipelineImpl.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/GUIImpl.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/GraphicsEngineContext.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/GraphicsEngineFabricImpl.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/GraphicsEngineImpl.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/MaterialImpl.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/MeshImpl.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20Convert.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20GUI.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20GUI.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20GraphicsEngine.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20GraphicsEngine.cpp.bak">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20GraphicsEngine.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20GraphicsEngineFabric.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20GraphicsEngineFabric.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20Input.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20Input.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20Material.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20Material.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20Mesh.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20Mesh.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20Texture2D.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/OpenGL20/GL20Texture2D.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/PixelShaderImpl.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/Texture2DImpl.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsApi/VertexShaderImpl.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsEngine.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsEngine.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsEngineFabric.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/GraphicsEngineFabric.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Input.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Input.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Internal/InternalInput.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Internal/InternalInput.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/KeyCode.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Light.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/Material.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/Material.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/MaterialDiffuse.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/MaterialDiffuse.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/MaterialSand.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/MaterialSand.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/MaterialTask01.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/MaterialTask01.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/MaterialUnlit.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Materials/MaterialUnlit.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Math.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/MathConstants.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/MathUtils.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Matrix4x4.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/Mesh.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/Mesh.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshCube.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshCube.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshCylinder.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshCylinder.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshObjFile.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshObjFile.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshQuad.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshQuad.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshSphere.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshSphere.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshTriangle.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Meshes/MeshTriangle.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Object.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Object.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/PlatformApi/Platform.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/PlatformApi/Windows/WinInput.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/PlatformApi/Windows/WinInput.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/PlatformApi/Windows/WinWindow.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/PlatformApi/Windows/WinWindow.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Rect.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Scene.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Scene.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/SceneUtils.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Screen.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Screen.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/DX11/ShaderDiffuse.fx">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/DX11/ShaderSand.fx">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/DX11/ShaderUnlit.fx">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/DX9/ShaderDiffuse.ps">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/DX9/ShaderDiffuse.vs">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/DX9/ShaderSand.ps">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/DX9/ShaderSand.vs">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/DX9/ShaderUnlit.ps">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/DX9/ShaderUnlit.vs">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/GL20/ShaderDiffuse.fs">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/GL20/ShaderDiffuse.vs">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/GL20/ShaderSand.fs">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/GL20/ShaderSand.vs">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/GL20/ShaderUnlit.fs">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Shaders/GL20/ShaderUnlit.vs">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Texture2D.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Texture2D.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Time.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Time.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Transform.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Transform.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Vector3.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Vector3.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/Vector4.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/resource.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/GraphicsEngine/tstring.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/Tasks/CameraController.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/Tasks/ObjectRotator.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/Tasks/Task.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/Tasks/Task01.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/Tasks/Task04.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/Tasks/Task05_01.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/Tasks/Task08.h">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/Sources/main.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/usr/lib/x86_64-linux-gnu/libGL.so">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/usr/lib/x86_64-linux-gnu/libGLEW.so">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/usr/lib/x86_64-linux-gnu/libGLU.so">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/usr/lib/x86_64-linux-gnu/libXi.so">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/usr/lib/x86_64-linux-gnu/libXmu.so">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/usr/lib/x86_64-linux-gnu/libglut.so">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dzs/Projects/university/psov/GraphicsEngine/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

@@ -24,18 +24,19 @@ GLuint bufferColor;
 
 GLuint attrConstColor;
 
+static float rquad = 0.5;
 
 void InitGeometry()
 {
 	GLfloat vertices[] = {
-         0.5f, -0.5f, -0.5f, 1.0f,
-         -0.5f, -0.5f, -0.5f, 1.0f,
-         0.5f,  0.5f, -0.5f, 1.0f,
-         -0.5f,  0.5f, -0.5f, 1.0f,
-         0.5f, -0.5f,  0.5f, 1.0f,
-         -0.5f, -0.5f,  0.5f, 1.0f,
-         -0.5f,  0.5f,  0.5f, 1.0f,
-         0.5f,  0.5f,  0.5f, 1.0f,
+            -0.5f, -0.5f,  0.5f, 1.0f,
+            0.5f, -0.5f,  0.5f, 1.0f,
+            -0.5f,  0.5f,  0.5f, 1.0f,
+            0.5f,  0.5f,  0.5f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f,
+            -0.5f,  0.5f, -0.5f, 1.0f,
+            0.5f,  0.5f, -0.5f, 1.0f,
 	};
 
 	glGenBuffers(1, &bufferPosition);
@@ -43,14 +44,7 @@ void InitGeometry()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     GLuint indices[] = {
-            6,
-            7,
-            5,
-            8,
-            1,
-            3,
-            2,
-            4
+            0,2,1,3,5,7,4,6,0,2
     };
 
     glGenBuffers(1, &bufferIndex);
@@ -121,10 +115,9 @@ void Render (void)
 		glEnableVertexAttribArray(0);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndex);
-        static float rquad = 0.5;
+        glRotatef(45,.0f,1.0f,.0f);
         glRotatef(rquad,1.0f,.0f,.0f);
-        glDrawElements(GL_TRIANGLE_STRIP, 6, GL_UNSIGNED_INT, nullptr);
-        rquad += 0.01;
+        glDrawElements(GL_TRIANGLE_STRIP, 10, GL_UNSIGNED_INT, nullptr);
 	}
 
 	glUseProgram(0);
@@ -136,6 +129,7 @@ void Render (void)
 void Cycle() 
 {
 	// ������� ����������� ������ (������� Render)
+    rquad += rquad < 360. ? 0.01 : .01 - 360.;
 	glutPostRedisplay();
 }
 
@@ -253,12 +247,12 @@ int main(int argc, char *argv[]) // ogorodnikovdmitry@gmail.com
 {
 	glutInit(&argc, argv); // Initialize GLUT  
 	glutInitDisplayMode(GLUT_RGBA /*| GLUT_DEPTH *//*| GLUT_DOUBLE*/); // Set up a basic display buffer (only single buffered for now)
-//    glClearDepth(1.0f);
-//    glDepthFunc(GL_GREATER);
-
+    glClearDepth(1.0f);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
 //    glFrontFace(GL_CW);
     glEnable(GL_CULL_FACE /*| GL_DEPTH_TEST*/);
-    glCullFace(GL_BACK);
+    glCullFace(GL_FRONT);
 //    std::cout << glIsEnabled(GL_CULL_FACE) << std::endl;
 //    glFrontFace(GL_CW);
     // Create the application's window
