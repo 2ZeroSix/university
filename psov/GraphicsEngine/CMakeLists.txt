@@ -166,17 +166,44 @@ set(SOURCE_FILES
         Sources/Tasks/Task04.h
         Sources/Tasks/Task05_01.h
         Sources/Tasks/Task08.h
-        Sources/main.cpp)
+        Sources/main.cpp Sources/Tasks/Task02.h Sources/GraphicsEngine/Meshes/MeshCubeSphere.h Sources/GraphicsEngine/Meshes/MeshCubeSphere.cpp)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
-#find_package(freeimage REQUIRED)
-#FIND_LIBRARY(FREE_IMAGE_LIBRARY
-#        NAMES ${LIB_PREFIX}freeimage.${LIB_POSTFIX}
-##        HINTS ${FREE_IMAGE_LIBRARY_DIR}
-##        NO_DEFAULT_PATH
-#        )
-include_directories(Sources ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 
-add_executable(GraphicsEngine ${SOURCE_FILES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARY} )
+IF (WIN32)
+    FIND_PATH( FREEIMAGE_INCLUDE_DIRS FreeImage.h
+        ${FREEIMAGE_ROOT_DIR}/include
+        ${FREEIMAGE_ROOT_DIR}
+        DOC "The directory where FreeImage.h resides")
+    FIND_LIBRARY( FREEIMAGE_LIBRARY
+        NAMES FreeImage freeimage
+        PATHS
+        ${FREEIMAGE_ROOT_DIR}/lib
+        ${FREEIMAGE_ROOT_DIR})
+ELSE (WIN32)
+    FIND_PATH( FREEIMAGE_INCLUDE_DIRS FreeImage.h
+        /usr/include
+        /usr/local/include
+        /sw/include
+        /opt/local/include
+        DOC "The directory where FreeImage.h resides")
+    FIND_LIBRARY( FREEIMAGE_LIBRARY
+        NAMES FreeImage freeimage libfreeimage libfreeimage-3.15.2
+        PATHS
+        /usr/lib64
+        /usr/lib
+        /usr/local/lib64
+        /usr/local/lib
+        /sw/lib
+        /opt/local/lib
+        DOC "The FreeImage library")
+ENDIF (WIN32)
+
+
+include_directories(Sources ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${FREEIMAGE_INCLUDE_DIRS})
+
+add_executable(GraphicsEngine ${SOURCE_FILES} )
+target_link_libraries(GraphicsEngine ${OPENGL_LIBRARIES}
+        ${GLUT_LIBRARY} ${GLEW_LIBRARY} ${FREEIMAGE_LIBRARY})
