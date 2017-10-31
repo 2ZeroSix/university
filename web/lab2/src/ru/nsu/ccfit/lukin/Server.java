@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 import java.nio.ByteBuffer;
@@ -18,6 +19,21 @@ public class Server extends Thread {
     private long lastCheck = startTime;
     private Server(Socket socket) {
         this.socket = socket;
+    }
+    public void printProgressInfo() {
+        long curTime = System.currentTimeMillis();
+        if (file != null)
+            System.out.println(
+                socket.getInetAddress().getCanonicalHostName()
+                + ": " + socket.getLocalPort()
+                + " : "+ file.getName()
+                + "\nprogress: " + (double) received / fileLen
+                + "; current speed: "
+                + (received - previousReceived) / (curTime - lastCheck)
+                + "; average speed: " + received / (curTime - startTime)
+            );
+        lastCheck = curTime;
+        previousReceived = received;
     }
     public static void main(String[] args) {
         if (args.length != 1) {
@@ -38,17 +54,7 @@ public class Server extends Thread {
                             sleep(3000);
                         synchronized (readers) {
                             readers.removeIf(r -> {
-                                long curTime = System.currentTimeMillis();
-                                if (r.file != null)
-                                System.out.println(
-                                        r.socket.getInetAddress().getCanonicalHostName()
-                                    + " : "+ r.file.getName()
-                                    + "\nprogress: " + (double) r.received / r.fileLen
-                                    + "; current speed: "
-                                    + (r.received - r.previousReceived) / (curTime - r.lastCheck)
-                                    + "; average speed: " + r.received / (curTime - r.startTime));
-                                r.lastCheck = curTime;
-                                r.previousReceived = r.received;
+                                r.printProgressInfo();
                                 if (r.isAlive())
                                     return false;
                                 else {
@@ -115,11 +121,10 @@ public class Server extends Thread {
                 return;
             }
             inStream.read(tmp, 0, filenameLen);
-            file = new File("uploads/" + new String(tmp, 0, filenameLen));
+            file = new File("uploads/" + new String(tmp, 0, filenameLen, "UTF-8"));
             inStream.read(tmp, 0, Long.BYTES);
             fileLen = ByteBuffer.allocate(Long.BYTES).put(tmp, 0, Long.BYTES).getLong(0);
-            file = new File("uploads/" + new String(tmp, 0, filenameLen));
-            if ( !file.createNewFile()) {
+            if ( !(file.createNewFile() || file.canWrite())) {
                 socket.close();
                 return;
             }
