@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.channels.Selector;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Node implements Runnable {
 
@@ -82,7 +84,6 @@ public class Node implements Runnable {
             int receivePercent = Integer.parseInt(args[1]);
             int parentPort = Integer.parseInt(args[2]);
             InetSocketAddress parentAddress = new InetSocketAddress(args[3], parentPort);
-
             DatagramSocket parentDatagramSocket = new DatagramSocket(localPort);
             new Node(parentDatagramSocket,receivePercent, parentAddress).run();
         } catch (IllegalArgumentException e) {
@@ -98,58 +99,50 @@ public class Node implements Runnable {
 
     @Override
     public void run() {
-        Thread readerThread = new Thread() {
-
-        };
+        Thread readerThread = new Thread(() -> {
+            ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
+            DatagramPacket packet = new DatagramPacket(byteBuffer.array(), byteBuffer.array().length);
+            while (!Thread.interrupted()) {
+                try {
+                    socket.receive(packet);
+                } catch (IOException e) {
+                }
+            }
+        });
         Thread writerThread = new Thread(() -> {
             try {
                 ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
+                Predicate<Neighbor> neighborWriter = neighbor -> {
+                    if(neighbor.confirmed) {
+                        neighbor.resendQueue.poll();
+                    } else if ( neighbor.lastIncomingMessageTime > timeout
+                            &&  neighbor.resendQueue.peek().type != Message.Type.Confirm) {
+                        return true;
+                    }
+                    Message message = neighbor.resendQueue.peek();
+                    byteBuffer.putLong(message.uuid.getLeastSignificantBits());
+                    byteBuffer.putLong(message.uuid.getMostSignificantBits());
+                    byteBuffer.put(message.payload, 0,
+                            Math.max(message.payload.length, 4096 - 2 * Long.BYTES));
+                    try {
+                        socket.send(
+                                new DatagramPacket(byteBuffer.array(),
+                                        message.payload.length + 2 * Long.BYTES, neighbor.address));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return true;
+                    }
+                    return false;
+                };
                 while (!Thread.interrupted()) {
                     synchronized (childrens) {
-                        childrens.removeIf((children) -> {
-                            if(children.confirmed) {
-                                children.resendQueue.poll();
-                            } else if ( children.lastIncomingMessageTime > timeout
-                                    &&  children.resendQueue.peek().type == Message.Type.Real) {
-                                return true;
-                            }
-                            Message message = children.resendQueue.peek();
-                            byteBuffer.putLong(message.uuid.getLeastSignificantBits());
-                            byteBuffer.putLong(message.uuid.getMostSignificantBits());
-                            byteBuffer.put(message.payload, 0,
-                                Math.max(message.payload.length, 4096 - 2 * Long.BYTES));
-                            try {
-                                socket.send(
-                                    new DatagramPacket(byteBuffer.array(),
-                                        message.payload.length + 2 * Long.BYTES, children.address));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                return true;
-                            }
-                            return false;
-                        });
+                        childrens.removeIf(neighborWriter);
                     }
                     if (!isRoot) {
                         synchronized (parent) {
-                            if (parent.confirmed) {
-                                parent.resendQueue.poll();
-                            } else if (parent.lastIncomingMessageTime > timeout) {
+                            if (neighborWriter.test(parent)) {
                                 isRoot = true;
                             }
-                            Message message = parent.resendQueue.peek();
-                            byteBuffer.putLong(message.uuid.getLeastSignificantBits());
-                            byteBuffer.putLong(message.uuid.getMostSignificantBits());
-                            byteBuffer.put(message.payload, 0,
-                                Math.max(message.payload.length, 4096 - 2 * Long.BYTES));
-                            try {
-                                socket.send(
-                                    new DatagramPacket(byteBuffer.array(),
-                                        message.payload.length + 2 * Long.BYTES,
-                                        parent.address));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
                         }
                     }
                     Thread.sleep(delay);

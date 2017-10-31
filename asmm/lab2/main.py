@@ -25,9 +25,9 @@ int main() {
     }
     int k = 0;
     ull start, end, min = __UINT64_MAX__;
-    for (int j = 0; j < 100000; ++j) {
+    for (int j = 0; j < 10000; ++j) {
         start = rdtsc();
-        for (int i = 0; i < 100; ++i) {
+        for (int i = 0; i < 1000; ++i) {
             k = arr[k];""")
         for j in range(i):
             file.write("\tasm(\"nop\");")

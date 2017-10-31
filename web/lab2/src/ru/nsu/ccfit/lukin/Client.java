@@ -18,8 +18,7 @@ public class Client {
              Socket socket = new Socket(InetAddress.getByName(args[1]), Integer.parseInt(args[2]));
              OutputStream outputStream = socket.getOutputStream()) {
             {
-                byte[] nameBytes = file.getName().getBytes();
-//                System.out.println(new String(nameBytes, "UTF-8"));
+                byte[] nameBytes = file.getName().getBytes("UTF-8");
                 if (nameBytes.length > 4096) {
                     System.err.println("name of file is too long (max 4096 bytes)");
                     return;

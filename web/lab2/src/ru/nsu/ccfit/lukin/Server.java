@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.util.LinkedList;
 import java.util.List;
 import java.nio.ByteBuffer;
@@ -25,7 +27,7 @@ public class Server extends Thread {
         if (file != null)
             System.out.println(
                 socket.getInetAddress().getCanonicalHostName()
-                + ": " + socket.getLocalPort()
+                + " : " + socket.getLocalPort()
                 + " : "+ file.getName()
                 + "\nprogress: " + (double) received / fileLen
                 + "; current speed: "
@@ -41,7 +43,7 @@ public class Server extends Thread {
             return;
         }
         File file = new File("uploads");
-        if (!(file.isDirectory() || file.mkdir())) {
+        if (!((file.isDirectory() && file.canWrite()) || file.mkdir())) {
             System.err.println("can't create subdirectory \"uploads\"");
         }
         try {
@@ -114,15 +116,30 @@ public class Server extends Thread {
                 /*Reader inReader = new InputStreamReader(inStream);
                 BufferedReader bufReader = new BufferedReader(inReader)*/){
             byte[] tmp = new byte[4096];
-            inStream.read(tmp, 0, Integer.BYTES);
+            int len = 0;
+            while (len < Integer.BYTES) {
+                int l = inStream.read(tmp, len, Integer.BYTES - len);
+                if (l == -1) throw new IOException();
+                len += l;
+            }
             int filenameLen = ByteBuffer.allocate(Long.BYTES).put(tmp,0, Integer.BYTES).getInt(0);
             if (filenameLen > 4096) {
                 System.err.println("name of file is too long (max 4096 bytes)");
                 return;
             }
-            inStream.read(tmp, 0, filenameLen);
-            file = new File("uploads/" + new String(tmp, 0, filenameLen, "UTF-8"));
-            inStream.read(tmp, 0, Long.BYTES);
+            len = 0;
+            while (len < filenameLen) {
+                int l = inStream.read(tmp, len, filenameLen - len);
+                if (l == -1) throw new IOException();
+                len += l;
+            }
+            file = FileSystems.getDefault().getPath("uploads").resolve(FileSystems.getDefault().getPath(new String(tmp, 0, filenameLen, "UTF-8")).getFileName()).toFile();
+            len = 0;
+            while (len < Long.BYTES) {
+                int l = inStream.read(tmp, len, Long.BYTES - len);
+                if (l == -1) throw new IOException();
+                len += l;
+            }
             fileLen = ByteBuffer.allocate(Long.BYTES).put(tmp, 0, Long.BYTES).getLong(0);
             if ( !(file.createNewFile() || file.canWrite())) {
                 socket.close();
@@ -135,22 +152,47 @@ public class Server extends Thread {
                     return;
                 }
                 while (received < fileLen) {
-                    if (isInterrupted()) {
-                        fileOutputStream.close();
-                        if (!file.delete()) {
-                            System.err.println("error while deleting file: " + file.getName());
-                        }
-                        socket.close();
-                        return;
+                    len = inStream.read(tmp, 0, 4096);
+                    if (isInterrupted() || len == -1) {
+                        throw new CloseFileException();
                     }
-                    int len = inStream.read(tmp, 0, 4096);
                     fileOutputStream.write(tmp, 0, len);
                     received += len;
                 }
             }
-            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (CloseFileException e){
+            if (!file.delete()) {
+                System.err.println("error while deleting file: " + file.getName());
+            }
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+}
+
+class CloseFileException extends Exception {
+    public CloseFileException() {
+    }
+
+    public CloseFileException(String s) {
+        super(s);
+    }
+
+    public CloseFileException(String s, Throwable throwable) {
+        super(s, throwable);
+    }
+
+    public CloseFileException(Throwable throwable) {
+        super(throwable);
+    }
+
+    public CloseFileException(String s, Throwable throwable, boolean b, boolean b1) {
+        super(s, throwable, b, b1);
     }
 }
