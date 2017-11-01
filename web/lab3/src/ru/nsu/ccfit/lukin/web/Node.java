@@ -157,8 +157,9 @@ public class Node implements Runnable {
             while(!Thread.interrupted()) {
                 byte[] byteStr = reader.readLine().getBytes();
                 synchronized (childrens) {
+                    Message message = new Message(UUID.randomUUID(), byteStr, Message.Type.Real);
                     childrens.forEach((children) ->
-                            children.resendQueue.add(new Message(UUID.randomUUID(), byteStr, Message.Type.Real)));
+                            children.resendQueue.add(message));
                 }
             }
         } catch (IOException e) {
