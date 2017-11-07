@@ -1,22 +1,21 @@
 #include<pthread.h>
 #include<stdio.h>
 #include<unistd.h>
-// pthread_mutex_t mutex;
-// volatile int thread_n;
-sem_t 
+#include<semaphore.h>
+sem_t sem[2];
 void* routine(void* unused) {
     for (int i = 0; i < 10; ++i) {
-        while (thread_n != 1);
-        // pthread_mutex_lock(&mutex);
+        sem_wait(&sem[1]);
         write(1, "2\n", sizeof("2\n"));
-        thread_n = 0;
-        // pthread_mutex_unlock(&mutex);
+        sem_post(&sem[0]);
     }
     return NULL;
 }
 
 int main() {
-    // pthread_t thread;
+    sem_init(&sem[0], 0, 1); 
+    sem_init(&sem[1], 0, 0); 
+    pthread_t thread;
     // pthread_mutexattr_t attr;
     // pthread_mutexattr_init(&attr);
     // pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
@@ -26,9 +25,9 @@ int main() {
         return 1;
     }
     for (int i = 0; i < 10; ++i) {
-        while (thread_n != 0);
+        sem_wait(&sem[0]);
         write(1, "1\n", sizeof("1\n"));
-        thread_n = 1;
+        sem_post(&sem[1]);
     }
     pthread_exit(0);
 }
