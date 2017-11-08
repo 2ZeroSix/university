@@ -1,13 +1,14 @@
+#!/usr/bin/python3
 from subprocess import Popen
 
-arr = []
-for i in range(1, 256):
-    with open("main" + str(i) + ".c", "w") as file:
-        file.write("""
-#include <stdio.h>
+print("generating source")
+with open("main.c", "w") as file:
+    file.write("""
+#include <iostream>
 #include <utility>
 #include <random>
 typedef unsigned long long ull;
+using namespace std;
 inline unsigned long long rdtsc() {
     unsigned int lo, hi;
     asm volatile ( "rdtsc\\n" : "=a" (lo), "=d" (hi) );
@@ -15,17 +16,24 @@ inline unsigned long long rdtsc() {
 }
 
 int main() {
-    int arr[1024*1024*25] = {0};
+    int* arr = new int[1024*1024*25];
+    cout << "generating array" << endl;
+
     for (int i = 0; i < 1024*1024*25; ++i) {
         arr[i] = i;
     }
     std::random_device rd;
+    cout << "randomize array" << endl;
     for (int i = 0; i < 1024*1024*25; ++i) {
         std::swap(arr[i], arr[i + rd() % (1024*1024*25 - i)]);
     }
+    cout << "run tests" << endl;
     int k = 0;
-    ull start, end, min = __UINT64_MAX__;
-    for (int j = 0; j < 10000; ++j) {
+    ull start, end, min;""")
+    for i in range(1, 256):
+        file.write("""
+    min = __UINT64_MAX__;
+    for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
         for (int i = 0; i < 1000; ++i) {
             k = arr[k];""")
@@ -36,18 +44,18 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    printf("%d\\b", k%2);
-    printf(\"""" + str(i) + """ : %llu\\n", min);
+    (cout << k%2 << "\\b" <<  min << ", ").flush();""")
+    file.write("""
+    delete[] arr;
     return 0;
 }""")
-    comp = Popen(["g++", "main" + str(i) + ".c", "-O3", "-std=c++11"])
-    exitcode = comp.wait()
-    if exitcode:
-        raise SystemExit("compiler returned non-zero exit code: " + str(exitcode))
-    prog = Popen(["./a.out"])
-    # stdout, _ = prog.communicate()
-    exitcode = prog.wait()
-    if exitcode:
-        raise SystemExit("program returned non-zero exit code: " + str(exitcode))
-    # arr.append(int(stdout))
-print(arr)
+print("compiling")
+comp = Popen(["g++", "main.c", "-O3", "-std=c++11"])
+exitcode = comp.wait()
+if exitcode:
+    raise SystemExit("compiler returned non-zero exit code: " + str(exitcode))
+print("run")
+prog = Popen(["./a.out"])
+exitcode = prog.wait()
+if exitcode:
+    raise SystemExit("program returned non-zero exit code: " + str(exitcode))
