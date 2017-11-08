@@ -34,7 +34,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -44,7 +44,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -54,7 +54,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -64,7 +64,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -74,7 +74,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -84,7 +84,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -94,7 +94,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -104,7 +104,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -114,7 +114,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -124,7 +124,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -134,7 +134,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -144,7 +144,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -154,7 +154,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -164,7 +164,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -174,7 +174,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -184,7 +184,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -194,7 +194,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -204,7 +204,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -214,7 +214,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -224,7 +224,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -234,7 +234,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -244,7 +244,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -254,7 +254,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -264,7 +264,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -274,7 +274,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -284,7 +284,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -294,7 +294,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -304,7 +304,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -314,7 +314,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -324,7 +324,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -334,7 +334,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -344,7 +344,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -354,7 +354,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -364,7 +364,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -374,7 +374,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -384,7 +384,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -394,7 +394,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -404,7 +404,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -414,7 +414,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -424,7 +424,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -434,7 +434,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -444,7 +444,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -454,7 +454,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -464,7 +464,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -474,7 +474,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -484,7 +484,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -494,7 +494,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -504,7 +504,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -514,7 +514,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -524,7 +524,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -534,7 +534,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -544,7 +544,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -554,7 +554,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -564,7 +564,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -574,7 +574,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -584,7 +584,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -594,7 +594,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -604,7 +604,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -614,7 +614,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -624,7 +624,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -634,7 +634,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -644,7 +644,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -654,7 +654,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -664,7 +664,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -674,7 +674,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -684,7 +684,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -694,7 +694,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -704,7 +704,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -714,7 +714,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -724,7 +724,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -734,7 +734,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -744,7 +744,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -754,7 +754,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -764,7 +764,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -774,7 +774,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -784,7 +784,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -794,7 +794,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -804,7 +804,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -814,7 +814,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -824,7 +824,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -834,7 +834,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -844,7 +844,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -854,7 +854,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -864,7 +864,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -874,7 +874,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -884,7 +884,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -894,7 +894,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -904,7 +904,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -914,7 +914,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -924,7 +924,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -934,7 +934,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -944,7 +944,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -954,7 +954,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -964,7 +964,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -974,7 +974,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -984,7 +984,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -994,7 +994,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1004,7 +1004,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1014,7 +1014,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1024,7 +1024,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1034,7 +1034,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1044,7 +1044,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1054,7 +1054,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1064,7 +1064,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1074,7 +1074,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1084,7 +1084,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1094,7 +1094,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1104,7 +1104,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1114,7 +1114,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1124,7 +1124,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1134,7 +1134,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1144,7 +1144,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1154,7 +1154,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1164,7 +1164,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1174,7 +1174,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1184,7 +1184,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1194,7 +1194,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1204,7 +1204,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1214,7 +1214,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1224,7 +1224,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1234,7 +1234,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1244,7 +1244,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1254,7 +1254,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1264,7 +1264,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1274,7 +1274,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1284,7 +1284,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1294,7 +1294,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1304,7 +1304,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1314,7 +1314,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1324,7 +1324,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1334,7 +1334,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1344,7 +1344,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1354,7 +1354,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1364,7 +1364,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1374,7 +1374,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1384,7 +1384,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1394,7 +1394,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1404,7 +1404,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1414,7 +1414,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1424,7 +1424,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1434,7 +1434,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1444,7 +1444,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1454,7 +1454,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1464,7 +1464,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1474,7 +1474,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1484,7 +1484,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1494,7 +1494,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1504,7 +1504,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1514,7 +1514,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1524,7 +1524,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1534,7 +1534,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1544,7 +1544,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1554,7 +1554,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1564,7 +1564,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1574,7 +1574,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1584,7 +1584,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1594,7 +1594,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1604,7 +1604,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1614,7 +1614,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1624,7 +1624,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1634,7 +1634,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1644,7 +1644,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1654,7 +1654,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1664,7 +1664,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1674,7 +1674,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1684,7 +1684,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1694,7 +1694,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1704,7 +1704,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1714,7 +1714,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1724,7 +1724,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1734,7 +1734,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1744,7 +1744,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1754,7 +1754,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1764,7 +1764,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1774,7 +1774,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1784,7 +1784,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1794,7 +1794,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1804,7 +1804,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1814,7 +1814,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1824,7 +1824,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1834,7 +1834,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1844,7 +1844,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1854,7 +1854,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1864,7 +1864,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1874,7 +1874,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1884,7 +1884,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1894,7 +1894,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1904,7 +1904,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1914,7 +1914,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1924,7 +1924,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1934,7 +1934,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1944,7 +1944,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1954,7 +1954,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1964,7 +1964,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1974,7 +1974,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1984,7 +1984,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -1994,7 +1994,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2004,7 +2004,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2014,7 +2014,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2024,7 +2024,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2034,7 +2034,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2044,7 +2044,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2054,7 +2054,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2064,7 +2064,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2074,7 +2074,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2084,7 +2084,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2094,7 +2094,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2104,7 +2104,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2114,7 +2114,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2124,7 +2124,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2134,7 +2134,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2144,7 +2144,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2154,7 +2154,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2164,7 +2164,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2174,7 +2174,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2184,7 +2184,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2194,7 +2194,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2204,7 +2204,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2214,7 +2214,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2224,7 +2224,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2234,7 +2234,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2244,7 +2244,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2254,7 +2254,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2264,7 +2264,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2274,7 +2274,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2284,7 +2284,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2294,7 +2294,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2304,7 +2304,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2314,7 +2314,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2324,7 +2324,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2334,7 +2334,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2344,7 +2344,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2354,7 +2354,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2364,7 +2364,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2374,7 +2374,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2384,7 +2384,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2394,7 +2394,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2404,7 +2404,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2414,7 +2414,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2424,7 +2424,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2434,7 +2434,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2444,7 +2444,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2454,7 +2454,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2464,7 +2464,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2474,7 +2474,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2484,7 +2484,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2494,7 +2494,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2504,7 +2504,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2514,7 +2514,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2524,7 +2524,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2534,7 +2534,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2544,7 +2544,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2554,7 +2554,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2564,7 +2564,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     min = __UINT64_MAX__;
     for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
@@ -2574,7 +2574,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\b" <<  min << ", ").flush();
+    (cout << k%2 << "\b" <<  min / 1000 << ", ").flush();
     delete[] arr;
     return 0;
 }

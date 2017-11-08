@@ -44,7 +44,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\\b" <<  min << ", ").flush();""")
+    (cout << k%2 << "\\b" <<  min / 1000 << ", ").flush();""")
     file.write("""
     delete[] arr;
     return 0;
