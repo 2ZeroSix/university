@@ -73,7 +73,7 @@ public class Node extends Thread {
                 .putLong(this.uuid.getMostSignificantBits())
                 .put(this.type.type)
                 .put(this.payload, 0,
-                    Math.min(this.payload.length, bufferLen - 2 * Long.BYTES - 1));
+                    Math.min(this.payload.length, bufferLen - 2 * Long.BYTES - 1)).flip();
         }
     }
 
@@ -90,7 +90,7 @@ public class Node extends Thread {
     private final Map<InetSocketAddress, NeighborInfo> childrens = new HashMap<>();
     private int receivePercent;
     private long delay = 500;
-    private long timeout = 10000;
+    private long timeout = 1000000;
 
     public Node(DatagramSocket socket, int receivePercent, InetSocketAddress parentAddress) {
         this.socket = socket;
@@ -180,7 +180,8 @@ public class Node extends Thread {
                 if (!isRoot) {
                     byte[] byteAddr = parent.getKey().getAddress().getAddress();
                     ByteBuffer byteBuffer = ByteBuffer.allocate(byteAddr.length + Byte.BYTES)
-                            .put(byteAddr).putInt(parent.getKey().getPort());
+                            .putInt(parent.getKey().getPort()).put(byteAddr);
+                    byteBuffer.flip();
                     sendMessage(byteBuffer.array(), Message.Type.Exit);
                     return;
                 }
@@ -193,6 +194,7 @@ public class Node extends Thread {
                 byte[] byteAddr = priorityChildren.getKey().getAddress().getAddress();
                 ByteBuffer byteBuffer = ByteBuffer.allocate(byteAddr.length + Byte.BYTES)
                         .putInt(priorityChildren.getKey().getPort()).put(byteAddr);
+                byteBuffer.flip();
                 sendMessage(byteBuffer.array(), Message.Type.Exit);
             }
         }
@@ -209,7 +211,7 @@ public class Node extends Thread {
                 byteBuffer.clear();
                 try {
                     socket.receive(packet);
-                    if (rnd.nextInt(100) < receivePercent)
+                    if (100 - receivePercent > rnd.nextInt(100))
                         continue;
                     Message message;
                     try {
@@ -258,9 +260,9 @@ public class Node extends Thread {
                             neighborInfo.lastIncomingMessage = message;
                             break;
                         case Real:
-                            System.out.println(new String(message.payload, "UTF-8"));
                             if (neighborInfo.lastIncomingMessage != null &&
                                 !neighborInfo.lastIncomingMessage.uuid.equals(message.uuid)) {
+                                System.out.println(new String(message.payload, "UTF-8"));
                                 neighborInfo.resendQueue.add(new Message(message.uuid, new byte[0], Message.Type.Confirm));
                                 synchronized (childrens) {
                                     childrens.forEach((addr, info) -> {
@@ -280,12 +282,12 @@ public class Node extends Thread {
                             neighborInfo.lastIncomingMessage = message;
                             break;
                         case Exit:
-                            System.out.println(address.toString() + " eixt");
                             try {
                                 InetSocketAddress newParentaddr = message.decodeExitMessage();
                                 if (!isRoot) {
                                     synchronized (parent) {
                                         if (!isRoot && address.equals(parent.getKey())) {
+                                            System.out.println(address.toString() + " exit");
                                             parent = new HashMap.SimpleEntry<>(newParentaddr,
                                                             new NeighborInfo());
                                         }
@@ -297,9 +299,12 @@ public class Node extends Thread {
                             neighborInfo.lastIncomingMessage = message;
                             break;
                         case Join:
-                            System.out.println(address.toString() + " joined");
-                            neighborInfo.resendQueue.add(new Message(message.uuid, new byte[0], Message.Type.Confirm));
-                            neighborInfo.lastIncomingMessage = message;
+                            if (neighborInfo.lastIncomingMessage == null ||
+                                    neighborInfo.lastIncomingMessage.uuid.equals(message.uuid)) {
+                                System.out.println(address.toString() + " joined");
+                                neighborInfo.resendQueue.add(new Message(message.uuid, new byte[0], Message.Type.Confirm));
+                                neighborInfo.lastIncomingMessage = message;
+                            }
                             break;
                     }
                     packet.getSocketAddress();
@@ -317,12 +322,13 @@ public class Node extends Thread {
                 if(neighbor.getValue().confirmed) {
                     neighbor.getValue().resendQueue.poll();
                     neighbor.getValue().confirmed = false;
-                } else if ( neighbor.getValue().lastIncomingMessageTime > timeout
+                } else if ( System.currentTimeMillis() - neighbor.getValue().lastIncomingMessageTime > timeout
                         &&  neighbor.getValue().resendQueue.peek() != null
                         &&  neighbor.getValue().resendQueue.peek().type != Message.Type.Confirm) {
                     return true;
                 }
                 Message message = neighbor.getValue().resendQueue.peek();
+                if (message == null) return false;
                 message.writeToByteBuffer(byteBuffer, bufferLen);
                 try {
                     socket.send(
