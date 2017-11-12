@@ -272,3 +272,12 @@ void GL20Material::LogError(const char * text, const char * filePath)
         std::cerr << text << std::endl;
 	}
 }
+
+void GL20Material::SetVertexShaderFloat(const char *propertyName, const GLfloat &d) {
+    GLuint location = glGetUniformLocation(m_program, propertyName);
+    glUniform1f(location, d);
+}
+
+void GL20Material::SetVertexShaderInt(const char *string, const int &d) {
+	glUniform1i(glGetUniformLocation(m_program, string), d);
+}

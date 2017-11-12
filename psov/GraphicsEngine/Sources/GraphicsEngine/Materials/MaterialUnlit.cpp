@@ -1,14 +1,11 @@
-﻿#include "MaterialUnlit.h"
+﻿#include <iostream>
+#include <cmath>
+#include "MaterialUnlit.h"
 #include "GraphicsEngine/Transform.h"
 #include "GraphicsEngine/MathUtils.h"
 #include "GraphicsEngine/SceneUtils.h"
 
 
-MaterialUnlit::MaterialUnlit()
-{
-	m_vsFileName = "ShaderUnlit";
-	m_psFileName = "ShaderUnlit";
-}
 
 // TODO: Реализовать переключение Graphics API при нажатии на кнопки (1 - DirectX 11, 2 - OpenGL 2.0, 9 - DirectX 9)
 // и отладить на этом механизм использования функций Init() и Deinit()
@@ -37,8 +34,28 @@ void MaterialUnlit::SetMaterial()
 	SetMaterialBegin();
 	{
 		SetVertexShaderBegin();
+        SetVertexShaderVector4("constColor", Vector4(1, 1, 1, 1));
 		SetVertexShaderMatrix4x4("matrixWorldViewProjT", matWorldViewProjT);
-		SetVertexShaderVector4("constColor", Vector4(1, 1, 1, 1));
+        switch (m_transform) {
+            case SPHERE_TRANSFORM:
+                SetVertexShaderFloat("stage", (m_stage > 1.f ? 2.f - m_stage : m_stage));
+                break;
+            case TWIST_TRANSFORM:
+                float stage;
+                if (.5f >= m_stage) {
+                    stage = m_stage*2.f;
+                } else if (1.5f >= m_stage && m_stage > .5f){
+                    stage = (1.f - m_stage)*2.f;
+                } else if (2.f >= m_stage && m_stage > 1.5f){
+                    stage = -(2.f - m_stage)*2.f;
+                } else {
+                    stage = 0.f;
+                }
+                SetVertexShaderFloat("stage", stage);
+                break;
+        }
+        SetVertexShaderFloat("radius", m_radius);
+        SetVertexShaderInt("transform", m_transform);
 		SetVertexShaderEnd();
 
 		SetPixelShaderBegin();
@@ -46,3 +63,19 @@ void MaterialUnlit::SetMaterial()
 	}
 	SetMaterialEnd();
 }
+
+MaterialUnlit::MaterialUnlit(MaterialUnlit::transform transform, float radius) {
+    m_stage = 0.f;
+    m_radius = radius;
+    m_transform = transform;
+    m_vsFileName = "ShaderUnlit";
+    m_psFileName = "ShaderUnlit";
+}
+
+void MaterialUnlit::addStage(float stage) {
+    if (stage > 2.f)
+        stage = stage - std::floor(stage);
+    m_stage += stage;
+    m_stage -= m_stage <= 2.f ? 0.f : 2.f;
+}
+

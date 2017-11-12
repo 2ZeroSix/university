@@ -1,4 +1,5 @@
-﻿#include "GraphicsEngine/Application.h"
+﻿#include <Tasks/Task02.h>
+#include "GraphicsEngine/Application.h"
 
 #include "Tasks/Task01.h"
 #include "Tasks/Task04.h"
@@ -16,8 +17,9 @@ int main(int argc, char ** argv)
 		app.argv = argv;
 	}
 
-//    Task * pTask = new Task01();
-    Task * pTask = new Task04();
+//	Task * pTask = new Task01();
+	Task * pTask = new Task02();
+//    Task * pTask = new Task04();
     //Task * pTask = new Task05_01();
 //    Task * pTask = new Task08();
 	{
@@ -32,8 +34,8 @@ int main(int argc, char ** argv)
 			engine.Render();
 		}
 
-        delete pTask;
 		engine.Deinit();
+        delete pTask;
     }
 	
     return 0;

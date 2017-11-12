@@ -15,17 +15,20 @@ public:
 	virtual void SetMaterialBegin() = 0;
 
 	virtual void SetVertexShaderBegin() = 0;
-	virtual void SetVertexShaderMatrix4x4	(const char * propertyName, const Matrix4x4 & matrix) = 0;
-	virtual void SetVertexShaderVector4		(const char * propertyName, const Vector4 & vector) = 0;
+	virtual void SetVertexShaderMatrix4x4	(const char * propertyName, const Matrix4x4 & matrix) 	= 0;
+	virtual void SetVertexShaderVector4		(const char * propertyName, const Vector4 & vector) 	= 0;
+	virtual void SetVertexShaderFloat		(const char *string, const float &d)				 	= 0;
+	virtual void SetVertexShaderInt		(const char *string, const int &d)				 	= 0;
 	virtual void SetVertexShaderEnd() = 0;
 
 	virtual void SetPixelShaderBegin() = 0;
-	virtual void SetPixelShaderMatrix4x4	(const char * propertyName, const Matrix4x4 & matrix) = 0;
-	virtual void SetPixelShaderVector4		(const char * propertyName, const Vector4 & vector) = 0;
+	virtual void SetPixelShaderMatrix4x4	(const char * propertyName, const Matrix4x4 & matrix) 	= 0;
+	virtual void SetPixelShaderVector4		(const char * propertyName, const Vector4 & vector) 	= 0;
 	virtual void SetPixelShaderTexture2d	(const char * propertyName, const Texture2D * pTexture) = 0;
 	virtual void SetPixelShaderEnd() = 0;
 
 	virtual void SetMaterialEnd() = 0;
 
 	virtual void ResetMaterial() = 0;
+
 };

@@ -84,3 +84,11 @@ void Material::ResetMaterial()
 {
 	m_pImpl->ResetMaterial();
 }
+
+void Material::SetVertexShaderFloat(const char *propertyName, const GLfloat &value) {
+	m_pImpl->SetVertexShaderFloat(propertyName, value);
+}
+
+void Material::SetVertexShaderInt(const char *propertyName, const int &value) {
+	m_pImpl->SetVertexShaderInt(propertyName, value);
+}

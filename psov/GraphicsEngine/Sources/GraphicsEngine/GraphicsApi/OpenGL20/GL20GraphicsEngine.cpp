@@ -210,8 +210,9 @@ void GL20GraphicsEngine::Render1()
 	glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
 	
 	// Clear the z-buffer
-	glClearDepth(1.0f);
-	
+	// doesn't needed because of GL_LESS depth func
+//	glClearDepth(1.0f);
+
 	{
 		m_scene.Update();
 		m_scene.Render();

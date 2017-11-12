@@ -166,7 +166,7 @@ set(SOURCE_FILES
         Sources/Tasks/Task04.h
         Sources/Tasks/Task05_01.h
         Sources/Tasks/Task08.h
-        Sources/main.cpp Sources/Tasks/Task02.h Sources/GraphicsEngine/Meshes/MeshCubeSphere.h Sources/GraphicsEngine/Meshes/MeshCubeSphere.cpp)
+        Sources/main.cpp Sources/Tasks/Task02.h Sources/GraphicsEngine/Objects/CubeSphere.cpp Sources/GraphicsEngine/Objects/CubeSphere.h)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)

@@ -12,6 +12,9 @@ public:
 	~GL20Material();
 	
 	void Init();
+
+	virtual void SetVertexShaderFloat		(const char *string, const GLfloat &d);
+
 	void Deinit();
 	bool IsInited();
 
@@ -31,7 +34,9 @@ public:
 	void SetMaterialEnd();
 
 	void ResetMaterial();
-	
+
+	void SetVertexShaderInt(const char *string, const int &d) override;
+
 private:
 	void LogErrorInLoadFile(const std::string & filePath);
 	void LogErrorInVertexShader();

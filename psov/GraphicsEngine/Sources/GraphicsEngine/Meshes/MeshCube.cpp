@@ -17,7 +17,7 @@ void MeshCube::Init()
 	}
 	else
 	{
-		//InitCubeDetailedStrip();
+//		InitCubeDetailedStrip();
 		InitCubeDetailedList();
 	}
 }

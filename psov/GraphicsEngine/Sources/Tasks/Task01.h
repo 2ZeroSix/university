@@ -18,6 +18,7 @@
 
 class Task01: public Task
 {
+    MaterialUnlit* material1 = NULL;
 public:
 	virtual ~Task01() { }
 
@@ -39,12 +40,13 @@ public:
 		}
 
 		// Объект - Куб #1
-		Object * pObj1 = NULL;
+        Object* pObj1 = NULL;
 		{
 			Object * pObject = new Object();
-			pObject->m_pMesh		= new MeshCube(3);
+			pObject->m_pMesh		= new MeshCube(10);
 			pObject->m_pTransform	= new Transform();
-			pObject->m_pMaterial	= new MaterialUnlit();
+            material1 = new MaterialUnlit();
+			pObject->m_pMaterial = material1;
 			pObject->AddComponent( new ObjectRotator(0, 45, 0) );
 			
 			scene.AddObject( pObject );
@@ -84,6 +86,5 @@ public:
 
 	virtual void Update()
 	{
-		
 	}
 };

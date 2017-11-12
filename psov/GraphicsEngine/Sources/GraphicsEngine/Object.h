@@ -16,8 +16,8 @@ public:
 
 	void Init();
 	void AddComponent(Component * pComponent);
-	
-	void Update() const;
+
+	virtual void Update() const;
 
 	// Содержит матрицу World (position, rotation, scale)
 	Transform * m_pTransform;
