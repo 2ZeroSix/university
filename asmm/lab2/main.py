@@ -33,9 +33,9 @@ int main() {
     for i in range(1, 256):
         file.write("""
     min = __UINT64_MAX__;
-    for (int j = 0; j < 100000; ++j) {
+    for (int j = 0; j < 10000000; ++j) {
         start = rdtsc();
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 100; ++i) {
             k = arr[k];""")
         for j in range(i):
             file.write("\tasm(\"nop\");")
@@ -44,7 +44,7 @@ int main() {
         end = rdtsc();
         min = end - start < min ? end - start : min;
     }
-    (cout << k%2 << "\\b" <<  min / 1000 << ", ").flush();""")
+    (cout << k%2 << "\\b" <<  static_cast<double>(min) / 100 << ", ").flush();""")
     file.write("""
     delete[] arr;
     return 0;

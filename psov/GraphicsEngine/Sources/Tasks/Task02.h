@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cmath>
+#include <GraphicsEngine/Materials/Stageable.h>
+#include <GraphicsEngine/Materials/MaterialCubeSphere.h>
+#include <GraphicsEngine/Materials/MaterialCylinderTwist.h>
 
 #include "GraphicsEngine/Application.h"
 #include "GraphicsEngine/Camera.h"
@@ -21,8 +24,8 @@
 
 class Task02: public Task
 {
-    MaterialUnlit* material1 = NULL;
-    MaterialUnlit* material2 = NULL;
+    Stageable* material1 = NULL;
+    Stageable* material2 = NULL;
     Object* pObj1 = NULL;
     Object* pObj2 = NULL;
 public:
@@ -38,7 +41,7 @@ public:
         // Камера
         {
             Object * pCameraObj = new Object();
-            pCameraObj->m_pTransform = new Transform( Vector3(0, 3, -7), Vector3(20.0f, 0.0f, 0.0f));
+            pCameraObj->m_pTransform = new Transform( Vector3(0, 2, -5), Vector3(20.0f, 0.0f, 0.0f));
             Camera * pCamera = new Camera();
             pCamera->SetFovY(90);
             pCamera->SetNearPlane(0.01f);
@@ -52,7 +55,7 @@ public:
             Object * pObject = new Object();
             pObject->m_pMesh		= new MeshCube(20);
             pObject->m_pTransform	= new Transform(2, 0, 0);
-            material1 = new MaterialUnlit(MaterialUnlit::SPHERE_TRANSFORM, std::sqrt(.5f));
+            material1 = new MaterialCubeSphere(std::sqrt(.5f));
             pObject->m_pMaterial = material1;
 
             scene.AddObject( pObject );
@@ -64,7 +67,7 @@ public:
             Object * pObject = new Object();
             pObject->m_pMesh		= new MeshCylinder(20);
             pObject->m_pTransform	= new Transform(-2, 0, 0);
-            material2 = new MaterialUnlit(MaterialUnlit::TWIST_TRANSFORM, 1.f);
+            material2 = new MaterialCylinderTwist(1.f);
             pObject->m_pMaterial	= material2;
 
             scene.AddObject( pObject );
@@ -76,7 +79,7 @@ public:
 
     virtual void Update()
     {
-        material1->addStage(.0001f);
-        material2->addStage(.0001f);
+        material1->addStage(.001f);
+        material2->addStage(.001f);
     }
 };

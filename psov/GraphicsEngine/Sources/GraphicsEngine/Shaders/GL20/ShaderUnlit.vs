@@ -23,13 +23,13 @@ void main()
 	    vec3 sphereCoord = radius * normalize(position);
 	    gl_Position = vec4(mix(position, sphereCoord, stage), 1.0) * matrixWorldViewProjT;
 	} else if (transform == 1) {
-        float angle = position.y * stage * radians(180.0);
-        float scale = pow(1.0 - abs((radius - abs(position.y)) * stage * stage), 2.0);
+        float angle = stage * position.y / radius * radians(180.0);
+        float scale = 1.0;// - pow(radius - abs(position.y), 2.0) * stage/4.0;
         mat4 twistMat = mat4(   vec4(scale * cos(angle),    0,      sin(angle),         0.0),
-                                vec4(0,                     1,      0,                  0.0),
+                                vec4(0,                     1.0,    0,                  0.0),
                                 vec4(-sin(angle),           0,      scale * cos(angle), 0.0),
                                 vec4(0,                     0,      0,                  1.0));
-	    gl_Position = vec4(position, 1.0) * twistMat * matrixWorldViewProjT;
+        gl_Position = vec4(position, 1.0) * twistMat * matrixWorldViewProjT;
 	} else {
 	    gl_Position = vec4(position, 1.0);
 	}
