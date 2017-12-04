@@ -39,7 +39,7 @@ int main() {
         printf("Can't create thread\n");
         return 3;
     }
-    // sleep(1);
+    sleep(1);
     for (int i = 0; i < 10; ++i) {
         pthread_mutex_lock(&mutex[2]);
         pthread_mutex_unlock(&mutex[0]);

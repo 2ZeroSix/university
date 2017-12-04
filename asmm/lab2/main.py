@@ -33,7 +33,7 @@ int main() {
     for i in range(1, 256):
         file.write("""
     min = __UINT64_MAX__;
-    for (int j = 0; j < 10000000; ++j) {
+    for (int j = 0; j < 100000; ++j) {
         start = rdtsc();
         for (int i = 0; i < 100; ++i) {
             k = arr[k];""")

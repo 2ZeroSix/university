@@ -52,16 +52,18 @@ void main()
 		vec3 lightDir = vec3(0,0,0);
 	
 		// Directional light
-                if (abs(type - 1.0) < epsilon)
-		{
+        if (abs(type - 1.0) < epsilon) {
 			lightDir = normalize(lights[i].direction.xyz).xyz;
 		}
 		// Point light
-                else if (abs(type - 2.0) < epsilon)
-		{
+        else if (abs(type - 2.0) < epsilon) {
 			lightDir = normalize(vertexPos - lights[i].position.xyz).xyz;
 		}
-		
+		// Spot light
+		else if (abs(type - 3.0) < epsilon) {
+		    lightDir = normalize(lights[i].direction.xyz).xyz;
+		}
+
 		col += materialColor.rgb * calcDiffuse(lightCol, lightDir, vertexNormal);
 	}
 	

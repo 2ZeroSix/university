@@ -51,6 +51,9 @@ void GL20Texture2D::SetFilterMode(TextureFilterMode filterMode)
 	}
 	else if (filterMode == TEXTURE_FILTER_MODE_BILINEAR)
 	{
+		m_minFilterMode = GL_LINEAR;
+		m_magFilterMode = GL_LINEAR;
+		m_useAniso = false;
 		// TODO: Task05
 	}
 	else if (filterMode == TEXTURE_FILTER_MODE_TRILINEAR)

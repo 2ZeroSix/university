@@ -4,6 +4,8 @@
 #include <GraphicsEngine/Materials/Stageable.h>
 #include <GraphicsEngine/Materials/MaterialCubeSphere.h>
 #include <GraphicsEngine/Materials/MaterialCylinderTwist.h>
+#include <GraphicsEngine/GraphicsApi/OpenGL20/GL20GUI.h>
+#include <GraphicsEngine/GUI.h>
 
 #include "GraphicsEngine/Application.h"
 #include "GraphicsEngine/Camera.h"
@@ -20,14 +22,21 @@
 #include "GraphicsEngine/Transform.h"
 #include "Tasks/Task.h"
 #include "Tasks/ObjectRotator.h"
+#include <chrono>
+#include <string>
+#include <GraphicsEngine/Screen.h>
 
-
+using namespace std::chrono;
+using namespace std;
 class Task02: public Task
 {
     Stageable* material1 = NULL;
     Stageable* material2 = NULL;
     Object* pObj1 = NULL;
     Object* pObj2 = NULL;
+    GUI gui;
+    double start;
+    double prevFrameCount;
 public:
     virtual ~Task02() {
         delete pObj1;
@@ -74,12 +83,23 @@ public:
 
             pObj2 = pObject;
         }
-
+        start = Time::GetTime();
+        prevFrameCount = Time::GetFrameCount();
     }
 
-    virtual void Update()
-    {
+    virtual void Update() {
         material1->addStage(.001f);
         material2->addStage(.001f);
+        static double fps = 0;
+        double end = Time::GetTime();
+        double delta = end - start;
+        if (delta > .25f) {
+            double frameCount = Time::GetFrameCount();
+            double frameDelta = frameCount - prevFrameCount;
+            fps = frameDelta / delta;
+            prevFrameCount = frameCount;
+            start = end;
+        }
+        gui.Label(0, Screen::GetHeight() - 18, Screen::GetWidth(), 18, string("FPS == ") + to_string(fps));
     }
 };

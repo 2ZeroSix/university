@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <complex>
 #include <immintrin.h>
-// typedef struct __declspec(align(32)) { int i[8]; } __m256i;
 using namespace std;
 typedef unsigned long long ull;
 inline unsigned long long rdtsc() {
@@ -68,8 +67,8 @@ void func(size_t size = sizeof(T)) {
             update_min(start, end, min);
         }
         cout << size << " : " << *(int*)&(*v1)[100] << *(int*)&(*v2)[100]<< endl;
+        cout << fixed << (100) / ((double)min.tv_sec + min.tv_nsec / 1000000000.) << endl;
         cout.flush();
-        printf("%.15lf\n", (100) / ((double)min.tv_sec + min.tv_nsec / 1000000000.));
     delete v1;
     delete v2;
     v1 = new vector<T>(1024 * 1024 * 100 / size);
@@ -81,7 +80,7 @@ void func(size_t size = sizeof(T)) {
             end = gettime();
             update_min(start, end, min);
         }
-        printf("%.15lf\n", (100) / ((double)min.tv_sec + min.tv_nsec / 1000000000.));
+        cout << fixed << (100) / ((double)min.tv_sec + min.tv_nsec / 1000000000.) << endl;
         cout << *(int*)&(*v1)[100] << *(int*)&(*v2)[100]<< endl;
         cout.flush();
     delete v1;
@@ -90,6 +89,7 @@ void func(size_t size = sizeof(T)) {
 }
 
 int main() {
+    cout.precision(15);
     func<int8_t>();
     func<int16_t>();
     func<int32_t>();

@@ -77,7 +77,8 @@ public class Node extends Thread {
 
     private static class NeighborInfo {
         LinkedList<Message> resendQueue = new LinkedList<>();
-        boolean confirmed = false;
+        Message confirmMessage;
+        boolean confirmed;
         Message lastIncomingMessage;
         long lastIncomingMessageTime = System.currentTimeMillis();
     }
@@ -86,8 +87,8 @@ public class Node extends Thread {
     private Optional<Map.Entry<InetSocketAddress, NeighborInfo>> parent;
     private final Map<InetSocketAddress, NeighborInfo> childrens = new HashMap<>();
     private int receivePercent;
-    private long delay = 500;
-    private long timeout = 1000000;
+    private long delay = 100;
+    private long timeout = 1000;
 
     public Node(DatagramSocket socket, int receivePercent, InetSocketAddress parentAddress) {
         this.socket = socket;
@@ -116,6 +117,7 @@ public class Node extends Thread {
             byteBuffer = ByteBuffer.allocate(bufferLen);
             packet = new DatagramPacket(byteBuffer.array(), byteBuffer.array().length);
         }
+
         NeighborInfo getNeighborInfo(InetSocketAddress address) {
             NeighborInfo neighborInfo;
             synchronized (parent) {
@@ -138,8 +140,19 @@ public class Node extends Thread {
             }
             return neighborInfo;
         }
+        Message getMessage() throws IOException {
+            socket.receive(packet);
+            if (100 - Node.this.receivePercent > rnd.nextInt(100))
+                return null;
+            try {
+                return new Node.Message(byteBuffer, packet.getLength());
+            } catch (IllegalArgumentException e) {
+                System.err.println("wrong message received: " + e.getLocalizedMessage());
+                return null;
+            }
+        }
 
-        void handleConfirm(InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
+        void handleConfirm  (InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
             if (neighborInfo.resendQueue.peek() != null
                     && neighborInfo.resendQueue.peek().uuid.equals(message.uuid)) {
                 System.out.println(neighborAddress.toString() + " confirmed");
@@ -150,15 +163,15 @@ public class Node extends Thread {
                         childrens.remove(neighborAddress);
                     }
                 }
+                neighborInfo.lastIncomingMessage = message;
+                neighborInfo.lastIncomingMessageTime = System.currentTimeMillis();
             }
-            neighborInfo.lastIncomingMessage = message;
         }
-
-        void handleReal(InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
+        void handleReal     (InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
             if (neighborInfo.lastIncomingMessage != null &&
                     !neighborInfo.lastIncomingMessage.uuid.equals(message.uuid)) {
-                System.out.println(neighborAddress.toString() +  " " + new String(message.payload, Charset.forName("UTF-8")));
-                neighborInfo.resendQueue.addFirst(new Node.Message(message.uuid, new byte[0], Node.Message.Type.Confirm));
+                System.out.println(neighborAddress.toString() + " " + new String(message.payload, Charset.forName("UTF-8")));
+                neighborInfo.confirmMessage = new Node.Message(message.uuid, new byte[0], Node.Message.Type.Confirm);
                 synchronized (childrens) {
                     childrens.forEach((addr, info) -> {
                         if (!addr.equals(neighborAddress)) {
@@ -173,11 +186,11 @@ public class Node extends Thread {
                         }
                     });
                 }
+                neighborInfo.lastIncomingMessageTime = System.currentTimeMillis();
+                neighborInfo.lastIncomingMessage = message;
             }
-            neighborInfo.lastIncomingMessage = message;
-
         }
-        void handleExit(InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
+        void handleExit     (InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
             neighborInfo.lastIncomingMessage = message;
             synchronized (childrens) {
                 if (childrens.remove(neighborAddress) != null) {
@@ -200,17 +213,18 @@ public class Node extends Thread {
                 });
             }
         }
-
-        void handleJoin(InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
-            if (neighborInfo.lastIncomingMessage == null /*||
-                    neighborInfo.lastIncomingMessage.uuid.equals(message.uuid)*/) {
+        void handleJoin     (InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
+            if (neighborInfo.lastIncomingMessage == null
+                    || neighborInfo.lastIncomingMessage.type != Message.Type.Join
+                    && !neighborInfo.lastIncomingMessage.uuid.equals(message.uuid)) {
                 System.out.println(neighborAddress.toString() + " joined");
-                neighborInfo.resendQueue.addFirst(new Node.Message(message.uuid, new byte[0], Node.Message.Type.Confirm));
+                neighborInfo.confirmMessage = new Node.Message(message.uuid, new byte[0], Node.Message.Type.Confirm);
+                neighborInfo.resendQueue.clear();
                 neighborInfo.lastIncomingMessage = message;
+                neighborInfo.lastIncomingMessageTime = System.currentTimeMillis();
             }
         }
-
-        void handleMessage(InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
+        void handleMessage  (InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
             switch(message.type) {
                 case Confirm:
                     handleConfirm(neighborAddress, neighborInfo, message);
@@ -224,18 +238,6 @@ public class Node extends Thread {
                 case Join:
                     handleJoin(neighborAddress, neighborInfo, message);
                     break;
-            }
-        }
-
-        Message getMessage() throws IOException {
-            socket.receive(packet);
-            if (100 - receivePercent > rnd.nextInt(100))
-                return null;
-            try {
-                return new Node.Message(byteBuffer, packet.getLength());
-            } catch (IllegalArgumentException e) {
-                System.err.println("wrong message received: " + e.getLocalizedMessage());
-                return null;
             }
         }
         @Override
@@ -269,20 +271,24 @@ public class Node extends Thread {
         }
         boolean WriteToNeighbor(Map.Entry<InetSocketAddress, NeighborInfo> neighbor) {
             byteBuffer.clear();
-            if (neighbor.getValue().confirmed) {
+            Message message;
+            if (neighbor.getValue().confirmMessage != null) {
+                if (System.currentTimeMillis() - neighbor.getValue().lastIncomingMessageTime <= timeout) {
+                    message = neighbor.getValue().confirmMessage;
+                } else {
+                    neighbor.getValue().confirmMessage = null;
+                    message = neighbor.getValue().resendQueue.peek();
+                }
+            } else if (neighbor.getValue().confirmed) {
                 neighbor.getValue().resendQueue.poll();
                 neighbor.getValue().confirmed = false;
+                message = neighbor.getValue().resendQueue.peek();
             } else if (System.currentTimeMillis() - neighbor.getValue().lastIncomingMessageTime > timeout
-                    && neighbor.getValue().resendQueue.peek() != null
-                    && neighbor.getValue().resendQueue.peek().type != Message.Type.Confirm) {
+                    && neighbor.getValue().resendQueue.peek() != null) {
                 return true;
-            } else if (neighbor.getValue().resendQueue.peek() != null &&
-                    neighbor.getValue().lastIncomingMessage != null &&
-                    neighbor.getValue().resendQueue.peek().type == Message.Type.Confirm &&
-                    !neighbor.getValue().resendQueue.peek().uuid.equals(neighbor.getValue().lastIncomingMessage.uuid)) {
-                neighbor.getValue().resendQueue.poll();
+            } else {
+                message = neighbor.getValue().resendQueue.peek();
             }
-            Message message = neighbor.getValue().resendQueue.peek();
             if (message == null) return false;
             message.writeToByteBuffer(byteBuffer, bufferLen);
             try {
@@ -303,7 +309,7 @@ public class Node extends Thread {
                     childrens.entrySet().removeIf(this::WriteToNeighbor);
                 }
                 synchronized (parent) {
-                    parent = parent.filter((parent) -> !WriteToNeighbor(parent));
+                    parent = parent.filter(parent -> !WriteToNeighbor(parent));
                 }
                 try {
                     Thread.sleep(delay);
@@ -344,7 +350,7 @@ public class Node extends Thread {
         Consumer<Map.Entry<InetSocketAddress, NeighborInfo>> send = neighbor -> {
             byte[] byteAddress = neighbor.getKey().getAddress().getAddress();
             ByteBuffer byteBuffer = ByteBuffer
-                    .allocate(byteAddress.length + Byte.BYTES)
+                    .allocate(byteAddress.length + Integer.BYTES)
                     .putInt(neighbor.getKey().getPort())
                     .put(byteAddress);
             byteBuffer.flip();

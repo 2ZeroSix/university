@@ -18,7 +18,6 @@ void MaterialSand::Init(Object * pObject)
 	Material::Init(pObject);
 
 	m_pTexture1 = new Texture2D("sand.jpg");
-			
 	m_pTexture1->SetFilterMode(m_filterMode);	
 }
 
