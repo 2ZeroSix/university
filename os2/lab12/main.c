@@ -12,8 +12,10 @@ void* routine(void* unused) {
         pthread_mutex_unlock(&mutex);
         write(1, "2\n", sizeof("2\n"));
         thread_n = 0;
+        pthread_mutex_lock(&mutex);
         pthread_cond_signal(&cond);
     }
+    pthread_mutex_unlock(&mutex);
     return NULL;
 }
 
@@ -35,7 +37,9 @@ int main() {
         pthread_mutex_unlock(&mutex);
         write(1, "1\n", sizeof("1\n"));
         thread_n = 1;
+        pthread_mutex_lock(&mutex);
         pthread_cond_signal(&cond);
     }
+    pthread_mutex_unlock(&mutex);
     pthread_exit(0);
 }
