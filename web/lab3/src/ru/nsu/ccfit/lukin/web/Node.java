@@ -3,7 +3,6 @@ package ru.nsu.ccfit.lukin.web;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -45,7 +44,6 @@ public class Node extends Thread {
             this.type = type;
         }
         Message(ByteBuffer byteBuffer, int length) throws IllegalArgumentException {
-//            byteBuffer.flip();
             if (length < 2 * Long.BYTES + 1)
                 throw new IllegalArgumentException("wrong size of message");
             this.uuid = new UUID(byteBuffer.getLong(), byteBuffer.getLong());
@@ -53,7 +51,7 @@ public class Node extends Thread {
             this.payload = new byte[length - 2 * Long.BYTES - 1];
             byteBuffer.get(this.payload);
         }
-        private InetSocketAddress decodeExitMessage() throws IllegalArgumentException, UnknownHostException {
+        InetSocketAddress decodeExitMessage() throws IllegalArgumentException, UnknownHostException {
             if (type != Type.Exit)
                 throw new IllegalArgumentException("Error trying to decode wrong type of message");
             ByteBuffer byteBuffer = ByteBuffer.wrap(payload);
@@ -62,16 +60,16 @@ public class Node extends Thread {
             byteBuffer.get(address);
             return new InetSocketAddress(InetAddress.getByAddress(address), port);
         }
-
         int len() {
             return payload.length + 2 * Long.BYTES + 1;
         }
         void writeToByteBuffer(ByteBuffer byteBuffer, int bufferLen) {
-            byteBuffer.putLong(this.uuid.getLeastSignificantBits())
-                .putLong(this.uuid.getMostSignificantBits())
-                .put(this.type.type)
-                .put(this.payload, 0,
-                    Math.min(this.payload.length, bufferLen - 2 * Long.BYTES - 1)).flip();
+            byteBuffer
+                    .putLong(this.uuid.getLeastSignificantBits())
+                    .putLong(this.uuid.getMostSignificantBits())
+                    .put(this.type.type)
+                    .put(this.payload, 0, Math.min(this.payload.length, bufferLen - 2 * Long.BYTES - 1))
+                    .flip();
         }
     }
 
@@ -80,13 +78,15 @@ public class Node extends Thread {
         Message confirmMessage;
         boolean confirmed;
         Message lastIncomingMessage;
-        long lastIncomingMessageTime = System.currentTimeMillis();
+        long lastMessageTime;
+        int step = 0;
     }
 
     private DatagramSocket socket;
     private Optional<Map.Entry<InetSocketAddress, NeighborInfo>> parent;
     private final Map<InetSocketAddress, NeighborInfo> childrens = new HashMap<>();
     private int receivePercent;
+    private boolean exiting = false;
     private long delay = 100;
     private long timeout = 1000;
 
@@ -95,7 +95,7 @@ public class Node extends Thread {
         this.receivePercent = receivePercent;
         if (parentAddress != null) {
             this.parent = Optional.of(new HashMap.SimpleEntry<>(parentAddress, new NeighborInfo()));
-            this.parent.get().getValue().resendQueue.add(new Message(UUID.randomUUID(), new byte[0], Message.Type.Join));
+            addToQueue(this.parent.get().getValue(), new Message(UUID.randomUUID(), new byte[0], Message.Type.Join));
         } else {
             this.parent = Optional.empty();
         }
@@ -107,17 +107,14 @@ public class Node extends Thread {
     }
 
     class MessageReader implements Runnable {
-        private int bufferLen;
         private Random rnd;
         private ByteBuffer byteBuffer;
         private DatagramPacket packet;
         MessageReader(int bufferLen) {
-            this.bufferLen = bufferLen;
             rnd = new Random(System.currentTimeMillis());
             byteBuffer = ByteBuffer.allocate(bufferLen);
             packet = new DatagramPacket(byteBuffer.array(), byteBuffer.array().length);
         }
-
         NeighborInfo getNeighborInfo(InetSocketAddress address) {
             NeighborInfo neighborInfo;
             synchronized (parent) {
@@ -151,7 +148,6 @@ public class Node extends Thread {
                 return null;
             }
         }
-
         void handleConfirm  (InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
             if (neighborInfo.resendQueue.peek() != null
                     && neighborInfo.resendQueue.peek().uuid.equals(message.uuid)) {
@@ -160,11 +156,12 @@ public class Node extends Thread {
                     neighborInfo.confirmed = true;
                     if (Thread.currentThread().isInterrupted() &&
                             neighborInfo.resendQueue.peek().type == Node.Message.Type.Exit) {
+                        System.out.println(neighborAddress.toString() + " deleted");
                         childrens.remove(neighborAddress);
                     }
                 }
                 neighborInfo.lastIncomingMessage = message;
-                neighborInfo.lastIncomingMessageTime = System.currentTimeMillis();
+                neighborInfo.lastMessageTime = System.currentTimeMillis();
             }
         }
         void handleReal     (InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
@@ -175,18 +172,18 @@ public class Node extends Thread {
                 synchronized (childrens) {
                     childrens.forEach((addr, info) -> {
                         if (!addr.equals(neighborAddress)) {
-                            info.resendQueue.add(message);
+                            addToQueue(info, message);
                         }
                     });
                 }
                 synchronized (parent) {
                     parent.ifPresent((parent) -> {
                         if (!parent.getKey().equals(neighborAddress)) {
-                            parent.getValue().resendQueue.add(message);
+                            addToQueue(parent.getValue(), message);
                         }
                     });
                 }
-                neighborInfo.lastIncomingMessageTime = System.currentTimeMillis();
+                neighborInfo.lastMessageTime = System.currentTimeMillis();
                 neighborInfo.lastIncomingMessage = message;
             }
         }
@@ -221,7 +218,7 @@ public class Node extends Thread {
                 neighborInfo.confirmMessage = new Node.Message(message.uuid, new byte[0], Node.Message.Type.Confirm);
                 neighborInfo.resendQueue.clear();
                 neighborInfo.lastIncomingMessage = message;
-                neighborInfo.lastIncomingMessageTime = System.currentTimeMillis();
+                neighborInfo.lastMessageTime = System.currentTimeMillis();
             }
         }
         void handleMessage  (InetSocketAddress neighborAddress, NeighborInfo neighborInfo, Message message) {
@@ -252,7 +249,7 @@ public class Node extends Thread {
                     NeighborInfo neighborInfo = getNeighborInfo(neighborAddress);
                     if (neighborInfo == null) continue;
 
-                    neighborInfo.lastIncomingMessageTime = System.currentTimeMillis();
+                    neighborInfo.lastMessageTime = System.currentTimeMillis();
                     handleMessage(neighborAddress, neighborInfo, message);
                 } catch (SocketTimeoutException ignore) {
 
@@ -269,11 +266,11 @@ public class Node extends Thread {
             this.bufferLen = bufferLen;
             byteBuffer = ByteBuffer.allocate(bufferLen);
         }
-        boolean WriteToNeighbor(Map.Entry<InetSocketAddress, NeighborInfo> neighbor) {
+        boolean writeToNeighbor(Map.Entry<InetSocketAddress, NeighborInfo> neighbor) {
             byteBuffer.clear();
             Message message;
-            if (neighbor.getValue().confirmMessage != null) {
-                if (System.currentTimeMillis() - neighbor.getValue().lastIncomingMessageTime <= timeout) {
+            if (neighbor.getValue().confirmMessage != null && neighbor.getValue().step++ % 2 == 0) {
+                if (System.currentTimeMillis() - neighbor.getValue().lastMessageTime <= timeout) {
                     message = neighbor.getValue().confirmMessage;
                 } else {
                     neighbor.getValue().confirmMessage = null;
@@ -283,7 +280,7 @@ public class Node extends Thread {
                 neighbor.getValue().resendQueue.poll();
                 neighbor.getValue().confirmed = false;
                 message = neighbor.getValue().resendQueue.peek();
-            } else if (System.currentTimeMillis() - neighbor.getValue().lastIncomingMessageTime > timeout
+            } else if (System.currentTimeMillis() - neighbor.getValue().lastMessageTime > timeout
                     && neighbor.getValue().resendQueue.peek() != null) {
                 return true;
             } else {
@@ -302,14 +299,22 @@ public class Node extends Thread {
             return false;
 
         }
+        private boolean writeToNeighborWithInfo(Map.Entry<InetSocketAddress, NeighborInfo> neighbor) {
+            if (writeToNeighbor(neighbor)) {
+                System.out.println(neighbor.getKey().getAddress().getCanonicalHostName() + " removed");
+                return true;
+            } else {
+                return false;
+            }
+        }
         @Override
         public void run() {
             while (!(Thread.currentThread().isInterrupted() && childrens.isEmpty())) {
                 synchronized (childrens) {
-                    childrens.entrySet().removeIf(this::WriteToNeighbor);
+                    childrens.entrySet().removeIf(this::writeToNeighborWithInfo);
                 }
                 synchronized (parent) {
-                    parent = parent.filter(parent -> !WriteToNeighbor(parent));
+                    parent = parent.filter(parent -> !writeToNeighborWithInfo(parent));
                 }
                 try {
                     Thread.sleep(delay);
@@ -319,19 +324,6 @@ public class Node extends Thread {
             }
         }
     }
-    private void setShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            interrupt();
-            while(true) {
-                try {
-                    join();
-                    break;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }));
-    }
 
     public void sendMessage(String str) {
         sendMessage(str.getBytes(Charset.forName("UTF-8")), Message.Type.Real);
@@ -339,12 +331,21 @@ public class Node extends Thread {
     private void sendMessage(byte[] msg, Message.Type type) {
         Message message = new Message(UUID.randomUUID(), msg, type);
         synchronized (childrens) {
-            childrens.forEach((childrenAddr, childrenInfo) ->
-                    childrenInfo.resendQueue.add(message));
+            childrens.forEach((childrenAddr, childrenInfo) -> {
+                addToQueue(childrenInfo, message);
+            });
         }
         synchronized (parent) {
-            parent.ifPresent((parent) -> parent.getValue().resendQueue.add(message));
+            parent.ifPresent((parent) -> {
+                addToQueue(parent.getValue(), message);
+            });
         }
+    }
+    private void addToQueue(NeighborInfo neighborInfo, Message message) {
+        if (neighborInfo.resendQueue.isEmpty()) {
+            neighborInfo.lastMessageTime = System.currentTimeMillis();
+        }
+        neighborInfo.resendQueue.add(message);
     }
     private void sendExit() {
         Consumer<Map.Entry<InetSocketAddress, NeighborInfo>> send = neighbor -> {
@@ -367,8 +368,12 @@ public class Node extends Thread {
     }
 
     @Override
+    public synchronized void start() {
+        super.start();
+    }
+
+    @Override
     public void run() {
-        setShutdownHook();
         int bufferLen = 4096;
         Thread readerThread = new Thread(new MessageReader(bufferLen));
         Thread writerThread = new Thread(new MessageWriter(bufferLen));
@@ -407,6 +412,17 @@ public class Node extends Thread {
             Node node = new Node(datagramSocket,receivePercent, parentAddress);
             node.start();
 
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                node.interrupt();
+                while(true) {
+                    try {
+                        node.join();
+                        break;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }));
 
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
                 String str;
@@ -418,7 +434,7 @@ public class Node extends Thread {
                 System.err.println("Error while reading");
             }
 
-
+            Runtime.getRuntime().exit(0);
         } catch (IllegalArgumentException e) {
             System.out.println(usage);
             System.err.println("Wrong arguments:");
