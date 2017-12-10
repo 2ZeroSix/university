@@ -1,11 +1,12 @@
-﻿#include "GraphicsEngine/Materials/Material.h"
+﻿#pragma once
+#include "GraphicsEngine/Materials/Material.h"
 
 
 // Рассчитывает только компоненту diffuse от всех источников света
-class MaterialDiffuse : public Material
+class MaterialLight : public Material
 {
 public:
-	MaterialDiffuse();
+	MaterialLight();
 
 	void Init(Object * pObject) override;
 
@@ -13,3 +14,4 @@ public:
 
 	void SetMaterial() override;
 };
+#pragma once

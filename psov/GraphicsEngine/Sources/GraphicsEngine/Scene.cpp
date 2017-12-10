@@ -40,7 +40,7 @@ void Scene::AddObject(Object * pObject)
 	}
 
 	pObject->Init();
-	m_objects.push_back(pObject);
+	m_objects.push_back(const_cast<const Object*&>(pObject));
 }
 
 void Scene::AddLight(Light * pLight)
@@ -87,6 +87,9 @@ void Scene::Update()
 		{
 			pObject->Update();
 		}
+	}
+	for (auto& light : m_lights) {
+        light->GetObjectPtr()->Update();
 	}
 }
 

@@ -12,15 +12,14 @@ public:
 		m_pObject = NULL;
 	}
 
-	virtual ~Component() {}
+	virtual ~Component() = default;
 
 	void Init(Object * pObject)
 	{
 		m_pObject = pObject;
 	}
 	
-	Object * GetObjectPtr()
-	{
+	Object * GetObjectPtr()const {
 		return m_pObject;
 	}
 

@@ -15,9 +15,11 @@ enum LightType
 class Light : public Component
 {
 protected:
-    explicit Light(LightType type) : m_type(type) {}
+    explicit Light(LightType type, float intensity=1.0f)
+			: m_type(type), m_intensity(intensity) {}
 public:
-	virtual ~Light() {}
+	Light() = delete;
+	~Light() override = default;
 
 	virtual Vector4 GetTypeOptions() const
 	{
@@ -41,7 +43,7 @@ public:
 		return direction;
 	}
 
-	virtual void SetColor(Vector3 color)
+	virtual void SetColor(const Vector3& color)
 	{
 		// Clamp color by interval [0,1]
 		m_color = Vector3::Clamp01(color);
@@ -56,14 +58,11 @@ public:
 	virtual void SetIntensity(float intensity)
 	{
 		// Clamp intensity by interval [0, +infinity]
-		m_intensity = (intensity >= 0) ? intensity : 0;
+		m_intensity = (intensity >= 0.f) ? intensity : 0.f;
 	}
-	
 protected:
 	LightType m_type;
 	Vector3	m_color;
 	float	m_intensity;
 
-private:
-	Light();
 };

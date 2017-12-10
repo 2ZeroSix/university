@@ -8,7 +8,8 @@ class Camera : public Component
 {
 public:
 	Camera();
-	
+	Camera(const Camera&) = delete;
+	Camera(Camera&&) = delete;
 	// Установка вертикального угла обзора (в градусах)
 	void SetFovY		(float fovY);
 	// Установка ближней отсекающей плоскости

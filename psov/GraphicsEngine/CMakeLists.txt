@@ -78,6 +78,8 @@ set(SOURCE_FILES
         Sources/GraphicsEngine/Materials/Material.h
         Sources/GraphicsEngine/Materials/MaterialDiffuse.cpp
         Sources/GraphicsEngine/Materials/MaterialDiffuse.h
+        Sources/GraphicsEngine/Materials/MaterialLight.cpp
+        Sources/GraphicsEngine/Materials/MaterialLight.h
         Sources/GraphicsEngine/Materials/MaterialSand.cpp
         Sources/GraphicsEngine/Materials/MaterialSand.h
         Sources/GraphicsEngine/Materials/MaterialTask01.cpp

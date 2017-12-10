@@ -5,7 +5,8 @@ struct Light
 	vec4	typeOptions;// типозависимые опции источника
 	vec4	position;	// позиция источника (есть у Point и Spot)
 	vec4	direction;	// направление света
-	vec4	color;		// (цвет.r, цвет.g, цвет.b, интенсивность)
+	vec4	color;		// цвет.r, цвет.g, цвет.b
+	vec4    specularColor; // rgb - цвет, a - сила отражения
 };
 
 // Shader parameters
@@ -13,23 +14,29 @@ uniform mat4    matWorldNormal;
 uniform mat4    matWorldT;
 uniform vec4    materialColor;
 uniform int     lightsCount;
+uniform mat4    camera;
 uniform Light   lights[3];
+varying vec3    localPosition;
+varying vec3    localNormal;
 
-varying vec3 localPosition;
-varying vec3 localNormal;
 
-
-vec3 calcDiffuse(vec4 lightCol, vec3 lightDir, vec3 vertexNormal)
+vec3 calcDiffuse(vec3 lightDir, vec3 lightCol, vec3 vertexNormal, float intensivity)
 {
-	float diffuse = clamp( dot(-lightDir, vertexNormal), 0.0, 1.0 );
+	float diffuse = clamp( dot(-lightDir, vertexNormal), 0.0, 1.0 ) * intensivity;
 
 	// Цвет = diffuse * (цвет источника) * (интенсивность источника)
-	vec3 color = diffuse * lightCol.rgb * lightCol.a;
+	vec3 color = diffuse * lightCol;
 
 	return color;
 }
 
-//vec3 calcSpecular(vec4 lightCol, vec3 lightDir, )
+vec3 calcSpecular(vec4 specLightCol, vec3 lightDir, vec3 vertexPos, vec3 vertexNormal, float intensivity) {
+    vec3 halfway = normalize(normalize((vec4(0,0,0,1)*camera).xyz - vertexPos) - lightDir);
+    float specular = pow(clamp(dot(vertexNormal, halfway), 0.0, 1.0), specLightCol.w) * intensivity;
+    vec3 color = specular * specLightCol.xyz;
+    return color;
+}
+
 void main()
 {
 	vec3 col = vec3(0,0,0);
@@ -42,12 +49,11 @@ void main()
 	vec3 vertexPos = (vec4(localPosition, 1.0) * matWorldT).xyz;
 	
 	for (int i = 0; i < lightsCount; ++i) {
-		float type = lights[i].typeOptions.x;
+		float type = (lights[i].typeOptions.x);
 		float epsilon = 0.001;
-		
-		vec4 lightCol = lights[i].color;
+		vec3 lightCol = lights[i].color.xyz;
 		vec3 lightDir = vec3(0,0,0);
-	
+	    float intensivity = 1.0;
 		// Directional light
         if (abs(type - 1.0) < epsilon) {
 			lightDir = normalize(lights[i].direction.xyz);
@@ -55,6 +61,9 @@ void main()
 		// Point light
         else if (abs(type - 2.0) < epsilon) {
 			lightDir = normalize(vertexPos - lights[i].position.xyz);
+			float dist = length(vertexPos - lights[i].position.xyz);
+			vec3 atten = lights[i].typeOptions.yzw;
+			intensivity = atten.x + (atten.y + atten.z * dist) * dist;
 		}
 		// Spot light
 		else if (abs(type - 3.0) < epsilon) {
@@ -63,19 +72,15 @@ void main()
 			float cosPhi2 = lights[i].typeOptions.z;
 			float falloff = lights[i].typeOptions.w;
 			float cosAngle = dot(lightDir, normalize(lights[i].direction.xyz));
-			if (cosAngle >= cosTheta2) {
-			    // nothing
-			} else if (cosAngle >= cosPhi2) {
-			    float intensivity = pow((cosAngle - cosPhi2) / (cosTheta2 - cosPhi2), falloff);
-			    lightCol *= intensivity;
-			} else {
-			    lightCol = vec4(0.0, 0.0, 0.0, 1.0);
+			if (cosTheta2 > cosAngle && cosAngle >= cosPhi2) {
+			    intensivity = pow((cosAngle - cosPhi2) / (cosTheta2 - cosPhi2), falloff);
+			} else if (cosPhi2 > cosAngle) {
+			    intensivity = 0.0;
 			}
 		}
 
-		col += materialColor.rgb * calcDiffuse(lightCol, lightDir, vertexNormal);
+		col += materialColor.rgb * calcDiffuse(lightDir, lightCol, vertexNormal, intensivity);
+		col += calcSpecular(lights[i].specularColor, lightDir, vertexPos, vertexNormal, intensivity);
 	}
-	
 	gl_FragColor = vec4(col, 1.0);
-        gl_FragColor.a = 1.0;
 }
