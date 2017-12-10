@@ -7,36 +7,19 @@
 
 enum LightType
 {
-	LIGHT_DIRECTIONAL,
+	LIGHT_DIRECTIONAL = 1,
 	LIGHT_POINT,
 	LIGHT_SPOT,
 };
 
 class Light : public Component
 {
+protected:
+    explicit Light(LightType type) : m_type(type) {}
 public:
-	Light(LightType type)
-	{
-		switch (type)
-		{
-			case LIGHT_DIRECTIONAL:
-				m_type = 1;
-				break;
-			case LIGHT_POINT:
-				m_type = 2;
-				break;
-			case LIGHT_SPOT:
-				m_type = 3;
-				break;
-			
-			default:
-				m_type = 1;
-				break;
-		}
-	}
 	virtual ~Light() {}
-	
-	virtual Vector4 GetType() const
+
+	virtual Vector4 GetTypeOptions() const
 	{
 		return Vector4(m_type,0,0,0);
 	}
@@ -77,7 +60,7 @@ public:
 	}
 	
 protected:
-	int		m_type;
+	LightType m_type;
 	Vector3	m_color;
 	float	m_intensity;
 

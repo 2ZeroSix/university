@@ -2,7 +2,7 @@
 
 struct Light
 {
-	vec4	type;		// тип источника
+	vec4	typeOptions;// типозависимые опции источника
 	vec4	position;	// позиция источника (есть у Point и Spot)
 	vec4	direction;	// направление света
 	vec4	color;		// (цвет.r, цвет.g, цвет.b, интенсивность)
@@ -29,6 +29,7 @@ vec3 calcDiffuse(vec4 lightCol, vec3 lightDir, vec3 vertexNormal)
 	return color;
 }
 
+//vec3 calcSpecular(vec4 lightCol, vec3 lightDir, )
 void main()
 {
 	vec3 col = vec3(0,0,0);
@@ -41,7 +42,7 @@ void main()
 	vec3 vertexPos = (vec4(localPosition, 1.0) * matWorldT).xyz;
 	
 	for (int i = 0; i < lightsCount; ++i) {
-		float type = lights[i].type.x;
+		float type = lights[i].typeOptions.x;
 		float epsilon = 0.001;
 		
 		vec4 lightCol = lights[i].color;
@@ -58,13 +59,15 @@ void main()
 		// Spot light
 		else if (abs(type - 3.0) < epsilon) {
 			lightDir = normalize(vertexPos - lights[i].position.xyz);
-			float cosTheta = lights[i].type.y;
-			float cosPhi = lights[i].type.z;
+			float cosTheta2 = lights[i].typeOptions.y;
+			float cosPhi2 = lights[i].typeOptions.z;
+			float falloff = lights[i].typeOptions.w;
 			float cosAngle = dot(lightDir, normalize(lights[i].direction.xyz));
-			if (cosAngle >= cosTheta) {
+			if (cosAngle >= cosTheta2) {
 			    // nothing
-			} else if (cosAngle >= cosPhi) {
-			    lightCol /= max(length(vertexPos - lights[i].position.xyz), 1.0);
+			} else if (cosAngle >= cosPhi2) {
+			    float intensivity = pow((cosAngle - cosPhi2) / (cosTheta2 - cosPhi2), falloff);
+			    lightCol *= intensivity;
 			} else {
 			    lightCol = vec4(0.0, 0.0, 0.0, 1.0);
 			}

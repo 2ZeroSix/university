@@ -37,6 +37,8 @@ public:
 
 	void SetVertexShaderInt(const char *string, const int &d) override;
 
+	void SetPixelShaderInt(const char *string, const int &i) override;
+
 private:
 	void LogErrorInLoadFile(const std::string & filePath);
 	void LogErrorInVertexShader();

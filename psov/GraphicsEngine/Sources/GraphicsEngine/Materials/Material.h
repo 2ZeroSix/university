@@ -27,12 +27,13 @@ protected:
 	void SetVertexShaderMatrix4x4	(const char * propertyName, const Matrix4x4 & matrix);
 	void SetVertexShaderVector4		(const char * propertyName, const Vector4 & vector);
 	void SetVertexShaderFloat		(const char * propertyName, const float & value);
-	void SetVertexShaderInt		(const char * propertyName, const int & value);
+	void SetVertexShaderInt			(const char * propertyName, const int & value);
 	void SetVertexShaderEnd();
 
 	void SetPixelShaderBegin();
 	void SetPixelShaderMatrix4x4	(const char * propertyName, const Matrix4x4 & matrix);
 	void SetPixelShaderVector4		(const char * propertyName, const Vector4 & vector);
+	void SetPixelShaderInt			(const char * propertyName, const int & value);
 	void SetPixelShaderTexture2d	(const char * propertyName, const Texture2D * pTexture);
 	void SetPixelShaderEnd();
 	

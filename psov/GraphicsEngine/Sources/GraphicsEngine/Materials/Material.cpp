@@ -92,3 +92,7 @@ void Material::SetVertexShaderFloat(const char *propertyName, const GLfloat &val
 void Material::SetVertexShaderInt(const char *propertyName, const int &value) {
 	m_pImpl->SetVertexShaderInt(propertyName, value);
 }
+
+void Material::SetPixelShaderInt(const char *propertyName, const int &value) {
+	m_pImpl->SetPixelShaderInt(propertyName, value);
+}

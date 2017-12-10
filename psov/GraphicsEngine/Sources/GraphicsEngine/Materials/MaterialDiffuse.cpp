@@ -51,24 +51,22 @@ void MaterialDiffuse::SetMaterial()
 		SetPixelShaderMatrix4x4	("matWorldNormal",	matWorldNormal);
 		SetPixelShaderMatrix4x4	("matWorldT",		matWorldT);
 		SetPixelShaderVector4	("materialColor",	Vector4(1, 1, 1, 1));
-		SetPixelShaderVector4	("lightsCount",		Vector4(count, 1, 1, 1));
-		
+		SetPixelShaderInt	("lightsCount",	static_cast<int>(count));
 		// Передаём параметры каждого источника света
 		int i = 0;
 		std::list<const Light *>::iterator iter;
 		for (iter = lights.begin(); iter != lights.end(); ++iter, ++i)
 		{
 			const Light * pLight = *iter;
-			const Vector4 lightType			= pLight->GetType();
+			const Vector4 lightTypeOptions	= pLight->GetTypeOptions();
 			const Vector4 lightPosition		= Vector4( pLight->GetPosition(), 1 );
 			const Vector4 lightDirection	= Vector4( pLight->GetDirection(), 0 );
 			const Vector4 lightColor		= pLight->GetColor();
-
 			// "lights[i]"
-			std::string lightStr = "lights[" + std::to_string(static_cast<long long>(i)) + "]";
+			std::string lightStr = "lights[" + std::to_string(i) + "]";
 			
 			// "lights[i].type", "lights[i].position", "lights[i].direction", "lights[i].color"
-			SetPixelShaderVector4( (lightStr + ".type").c_str(),		lightType);
+			SetPixelShaderVector4( (lightStr + ".type").c_str(),		lightTypeOptions);
 			SetPixelShaderVector4( (lightStr + ".position").c_str(),	lightPosition );
 			SetPixelShaderVector4( (lightStr + ".direction").c_str(),	lightDirection );
 			SetPixelShaderVector4( (lightStr + ".color").c_str(),		lightColor );	

@@ -281,3 +281,7 @@ void GL20Material::SetVertexShaderFloat(const char *propertyName, const GLfloat 
 void GL20Material::SetVertexShaderInt(const char *string, const int &d) {
 	glUniform1i(glGetUniformLocation(m_program, string), d);
 }
+
+void GL20Material::SetPixelShaderInt(const char *string, const int &i) {
+	glUniform1i(glGetUniformLocation(m_program, string), i);
+}

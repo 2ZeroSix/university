@@ -1,4 +1,8 @@
 ﻿#pragma once
+
+#include <GraphicsEngine/LightPoint.h>
+#include <GraphicsEngine/LightDirect.h>
+#include <GraphicsEngine/LightSpot.h>
 #include "GraphicsEngine/Application.h"
 #include "GraphicsEngine/GraphicsEngine.h"
 #include "GraphicsEngine/Light.h"
@@ -18,15 +22,14 @@
 class Task04: public Task
 {
 public:
-	virtual ~Task04() { }
+    ~Task04() override = default;
 
-	virtual void Init()
-	{
+    void Init() override {
 		Scene & scene = Application::Instance().GetScene();
 		
 		// Камера
 		{
-			Object * pCameraObj = new Object();
+            auto * pCameraObj = new Object();
 			pCameraObj->m_pTransform = new Transform( Vector3(0.0f, 0.0f,-7.0f), Vector3(0.0f, 0.0f, 0.0f));
 			Camera * pCamera = new Camera();
 			pCameraObj->AddComponent( pCamera );
@@ -36,7 +39,7 @@ public:
 
 		// объект #1 - Сфера
 		{
-			Object * pObject1 = new Object();
+            auto * pObject1 = new Object();
 
 			pObject1->m_pTransform	= new Transform(0,0,0, 0,0,0, 3,3,3);
 			pObject1->m_pMesh		= new MeshSphere(20);
@@ -48,11 +51,11 @@ public:
 
 		// Источник света #1
 		{
-			Light * pLight = new Light(LightType::LIGHT_DIRECTIONAL);
+			auto * pLight = new LightDirect();
 			pLight->SetColor(1,1,0);
 			pLight->SetIntensity(1);
 
-			Object * pLightObject = new Object();
+            auto pLightObject = new Object();
 			pLightObject->m_pTransform	= new Transform(1,0,0, 0,90,0, 1,1,1);
 			pLightObject->AddComponent(pLight);
 
@@ -61,20 +64,31 @@ public:
 
 		// Источник света #2
 		{
-			Light * pLight = new Light(LightType::LIGHT_POINT);
+			auto * pLight = new LightPoint();
 			pLight->SetColor(1,1,1);
 			pLight->SetIntensity(1);
 
-			Object * pLightObject = new Object();
+            auto * pLightObject = new Object();
 			pLightObject->m_pTransform	= new Transform(3,0,0, 0,0,0, 1,1,1);
 			pLightObject->AddComponent(pLight);
 
 			scene.AddLight(pLight);
 		}
+        // Источник света #3
+        {
+            auto * pLight = new LightSpot(15, 45, .1f);
+            pLight->SetColor(1,0,0);
+            pLight->SetIntensity(1);
+
+            auto * pLightObject = new Object();
+            pLightObject->m_pTransform	= new Transform(0,0,-2.5f, 0,0,0, 1,1,1);
+            pLightObject->AddComponent(pLight);
+
+            scene.AddLight(pLight);
+        }
 	}
 
-	virtual void Update()
-	{
+    void Update() override {
 		
 	}
 };
