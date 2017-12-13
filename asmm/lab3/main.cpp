@@ -1,6 +1,7 @@
 #include <iostream>
-
-const int iter = 10000;
+#include <cmath>
+#include <cstdlib>
+const int iter = 100000;
 const int maxL = 13;
 using namespace std;
 typedef unsigned long long ull;
@@ -18,7 +19,7 @@ inline timespec gettime() {
 }
 
 inline void update_min(const timespec& start, const timespec& end, timespec& min) {
-    timespec tmp = {end.tv_sec - start.tv_sec - (end.tv_nsec - start.tv_nsec < 0), (end.tv_nsec - start.tv_nsec + 1000000000) % 1000000000};
+    timespec tmp = {end.tv_sec - start.tv_sec - (end.tv_nsec - start.tv_nsec < 0), (end.tv_nsec - start.tv_nsec + 10000000000) % 10000000000};
     min = min.tv_sec < tmp.tv_sec ? min : (min.tv_nsec < tmp.tv_nsec ? min : tmp); 
 }
 
@@ -45,7 +46,7 @@ int main(int argc, char** argv) {
                 for (int L2 = 1; L2 < L; ++L2) {
                     if (lcm(L1, L2) <= L) continue; 
                     ull start, end, min = __UINT64_MAX__;
-                    for (int i = 0; i < 1000; ++i) {
+                    for (int i = 0; i < 10000; ++i) {
                         start = rdtsc();
                         for (int j = 0; j < iter; ++j) {
                             if ((i%L1) == 0) a=1;
@@ -67,7 +68,7 @@ int main(int argc, char** argv) {
         case 0: {
             for (int L = 1; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (j%(L) == 0) a = 0; else a=1;
@@ -83,7 +84,7 @@ int main(int argc, char** argv) {
         case 1: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -100,7 +101,7 @@ int main(int argc, char** argv) {
         case 2: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -118,7 +119,7 @@ int main(int argc, char** argv) {
         case 3: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -137,7 +138,7 @@ int main(int argc, char** argv) {
         case 4: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -157,7 +158,7 @@ int main(int argc, char** argv) {
         case 5: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -178,7 +179,7 @@ int main(int argc, char** argv) {
         case 6: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -200,7 +201,7 @@ int main(int argc, char** argv) {
         case 7: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -223,7 +224,7 @@ int main(int argc, char** argv) {
         case 8: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -247,7 +248,7 @@ int main(int argc, char** argv) {
         case 9: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -272,7 +273,7 @@ int main(int argc, char** argv) {
         case 10: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -298,7 +299,7 @@ int main(int argc, char** argv) {
         case 11: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
@@ -325,7 +326,7 @@ int main(int argc, char** argv) {
         case 12: {
             for (int L = 2; L < maxL; ++L) {
                 ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
+                for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
                         if (i<0) a=1; else a=0;
