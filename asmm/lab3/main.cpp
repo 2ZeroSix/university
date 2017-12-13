@@ -1,7 +1,7 @@
 #include <iostream>
 
 const int iter = 10000;
-const int maxL = 10;
+const int maxL = 13;
 using namespace std;
 typedef unsigned long long ull;
 inline unsigned long long rdtsc() {
@@ -22,6 +22,17 @@ inline void update_min(const timespec& start, const timespec& end, timespec& min
     min = min.tv_sec < tmp.tv_sec ? min : (min.tv_nsec < tmp.tv_nsec ? min : tmp); 
 }
 
+int gcd(int a, int b) {
+    if (b == 0)
+       return a;
+    else
+       return gcd(b, a % b);
+}
+
+int lcm(int a, int b) {
+    return abs(a * b) / gcd(a, b);
+}
+
 int main(int argc, char** argv) {
     cout.precision(5);
     int a = 1;
@@ -29,20 +40,29 @@ int main(int argc, char** argv) {
     int L = 7;
     switch (type) {
         case -1: {
-            for (int L = 1; L < maxL; ++L) {
-                ull start, end, min = __UINT64_MAX__;
-                for (int i = 0; i < 1000; ++i) {
-                    start = rdtsc();
-                    for (int j = 0; j < iter; ++j) {
-                        if (j%(L) == 0) a = 0; else a=1;
+            int a,b,c;
+            for (int L1 = 1; L1 < L; ++L1) {
+                for (int L2 = 1; L2 < L; ++L2) {
+                    if (lcm(L1, L2) <= L) continue; 
+                    ull start, end, min = __UINT64_MAX__;
+                    for (int i = 0; i < 1000; ++i) {
+                        start = rdtsc();
+                        for (int j = 0; j < iter; ++j) {
+                            if ((i%L1) == 0) a=1;
+                            else a=0;
+                            if ((i%L2) == 0) b=1;
+                            else b=0;
+                            if ((a*b) == 1) c=1;
+                            else c = 0;
+                        }
+                        end = rdtsc();
+                        cout << a%2 + b%2 + c%2 << "\b \b";
+                        min = min < end - start ? min : end - start;
                     }
-                    end = rdtsc();
-                    cout << a%2 << "\b \b";
-                    min = min < end - start ? min : end - start;
+                    cout << fixed << (double)min / iter << ",";
                 }
-                cout << fixed << (double)min / iter << ",";
+                cout << endl;
             }
-            break;
         }
         case 0: {
             for (int L = 1; L < maxL; ++L) {
