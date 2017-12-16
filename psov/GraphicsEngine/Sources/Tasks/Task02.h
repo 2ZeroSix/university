@@ -83,6 +83,18 @@ public:
 
             pObj2 = pObject;
         }
+//        for (int i = 2; i < 10; ++i) {
+//            Object * pObject = new Object();
+//            pObject->m_pMesh		= new MeshCylinder(20);
+//            pObject->m_pTransform	= new Transform(-2, 0, -i);
+//            material2 = new MaterialCylinderTwist(1.f);
+//            pObject->m_pMaterial	= material2;
+//
+//            scene.AddObject( pObject );
+//
+//            pObj2 = pObject;
+//        }
+
         start = Time::GetTime();
         prevFrameCount = Time::GetFrameCount();
     }
@@ -100,6 +112,6 @@ public:
             prevFrameCount = frameCount;
             start = end;
         }
-        gui.Label(0, Screen::GetHeight() - 18, Screen::GetWidth(), 18, string("FPS == ") + to_string(fps));
+        gui.Label(0, Screen::GetHeight() - 18, 0, 0, string("FPS == ") + to_string(fps));
     }
 };

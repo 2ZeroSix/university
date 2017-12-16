@@ -1,5 +1,6 @@
 ﻿#include "GL20Texture2D.h"
 #include "GraphicsEngine/Application.h"
+#include <iostream>
 //#include "GraphicsEngine/GraphicsApi/OpenGL20/GL20GraphicsEngineContext.h"
 
 
@@ -31,8 +32,8 @@ GL20Texture2D::GL20Texture2D(const char * filepath)
 
 GL20Texture2D::~GL20Texture2D()
 {
-//	glDeleteTextures(1, &m_texture);
-	glDeleteBuffers(1, &m_texture);
+	glDeleteTextures(1, &m_texture);
+//	glDeleteBuffers(1, &m_texture);
 }
 
 void GL20Texture2D::SetFilterMode(TextureFilterMode filterMode)
@@ -51,18 +52,24 @@ void GL20Texture2D::SetFilterMode(TextureFilterMode filterMode)
 	}
 	else if (filterMode == TEXTURE_FILTER_MODE_BILINEAR)
 	{
+		// TODO: Task05
 		m_minFilterMode = GL_LINEAR;
 		m_magFilterMode = GL_LINEAR;
 		m_useAniso = false;
-		// TODO: Task05
 	}
 	else if (filterMode == TEXTURE_FILTER_MODE_TRILINEAR)
 	{
 		// TODO: Task05
+		m_minFilterMode = GL_LINEAR_MIPMAP_LINEAR;
+		m_magFilterMode = GL_LINEAR;
+		m_useAniso = false;
 	}
 	else if (filterMode == TEXTURE_FILTER_MODE_ANISOTROPIC)
 	{
 		// TODO: Task05
+		m_minFilterMode = GL_LINEAR_MIPMAP_LINEAR;
+		m_magFilterMode = GL_LINEAR;
+		m_useAniso = true;
 	}
 }
 
@@ -73,7 +80,15 @@ void GL20Texture2D::SetTexture(int textureRegister) const
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_minFilterMode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_magFilterMode);
+	if (m_useAniso) {
+//		if (glewIsExtensionSupported("GL_TEXTURE_MAX_ANISOTROPY_EXT")) {
+			GLfloat fLargest;
+			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
+//		} else {
+//			std::cerr << "GL_TEXTURE_MAX_ANISOTROPY_EXT unsupported" << std::endl;
+//		}
+	}
 }

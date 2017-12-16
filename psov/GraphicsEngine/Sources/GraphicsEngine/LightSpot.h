@@ -25,8 +25,9 @@ public:
         m_falloff = falloff;
     }
 
-    explicit LightSpot(float theta=90, float phi=90, float falloff=1.0f)
+    explicit LightSpot(float theta=90, float phi=90, float falloff=1.0f, Vector3 atten=Vector3(1.0,0.0,0.0))
             : Light(LightType::LIGHT_SPOT) {
+        setAttenuationFactors(atten);
         setPhi(phi);
         setTheta(theta);
         setFalloff(falloff);

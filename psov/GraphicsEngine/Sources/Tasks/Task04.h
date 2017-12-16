@@ -43,7 +43,7 @@ public:
 		{
             pObject1 = new Object();
 
-			pObject1->m_pTransform	= new Transform(0,0,0, 0,0,0, 3,3,3);
+			pObject1->m_pTransform	= new Transform(0,0,0, 0,0,0, 3,3,1);
 			pObject1->m_pMesh		= new MeshSphere(20);
             pObject1->m_pMaterial	= new MaterialLight();
 			pObject1->AddComponent( new ObjectRotator(0,10,0) );
@@ -60,33 +60,34 @@ public:
             auto pLightObject = new Object();
 			pLightObject->m_pTransform	= new Transform(1,0,0, 0,90,0, 1,1,1);
 			pLightObject->AddComponent(pLight);
-            pLightObject->m_pTransform->SetParent(pObject1->m_pTransform);
+//            pLightObject->m_pTransform->SetParent(pObject1->m_pTransform);
 			scene.AddLight(pLight);
 		}
 
 		// Источник света #2
 		{
-			auto * pLight = new LightPoint(1.0f);
+			auto * pLight = new LightPoint(1.0, 0.0, .01f);
 			pLight->SetColor(1,1,1);
 			pLight->SetIntensity(1);
 
             auto * pLightObject = new Object();
-			pLightObject->m_pTransform	= new Transform(3,0,0, 0,0,0, 1,1,1);
+			pLightObject->m_pTransform	= new Transform(3.f,0,0, 0,0,0, 1,1,1);
 			pLightObject->AddComponent(pLight);
-            pLightObject->m_pTransform->SetParent(pObject1->m_pTransform);
+//            pLightObject->m_pTransform->SetParent(pObject1->m_pTransform);
 
 			scene.AddLight(pLight);
 		}
         // Источник света #3
         {
-            auto * pLight = new LightSpot(15, 45, 1.f);
+            auto * pLight = new LightSpot(15, 30, 1.f);
+            pLight->setAttenuationFactors(Vector3(1.0, 0.0, .01f));
             pLight->SetColor(1,0,0);
             pLight->SetIntensity(1);
 
             auto * pLightObject = new Object();
-            pLightObject->m_pTransform	= new Transform(0,0,-3.f, 0,0,0, 1,1,1);
+            pLightObject->m_pTransform	= new Transform(0,3.f,-3.f, 45,0,0, 1,1,1);
             pLightObject->AddComponent(pLight);
-            pLightObject->m_pTransform->SetParent(pObject1->m_pTransform);
+//            pLightObject->m_pTransform->SetParent(pObject1->m_pTransform);
 
             scene.AddLight(pLight);
         }

@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
                 for (int i = 0; i < 10000; ++i) {
                     start = rdtsc();
                     for (int j = 0; j < iter; ++j) {
-                        if (j%(L) == 0) a = 0; else a=1;
+                        if (j%(L) <= 1) a = 0; else a=1;
                     }
                     end = rdtsc();
                     cout << a%2 << "\b \b";

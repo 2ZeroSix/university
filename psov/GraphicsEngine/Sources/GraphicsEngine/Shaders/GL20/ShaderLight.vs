@@ -1,4 +1,4 @@
-#version 110
+#version 130
 
 // Shader parameters
 uniform mat4 matrixWorldViewProjT;

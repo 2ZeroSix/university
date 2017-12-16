@@ -3,6 +3,7 @@
 #include "GraphicsEngine/Light.h"
 #include "GraphicsEngine/MathUtils.h"
 #include "GraphicsEngine/SceneUtils.h"
+#include <iostream>
 
 
 MaterialLight::MaterialLight()
@@ -36,8 +37,6 @@ void MaterialLight::SetMaterial()
 
 	Camera& camera = Application::Instance().GetScene().GetCamera();
 	const Matrix4x4 & matWorldCam = SceneUtils::GetMatrixWorld(camera.GetObjectPtr());
-//	const Vector4 cameraPosition = MathUtils::GetMatrixWorldViewProjT(matWorldCam, matView, matProj);
-
 
 	const Matrix4x4 matWorldViewProjT	= MathUtils::GetMatrixWorldViewProjT(matWorld, matView, matProj);
 	const Matrix4x4 matWorldT			= matWorld.Transpose();
@@ -57,27 +56,32 @@ void MaterialLight::SetMaterial()
 		SetPixelShaderMatrix4x4	("matWorldNormal",	matWorldNormal);
 		SetPixelShaderMatrix4x4	("matWorldT",		matWorldT);
 		SetPixelShaderVector4	("materialColor",	Vector4(1, 1, 1, 1));
-		SetPixelShaderInt	("lightsCount",	static_cast<int>(count));
-		SetPixelShaderMatrix4x4	("camera",	MathUtils::GetMatrixWorldViewProjT(matWorldCam, matView, matProj));
+		SetPixelShaderInt       ("lightsCount",     static_cast<int>(count));
+        Vector4 cameraVec = Vector4(camera.GetObjectPtr()->m_pTransform->GetPosition(), 1.0);
+//        std::cout << cameraVec.x << " " <<  cameraVec.y << " " << cameraVec.z << std::endl;
+		SetPixelShaderVector4("camera",	cameraVec);
 		// Передаём параметры каждого источника света
 		int i = 0;
 		std::list<const Light *>::iterator iter;
 		for (iter = lights.begin(); iter != lights.end(); ++iter, ++i)
 		{
 			const Light * pLight = *iter;
-			const Vector4 lightTypeOptions	= pLight->GetTypeOptions();
-			const Vector4 lightPosition		= Vector4( pLight->GetPosition(), 1 );
-			const Vector4 lightDirection	= Vector4( pLight->GetDirection(), 0 );
-			const Vector4 lightColor		= pLight->GetColor();
+            const Vector4& lightTypeOptions	    = pLight->GetTypeOptions();
+            const Vector4& lightAtten           = pLight->getAttenuationFactors();
+			const Vector4& lightPosition        = Vector4( pLight->GetPosition(), 1 );
+			const Vector4& lightDirection	    = Vector4( pLight->GetDirection(), 0 );
+            const Vector4& lightColor           = pLight->GetColor();
+            const Vector4& lightSpecularColor   = pLight->getSpecularColor();
 			// "lights[i]"
 			std::string lightStr = "lights[" + std::to_string(i) + "]";
 			
 			// "lights[i].type", "lights[i].position", "lights[i].direction", "lights[i].color"
-			SetPixelShaderVector4( (lightStr + ".typeOptions").c_str(),	 lightTypeOptions);
+            SetPixelShaderVector4( (lightStr + ".typeOptions").c_str(),	 lightTypeOptions);
+            SetPixelShaderVector4( (lightStr + ".attenuation").c_str(),	 lightAtten);
 			SetPixelShaderVector4( (lightStr + ".position").c_str(),	 lightPosition );
 			SetPixelShaderVector4( (lightStr + ".direction").c_str(),	 lightDirection );
 			SetPixelShaderVector4( (lightStr + ".color").c_str(),		 lightColor );
-			SetPixelShaderVector4( (lightStr + ".specularColor").c_str(),lightColor );
+			SetPixelShaderVector4( (lightStr + ".specularColor").c_str(),lightSpecularColor );
 		}
 
 		SetPixelShaderEnd();

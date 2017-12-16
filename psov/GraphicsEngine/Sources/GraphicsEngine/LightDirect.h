@@ -10,7 +10,11 @@
 
 class LightDirect : public Light {
 public:
-    LightDirect() : Light(LightType::LIGHT_DIRECTIONAL) {}
+    LightDirect()
+            : Light(LightType::LIGHT_DIRECTIONAL)
+    {
+        setAttenuationFactors(Vector3(1.0,0.0,0.0));
+    }
 };
 
 

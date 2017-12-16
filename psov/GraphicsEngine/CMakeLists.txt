@@ -166,7 +166,7 @@ set(SOURCE_FILES
         Sources/Tasks/Task.h
         Sources/Tasks/Task01.h
         Sources/Tasks/Task04.h
-        Sources/Tasks/Task05_01.h
+        Sources/Tasks/Task05_02.h
         Sources/Tasks/Task08.h
         Sources/main.cpp Sources/Tasks/Task02.h Sources/GraphicsEngine/Materials/MaterialCubeSphere.h Sources/GraphicsEngine/Materials/MaterialCubeSphere.cpp Sources/GraphicsEngine/Materials/MaterialCylinderTwist.cpp Sources/GraphicsEngine/Materials/MaterialCylinderTwist.h Sources/GraphicsEngine/Materials/Stageable.h Sources/GraphicsEngine/LightSpot.h Sources/GraphicsEngine/LightPoint.h Sources/GraphicsEngine/LightDirect.h)
 
