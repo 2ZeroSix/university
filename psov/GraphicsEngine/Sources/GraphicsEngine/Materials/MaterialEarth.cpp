@@ -1,33 +1,27 @@
-﻿#include "MaterialRoad.h"
+﻿#include "MaterialEarth.h"
 #include "GraphicsEngine/Transform.h"
 #include "GraphicsEngine/MathUtils.h"
 #include "GraphicsEngine/SceneUtils.h"
 
 
-MaterialRoad::MaterialRoad(TextureFilterMode filterMode)
+MaterialEarth::MaterialEarth(TextureFilterMode filterMode)
 {
-	m_vsFileName = "ShaderRoad";
-	m_psFileName = "ShaderRoad";
+	m_vsFileName = "ShaderSand";
+	m_psFileName = "ShaderSand";
 
 	m_pTexture1 = NULL;
-	m_pTexture2 = NULL;
-	m_pTexture3 = NULL;
 	m_filterMode = filterMode;
 }
 
-void MaterialRoad::Init(Object * pObject)
+void MaterialEarth::Init(Object * pObject)
 {
 	Material::Init(pObject);
 
-	m_pTexture1 = new Texture2D("road_1.jpg");
+    m_pTexture1 = new Texture2D("Earth_Albedo.jpg");
 	m_pTexture1->SetFilterMode(m_filterMode);
-	m_pTexture2 = new Texture2D("road_2.jpg");
-	m_pTexture2->SetFilterMode(m_filterMode);
-	m_pTexture3 = new Texture2D("road_3.jpg");
-	m_pTexture3->SetFilterMode(m_filterMode);
 }
 
-void MaterialRoad::Deinit()
+void MaterialEarth::Deinit()
 {
 	delete m_pTexture1;
 	m_pTexture1 = NULL;
@@ -35,7 +29,7 @@ void MaterialRoad::Deinit()
 	Material::Deinit();
 }
 
-void MaterialRoad::SetMaterial()
+void MaterialEarth::SetMaterial()
 {
 	const Matrix4x4 & matWorld	= SceneUtils::GetMatrixWorld(m_pObject);
 	const Matrix4x4 & matView	= SceneUtils::GetMatrixView();
@@ -51,9 +45,7 @@ void MaterialRoad::SetMaterial()
 		SetVertexShaderEnd();
 
 		SetPixelShaderBegin();
-		SetPixelShaderTexture2d("texture1", m_pTexture1);
-		SetPixelShaderTexture2d("texture2", m_pTexture2);
-		SetPixelShaderTexture2d("texture3", m_pTexture3);
+        SetPixelShaderTexture2d("texture1", m_pTexture1);
 		SetPixelShaderEnd();
 	}
 	SetMaterialEnd();

@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.8)
 project(GraphicsEngine)
 
 set(CMAKE_CXX_STANDARD 11)
-
 set(SOURCE_FILES
         Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11.h
         Sources/GraphicsEngine/GraphicsApi/DirectX11/DX11ConstantBuffer.cpp
@@ -82,6 +81,12 @@ set(SOURCE_FILES
         Sources/GraphicsEngine/Materials/MaterialLight.h
         Sources/GraphicsEngine/Materials/MaterialSand.cpp
         Sources/GraphicsEngine/Materials/MaterialSand.h
+        Sources/GraphicsEngine/Materials/MaterialRoad.cpp
+        Sources/GraphicsEngine/Materials/MaterialRoad.h
+        Sources/GraphicsEngine/Materials/MaterialEarth.cpp
+        Sources/GraphicsEngine/Materials/MaterialEarth.h
+        Sources/GraphicsEngine/Materials/MaterialEarthLight.cpp
+        Sources/GraphicsEngine/Materials/MaterialEarthLight.h
         Sources/GraphicsEngine/Materials/MaterialTask01.cpp
         Sources/GraphicsEngine/Materials/MaterialTask01.h
         Sources/GraphicsEngine/Materials/MaterialUnlit.cpp

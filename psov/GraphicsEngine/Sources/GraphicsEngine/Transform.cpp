@@ -111,6 +111,9 @@ void Transform::Translate( float x, float y, float z )
 void Transform::Rotate(const Vector3 & euler)
 {
 	m_eulerAngles += euler;
+//	m_eulerAngles.x -= m_eulerAngles.x >= 180.0 ? 360.f : 0.f;
+//	m_eulerAngles.y -= m_eulerAngles.y >= 180.0 ? 360.f : 0.f;
+//	m_eulerAngles.z -= m_eulerAngles.z >= 180.0 ? 360.f : 0.f;
 	m_shouldRecalc = true;
 }
 

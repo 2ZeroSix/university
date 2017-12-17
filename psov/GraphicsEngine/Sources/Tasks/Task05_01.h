@@ -10,10 +10,10 @@
 #include "GraphicsEngine/Light.h"
 
 
-class Task05_02: public Task
+class Task05_01: public Task
 {
 public:
-	virtual ~Task05_02() { }
+	virtual ~Task05_01() { }
 
 	virtual void Init()
 	{

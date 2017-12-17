@@ -3,10 +3,10 @@
 #include "GraphicsEngine/Texture2D.h"
 
 
-class MaterialRoad : public Material
+class MaterialEarth : public Material
 {
 public:
-	MaterialRoad(TextureFilterMode filterMode);
+	MaterialEarth(TextureFilterMode filterMode);
 
 	virtual void Init(Object * pObject);
 	virtual void Deinit();
@@ -15,7 +15,5 @@ public:
 
 private:
 	Texture2D *	m_pTexture1;
-	Texture2D *	m_pTexture2;
-	Texture2D *	m_pTexture3;
 	TextureFilterMode m_filterMode;
 };

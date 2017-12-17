@@ -15,7 +15,7 @@ GL20Texture2D::GL20Texture2D(const char * filepath)
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 	{
-		void * pPixels = (void*)FreeImage_GetBits(pImage);		
+		auto pPixels = (void*)FreeImage_GetBits(pImage);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, nWidth, nHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, pPixels);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}

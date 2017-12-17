@@ -80,6 +80,11 @@ public:
 		Light::m_specularColor = m_specularColor;
 	}
 
+	void setSpecularColor(float r, float g, float b, float power) {
+		setSpecularColor(Vector4(r,g,b,power));
+	}
+
+
 protected:
 	float	m_intensity;
 

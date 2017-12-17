@@ -2,13 +2,13 @@
 #include "GraphicsEngine/PlatformApi/Platform.h"
 
 #ifdef PLATFORM_WINDOWS
-#include "GraphicsEngine/GraphicsApi/DirectX9/DX9GraphicsEngineFabric.h"
-#include "GraphicsEngine/GraphicsApi/DirectX11/DX11GraphicsEngineFabric.h"
+//#include "GraphicsEngine/GraphicsApi/DirectX9/DX9GraphicsEngineFabric.h"
+//#include "GraphicsEngine/GraphicsApi/DirectX11/DX11GraphicsEngineFabric.h"
 #include "GraphicsEngine/GraphicsApi/OpenGL20/GL20GraphicsEngineFabric.h"
 
-GraphicsEngineFabricImpl * GraphicsEngineFabric::pImpl = new DX9GraphicsEngineFabric();
+//GraphicsEngineFabricImpl * GraphicsEngineFabric::pImpl = new DX9GraphicsEngineFabric();
 //GraphicsEngineFabricImpl * GraphicsEngineFabric::pImpl = new DX11GraphicsEngineFabric();
-//GraphicsEngineFabricImpl * GraphicsEngineFabric::pImpl = new GL20GraphicsEngineFabric();
+GraphicsEngineFabricImpl * GraphicsEngineFabric::pImpl = new GL20GraphicsEngineFabric();
 #endif
 
 #ifdef PLATFORM_LINUX

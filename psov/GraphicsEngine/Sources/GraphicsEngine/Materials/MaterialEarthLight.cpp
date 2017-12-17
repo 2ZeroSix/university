@@ -1,36 +1,38 @@
-﻿#include "MaterialLight.h"
+﻿#include "MaterialEarthLight.h"
 #include "GraphicsEngine/Transform.h"
-#include "GraphicsEngine/Light.h"
 #include "GraphicsEngine/MathUtils.h"
 #include "GraphicsEngine/SceneUtils.h"
-#include <iostream>
+#include "GraphicsEngine/Light.h"
 
-
-MaterialLight::MaterialLight()
+MaterialEarthLight::MaterialEarthLight(TextureFilterMode filterMode)
 {
-	m_vsFileName = "ShaderLight";
-	m_psFileName = "ShaderLight";
+	m_vsFileName = "ShaderEarthLight";
+	m_psFileName = "ShaderEarthLight";
+
+	m_pTexture1 = NULL;
+	m_filterMode = filterMode;
 }
 
-// TODO: Реализовать переключение Graphics API при нажатии на кнопки (1 - DirectX 11, 2 - OpenGL 2.0, 9 - DirectX 9)
-// и отладить на этом механизм использования функций Init() и Deinit()
-void MaterialLight::Init(Object * pObject)
+void MaterialEarthLight::Init(Object * pObject)
 {
 	Material::Init(pObject);
-	
-	// TODO: Нужно при компиляции скопировать папку с шейдерами
-	// Google it: "visual studio during build copy files into application folder"
+
+	m_pTexture1 = new Texture2D("Earth_Albedo.jpg");
+	m_pTexture1->SetFilterMode(m_filterMode);
+	m_pTexture2 = new Texture2D("Earth_NormalMap.jpg");
+	m_pTexture2->SetFilterMode(m_filterMode);
 }
 
-void MaterialLight::Deinit()
+void MaterialEarthLight::Deinit()
 {
+	delete m_pTexture1;
+	m_pTexture1 = NULL;
+
 	Material::Deinit();
 }
 
-void MaterialLight::SetMaterial()
+void MaterialEarthLight::SetMaterial()
 {
-
-	// Заполняем матрицы World, View, Proj
 	const Matrix4x4 & matWorld	= SceneUtils::GetMatrixWorld(m_pObject);
 	const Matrix4x4 & matView	= SceneUtils::GetMatrixView();
 	const Matrix4x4 & matProj	= SceneUtils::GetMatrixProj();
@@ -45,7 +47,6 @@ void MaterialLight::SetMaterial()
 	// Получили список всех источников света в сцене
 	std::list<const Light *> lights = SceneUtils::GetLights();
 	const size_t count = lights.size() < 3 ? lights.size() : 3;
-
 	SetMaterialBegin();
 	{
 		SetVertexShaderBegin();
@@ -57,32 +58,32 @@ void MaterialLight::SetMaterial()
 		SetPixelShaderMatrix4x4	("matWorldT",		matWorldT);
 		SetPixelShaderVector4	("materialColor",	Vector4(1, 1, 1, 1));
 		SetPixelShaderInt       ("lightsCount",     static_cast<int>(count));
-        Vector4 cameraVec = Vector4(camera.GetObjectPtr()->m_pTransform->GetPosition(), 1.0);
+		Vector4 cameraVec = Vector4(camera.GetObjectPtr()->m_pTransform->GetPosition(), 1.0);
 		SetPixelShaderVector4("camera",	cameraVec);
 		// Передаём параметры каждого источника света
-		int i = 0;
-		std::list<const Light *>::iterator iter;
-		for (iter = lights.begin(); iter != lights.end(); ++iter, ++i)
+        int i = 0;
+		for (auto iter = lights.begin(); iter != lights.end(); ++iter, ++i)
 		{
 			const Light * pLight = *iter;
-            const Vector4& lightTypeOptions	    = pLight->GetTypeOptions();
-            const Vector4& lightAtten           = pLight->getAttenuationFactors();
+			const Vector4& lightTypeOptions	    = pLight->GetTypeOptions();
+			const Vector4& lightAtten           = pLight->getAttenuationFactors();
 			const Vector4& lightPosition        = Vector4( pLight->GetPosition(), 1 );
 			const Vector4& lightDirection	    = Vector4( pLight->GetDirection(), 0 );
-            const Vector4& lightColor           = pLight->GetColor();
-            const Vector4& lightSpecularColor   = pLight->getSpecularColor();
+			const Vector4& lightColor           = pLight->GetColor();
+			const Vector4& lightSpecularColor   = pLight->getSpecularColor();
 			// "lights[i]"
 			std::string lightStr = "lights[" + std::to_string(i) + "]";
-			
+
 			// "lights[i].type", "lights[i].position", "lights[i].direction", "lights[i].color"
-            SetPixelShaderVector4( (lightStr + ".typeOptions").c_str(),	 lightTypeOptions);
-            SetPixelShaderVector4( (lightStr + ".attenuation").c_str(),	 lightAtten);
+			SetPixelShaderVector4( (lightStr + ".typeOptions").c_str(),	 lightTypeOptions);
+			SetPixelShaderVector4( (lightStr + ".attenuation").c_str(),	 lightAtten);
 			SetPixelShaderVector4( (lightStr + ".position").c_str(),	 lightPosition );
 			SetPixelShaderVector4( (lightStr + ".direction").c_str(),	 lightDirection );
 			SetPixelShaderVector4( (lightStr + ".color").c_str(),		 lightColor );
 			SetPixelShaderVector4( (lightStr + ".specularColor").c_str(),lightSpecularColor );
 		}
-
+		SetPixelShaderTexture2d("texture1", m_pTexture1);
+		SetPixelShaderTexture2d("texture2", m_pTexture2);
 		SetPixelShaderEnd();
 	}
 	SetMaterialEnd();

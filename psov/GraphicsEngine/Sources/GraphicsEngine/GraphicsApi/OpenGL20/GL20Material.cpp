@@ -31,7 +31,7 @@ GL20Material::GL20Material(const char * vertexShaderFilePath, const char * fragm
 		const char * pStr = vsText.c_str();
 		
 		m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource (m_vertexShader, 1, &pStr, NULL);
+		glShaderSource (m_vertexShader, 1, &pStr, nullptr);
 		glCompileShader(m_vertexShader);
 
 		// Check for errors
@@ -56,7 +56,7 @@ GL20Material::GL20Material(const char * vertexShaderFilePath, const char * fragm
 		const char * pStr = fsText.c_str();
 
 		m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource (m_fragmentShader, 1, &pStr, NULL);
+		glShaderSource (m_fragmentShader, 1, &pStr, nullptr);
 		glCompileShader(m_fragmentShader);
 
 		// Check for errors
@@ -80,7 +80,9 @@ GL20Material::GL20Material(const char * vertexShaderFilePath, const char * fragm
 		glBindAttribLocation(m_program, 0, "position");
 		glBindAttribLocation(m_program, 1, "color");
 		glBindAttribLocation(m_program, 2, "normal");
-		glBindAttribLocation(m_program, 3, "texcoord0");
+        glBindAttribLocation(m_program, 3, "texcoord0");
+        glBindAttribLocation(m_program, 4, "texcoord1");
+        glBindAttribLocation(m_program, 5, "texcoord2");
 	}
 
 	// Link program
@@ -159,7 +161,7 @@ void GL20Material::SetVertexShaderBegin()
 
 void GL20Material::SetVertexShaderMatrix4x4(const char * propertyName, const Matrix4x4 & matrix)
 {
-	GLuint location = glGetUniformLocation(m_program, propertyName);
+	GLint location = glGetUniformLocation(m_program, propertyName);
 
 	GLfloat matrixf[16];
 	GL20Convert::ToGL20Matrix4x4(matrix, matrixf);
@@ -169,7 +171,7 @@ void GL20Material::SetVertexShaderMatrix4x4(const char * propertyName, const Mat
 
 void GL20Material::SetVertexShaderVector4(const char * propertyName, const Vector4 & vector)
 {
-	GLuint location = glGetUniformLocation(m_program, propertyName);
+	GLint location = glGetUniformLocation(m_program, propertyName);
 	
 	GLfloat vectorf[4];	
 	GL20Convert::ToGL20Vector4(vector, vectorf);
@@ -189,7 +191,7 @@ void GL20Material::SetPixelShaderBegin()
 
 void GL20Material::SetPixelShaderMatrix4x4(const char * propertyName, const Matrix4x4 & matrix)
 {
-	GLuint location = glGetUniformLocation(m_program, propertyName);
+	GLint location = glGetUniformLocation(m_program, propertyName);
 
 	GLfloat matrixf[16];
 	GL20Convert::ToGL20Matrix4x4(matrix, matrixf);
@@ -199,7 +201,7 @@ void GL20Material::SetPixelShaderMatrix4x4(const char * propertyName, const Matr
 
 void GL20Material::SetPixelShaderVector4(const char * propertyName, const Vector4 & vector)
 {
-	GLuint location = glGetUniformLocation(m_program, propertyName);
+	GLint location = glGetUniformLocation(m_program, propertyName);
 	
 	GLfloat vectorf[4];	
 	GL20Convert::ToGL20Vector4(vector, vectorf);
@@ -209,10 +211,10 @@ void GL20Material::SetPixelShaderVector4(const char * propertyName, const Vector
 
 void GL20Material::SetPixelShaderTexture2d(const char * propertyName, const Texture2D * pTexture)
 {
-	GLuint location = glGetUniformLocation(m_program, propertyName);
+	GLint location = glGetUniformLocation(m_program, propertyName);
 	glUniform1i(location, m_textureRegister);
 	
-	const GL20Texture2D * pGL20Texture = static_cast<const GL20Texture2D *>(pTexture->GetImplPointer());
+	auto pGL20Texture = dynamic_cast<const GL20Texture2D *>(pTexture->GetImplPointer());
 	pGL20Texture->SetTexture(m_textureRegister);
 
 	m_textureRegister += 1;
@@ -234,7 +236,7 @@ void GL20Material::LogErrorInVertexShader()
 	const int MAX_INFO_LOG_SIZE = 4096;
 	GLchar text[MAX_INFO_LOG_SIZE];
 	
-	glGetShaderInfoLog(m_vertexShader, MAX_INFO_LOG_SIZE, NULL, text);
+	glGetShaderInfoLog(m_vertexShader, MAX_INFO_LOG_SIZE, nullptr, text);
 	
 	LogError(text, m_vsPath.c_str());
 }
@@ -244,7 +246,7 @@ void GL20Material::LogErrorInFragmentShader()
 	const int MAX_INFO_LOG_SIZE = 4096;
 	GLchar text[MAX_INFO_LOG_SIZE];
 	
-	glGetShaderInfoLog(m_fragmentShader, MAX_INFO_LOG_SIZE, NULL, text);
+	glGetShaderInfoLog(m_fragmentShader, MAX_INFO_LOG_SIZE, nullptr, text);
 	
 	LogError(text, m_fsPath.c_str());
 }
@@ -254,17 +256,17 @@ void GL20Material::LogErrorInProgram()
 	const int MAX_INFO_LOG_SIZE = 4096;
 	GLchar text[MAX_INFO_LOG_SIZE];
 
-	glGetProgramInfoLog(m_program, MAX_INFO_LOG_SIZE, NULL, text);
+	glGetProgramInfoLog(m_program, MAX_INFO_LOG_SIZE, nullptr, text);
 
 	LogError(text);
 }
 
 void GL20Material::LogError(const char * text, const char * filePath)
 {	
-	if (NULL != text)
+	if (nullptr != text)
 	{
 		std::string title = "Error";
-		if (NULL != filePath)
+		if (nullptr != filePath)
 		{
 			title += " in " + File::GetFileName(filePath);
 		}
@@ -274,7 +276,7 @@ void GL20Material::LogError(const char * text, const char * filePath)
 }
 
 void GL20Material::SetVertexShaderFloat(const char *propertyName, const GLfloat &d) {
-    GLuint location = glGetUniformLocation(m_program, propertyName);
+    GLint location = glGetUniformLocation(m_program, propertyName);
     glUniform1f(location, d);
 }
 

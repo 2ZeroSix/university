@@ -9,6 +9,7 @@
 class ObjectRotator : public Component
 {
 	Vector3 speed;
+	Vector3 current;
 
 public:
 	ObjectRotator(float x, float y, float z) 
@@ -26,7 +27,6 @@ public:
 		}
 		
 		double deltaTime = Time::GetDeltaTime();
-
-		m_pObject->m_pTransform->Rotate(speed * deltaTime);
+		m_pObject->m_pTransform->Rotate(speed*deltaTime);
 	}
 };

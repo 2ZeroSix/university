@@ -9,7 +9,7 @@
 
 
 #ifdef PLATFORM_WINDOWS
-	#define CAN_USE_DIRECT_X
+//	#define CAN_USE_DIRECT_X
 	#define CAN_USE_OPEN_GL
 #else
 	#ifdef PLATFORM_LINUX

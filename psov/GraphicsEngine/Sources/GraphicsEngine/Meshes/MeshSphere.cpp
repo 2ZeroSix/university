@@ -1,6 +1,7 @@
 ﻿#include "MeshSphere.h"
 #include "GraphicsEngine/MathConstants.h"
 #include <stdlib.h>
+#include <iostream>
 
 
 void GetVertexOnSphere(int i, int iMax, int j, int jMax, Vector3 & v, Vector3 & n, Vector4 & c, Vector3 & uv0)
@@ -39,6 +40,7 @@ MeshSphere::MeshSphere(int levelCount)
 void MeshSphere::Init()
 {
 	Mesh::Init();
+	(std::cout << "hi").flush();
 
 	std::vector<Vector3> vertices;
 	std::vector<Vector4> colors;
