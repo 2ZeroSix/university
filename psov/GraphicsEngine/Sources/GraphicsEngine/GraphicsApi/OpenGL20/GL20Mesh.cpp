@@ -66,13 +66,12 @@ void GL20Mesh::SetColors(const std::vector<Vector4> & colors)
 void GL20Mesh::SetIndices(const std::vector<int> & indices, MeshTopology topology)
 {
 	m_indicesCount = indices.size();
-	m_indices.reserve(m_indicesCount);
-
+	m_indices = std::vector<GLuint>(m_indicesCount);
 	for (GLsizei i = 0; i < m_indicesCount; ++i)
 	{
-		m_indices.push_back( static_cast<GLuint>(indices[i]) );
+		m_indices[i] = static_cast<GLuint>(indices[i]);
 	}
-	
+
 	m_topology	= topology;
 }
 

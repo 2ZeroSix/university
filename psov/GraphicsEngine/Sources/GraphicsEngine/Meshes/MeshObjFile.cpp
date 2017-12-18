@@ -52,39 +52,40 @@ void MeshObjFile::Init()
 {
 	ReadAllTriangles();
 
+    Mesh::Init();
 	std::vector<Vector3> vertices;
 	std::vector<Vector3> norms;
 	std::vector<Vector3> texcs;
 	size_t ind = 0;
 
 	for (auto& triangle : m_triangles) {
-		vertices.push_back(m_vertices[triangle.v1Idx]);
-		vertices.push_back(m_vertices[triangle.v2Idx]);
-		vertices.push_back(m_vertices[triangle.v3Idx]);
-		norms.push_back(m_normals[triangle.n1Idx]);
-		norms.push_back(m_normals[triangle.n2Idx]);
-		norms.push_back(m_normals[triangle.n3Idx]);
-		texcs.push_back(m_textCoords[triangle.t1Idx]);
-		texcs.push_back(m_textCoords[triangle.t2Idx]);
-		texcs.push_back(m_textCoords[triangle.t3Idx]);
+		vertices.emplace_back(m_vertices[triangle.v1Idx-1]);
+		vertices.emplace_back(m_vertices[triangle.v2Idx-1]);
+		vertices.emplace_back(m_vertices[triangle.v3Idx-1]);
+		norms.emplace_back(m_normals[triangle.n1Idx-1]);
+		norms.emplace_back(m_normals[triangle.n2Idx-1]);
+		norms.emplace_back(m_normals[triangle.n3Idx-1]);
+		texcs.emplace_back(Vector3(1.0, 1.0, 1.0) - m_textCoords[triangle.t1Idx-1]);
+		texcs.emplace_back(Vector3(1.0, 1.0, 1.0) - m_textCoords[triangle.t2Idx-1]);
+		texcs.emplace_back(Vector3(1.0, 1.0, 1.0) - m_textCoords[triangle.t3Idx-1]);
 		m_indices.emplace_back(ind++);
         m_indices.emplace_back(ind++);
         m_indices.emplace_back(ind++);
-        std::cout << triangle.v1Idx << " " << triangle.v2Idx << " " << triangle.v3Idx << ";"
-                  << triangle.t1Idx << " " << triangle.t2Idx << " " << triangle.t3Idx << ";"
-                  << triangle.n1Idx << " " << triangle.n2Idx << " " << triangle.n3Idx << std::endl;
+//        std::cout << triangle.v1Idx << " " << triangle.v2Idx << " " << triangle.v3Idx << ";"
+//                  << triangle.t1Idx << " " << triangle.t2Idx << " " << triangle.t3Idx << ";"
+//                  << triangle.n1Idx << " " << triangle.n2Idx << " " << triangle.n3Idx << std::endl;
 	}
     (std::cout << "hi").flush();
-	Mesh::Init();
-    m_vertices = vertices;
-    m_normals = norms;
-    m_textCoords = texcs;
-    m_colors = std::vector<Vector4>(m_vertices.size(), Vector4(1.0,1.0,1.0,1.0));
-    meshImpl->SetVertices(m_vertices);
-    meshImpl->SetNormals(m_normals);
-    meshImpl->SetColors(m_colors);
-    meshImpl->SetUV0(m_textCoords);
-    meshImpl->SetIndices(m_indices, MESH_TOPOLOGY_TRIANGLE_LIST);
+//    m_vertices = vertices;
+//    m_normals = norms;
+//    m_textCoords = texcs;
+//    m_colors = std::vector<Vector4>(m_vertices.size(), Vector4(1.0,1.0,1.0,1.0));
+    meshImpl->SetVertices(vertices);
+    meshImpl->SetNormals(norms);
+//    meshImpl->SetColors(m_colors);
+    meshImpl->SetUV0(texcs);
+    meshImpl->SetIndices(m_indices, MeshTopology::MESH_TOPOLOGY_TRIANGLE_LIST);
+    meshImpl->Apply();
 }
 
 void MeshObjFile::Deinit()
@@ -147,14 +148,16 @@ void MeshObjFile::ReadAllTriangles()
 			{
 				// Пример строки cmd: "f 2/2/2 4/4/4 1/1/1"
 				std::string triangleStr = line.substr(2);
-				TriangleInObjFile triangle;
+				TriangleInObjFile triangle{};
 
 				if (ReadTriangle(triangleStr, triangle))
 				{
 
 					m_triangles.push_back(triangle);
 				}
-			}
+			} else {
+                std::cout <<  line << std::endl;
+            }
 		}
 
 		file.close();
@@ -172,7 +175,8 @@ bool MeshObjFile::ReadVector3(const std::string & line, Vector3 & vec)
 	}
 	catch (...)
 	{
-		return false;
+        (std::cout << "aaa1" << std::endl).flush();
+        return false;
 	}
 
 	return true;
@@ -186,9 +190,11 @@ bool MeshObjFile::ReadVector2(const std::string & line, Vector3 & vec)
 	try
 	{
 		ss >> vec.x >> vec.y;
+        vec.z = 0;
 	}
 	catch (...)
 	{
+        (std::cout << "aaa2" << std::endl).flush();
 		return false;
 	}
 
@@ -204,12 +210,13 @@ bool MeshObjFile::ReadTriangle(const std::string & line, TriangleInObjFile & tri
 	{
 		char ch;
 
-		ss >> triangle.v1Idx >> ch >> triangle.t1Idx >> ch >> triangle.n1Idx;
-		ss >> triangle.v2Idx >> ch >> triangle.t2Idx >> ch >> triangle.n2Idx;
-		ss >> triangle.v3Idx >> ch >> triangle.t3Idx >> ch >> triangle.n3Idx;
+		ss >> triangle.v1Idx >> ch >> triangle.t1Idx >> ch >> triangle.n1Idx
+           >> triangle.v2Idx >> ch >> triangle.t2Idx >> ch >> triangle.n2Idx
+		   >> triangle.v3Idx >> ch >> triangle.t3Idx >> ch >> triangle.n3Idx;
 	}
 	catch (...)
 	{
+        (std::cout << "aaa3" << std::endl).flush();
 		return false;
 	}
 

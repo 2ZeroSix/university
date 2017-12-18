@@ -1,6 +1,8 @@
 ﻿#undef CAN_USE_DIRECT_X
 
 #include <Tasks/Task06.h>
+#include <sstream>
+#include <iostream>
 #include "GraphicsEngine/Application.h"
 
 #include "Tasks/Task01.h"
@@ -15,6 +17,7 @@
 // The application's entry point
 int main(int argc, char ** argv)
 {
+
 	// Remember argc, argv
 	{
 		Application & app = Application::Instance();
