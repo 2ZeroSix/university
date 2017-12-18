@@ -115,18 +115,9 @@ void MeshObjFile::Init()
         } else {
             m_indices.emplace_back(iter->ind);
         }
-//        std::cout << triangle.v1Idx << " " << triangle.v2Idx << " " << triangle.v3Idx << ";"
-//                  << triangle.t1Idx << " " << triangle.t2Idx << " " << triangle.t3Idx << ";"
-//                  << triangle.n1Idx << " " << triangle.n2Idx << " " << triangle.n3Idx << std::endl;
 	}
-//    (std::cout << "hi").flush();
-//    m_vertices = vertices;
-//    m_normals = norms;
-//    m_textCoords = texcs;
-//    m_colors = std::vector<Vector4>(m_vertices.size(), Vector4(1.0,1.0,1.0,1.0));
     meshImpl->SetVertices(vertices);
     meshImpl->SetNormals(norms);
-//    meshImpl->SetColors(m_colors);
     meshImpl->SetUV0(texcs);
     meshImpl->SetIndices(m_indices, MeshTopology::MESH_TOPOLOGY_TRIANGLE_LIST);
     meshImpl->Apply();

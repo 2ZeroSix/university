@@ -6,8 +6,8 @@
 
 MaterialEarth::MaterialEarth(TextureFilterMode filterMode)
 {
-	m_vsFileName = "ShaderSand";
-	m_psFileName = "ShaderSand";
+	m_vsFileName = "ShaderEarth";
+	m_psFileName = "ShaderEarth";
 
 	m_pTexture1 = NULL;
 	m_filterMode = filterMode;

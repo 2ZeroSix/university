@@ -11,7 +11,7 @@ uniform sampler2D texture3;
 void main()
 {
     vec2 uv1Scale = vec2(1, 100);
-    vec2 uv2Scale = vec2(2, 25);
+    vec2 uv2Scale = vec2(2, 25)*2.0;
     vec2 uv3Scale = vec2(1, 5);
 	vec3 color1 = texture2D( texture1, uv1.xy * uv1Scale ).rgb;
 	vec3 color2 = texture2D( texture2, uv2.xy * uv2Scale ).rgb;

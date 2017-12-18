@@ -33,7 +33,7 @@ public:
 		{
 			Object * pCameraObj = new Object();
 			Camera * pCamera = new Camera();
-			pCameraObj->m_pTransform = new Transform( Vector3(0.0f, 3.0,-5.0f), Vector3(30.f, 0.0f, 0.0f) );
+			pCameraObj->m_pTransform = new Transform( Vector3(0.0f, 0.0,-5.0f), Vector3(0.f, 0.0f, 0.0f) );
 			pCameraObj->AddComponent( pCamera );
 
 			scene.SetCamera( pCamera );
@@ -57,40 +57,40 @@ public:
             pLight->SetIntensity(1);
             pLight->setSpecularColor(1,1,0, 500.f);
             auto pLightObject = new Object();
-            pLightObject->m_pTransform	= new Transform(1,0,0, 0,90,0, 1,1,1);
+            pLightObject->m_pTransform	= new Transform(1,0,0, -90, 0,0, 1,1,1);
             pLightObject->AddComponent(pLight);
 //            pLightObject->m_pTransform->SetParent(pObject1->m_pTransform);
             scene.AddLight(pLight);
         }
 
         // Источник света #2
-        {
-            auto * pLight = new LightPoint(.5, 0.0, .0f);
-            pLight->SetColor(1,1,1);
-            pLight->SetIntensity(1);
-            pLight->setSpecularColor(1,1,1, 500.f);
-
-            auto * pLightObject = new Object();
-            pLightObject->m_pTransform	= new Transform(4.f,0,-4.f, 0,0,0, 1,1,1);
-            pLightObject->AddComponent(pLight);
-
-            scene.AddLight(pLight);
-        }
-        // Источник света #3
-        {
-            auto * pLight = new LightSpot(15, 30, 1.f);
-            pLight->setAttenuationFactors(Vector3(1.0, 0.0, .0f));
-            pLight->SetColor(1,0,0);
-            pLight->SetIntensity(1);
-            pLight->setSpecularColor(1,0,0, 500.f);
-
-            auto * pLightObject = new Object();
-            pLightObject->m_pTransform	= new Transform(0,3.f,-3.f, 45,0,0, 1,1,1);
-            pLightObject->AddComponent(pLight);
-//            pLightObject->m_pTransform->SetParent(pObject1->m_pTransform);
-
-            scene.AddLight(pLight);
-        }
+//        {
+//            auto * pLight = new LightPoint(.5, 0.0, .0f);
+//            pLight->SetColor(1,1,1);
+//            pLight->SetIntensity(1);
+//            pLight->setSpecularColor(1,1,1, 500.f);
+//
+//            auto * pLightObject = new Object();
+//            pLightObject->m_pTransform	= new Transform(4.f,0,-4.f, 0,0,0, 1,1,1);
+//            pLightObject->AddComponent(pLight);
+//
+//            scene.AddLight(pLight);
+//        }
+//        // Источник света #3
+//        {
+//            auto * pLight = new LightSpot(15, 30, 1.f);
+//            pLight->setAttenuationFactors(Vector3(1.0, 0.0, .0f));
+//            pLight->SetColor(1,0,0);
+//            pLight->SetIntensity(1);
+//            pLight->setSpecularColor(1,0,0, 500.f);
+//
+//            auto * pLightObject = new Object();
+//            pLightObject->m_pTransform	= new Transform(0,3.f,-3.f, 45,0,0, 1,1,1);
+//            pLightObject->AddComponent(pLight);
+////            pLightObject->m_pTransform->SetParent(pObject1->m_pTransform);
+//
+//            scene.AddLight(pLight);
+//        }
     }
 
 	virtual void Update()

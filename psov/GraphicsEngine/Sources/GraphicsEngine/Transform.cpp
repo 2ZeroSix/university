@@ -165,10 +165,10 @@ void Transform::Recalc()
 	// ѕересчитаем матрицу World
 	{
 		Matrix4x4 matTrans	= Matrix4x4::Translation(m_position);
-		Matrix4x4 matRot	= Matrix4x4::Rotation(m_eulerAngles);
+		Matrix4x4 matRot	= Matrix4x4::Rotation(Vector3(0.0 , m_eulerAngles.y, m_eulerAngles.z));
 		Matrix4x4 matScale	= Matrix4x4::Scaling(m_scale);
-
-		m_matWorld = matScale * matRot * matTrans;
+		Matrix4x4 matRotSecond= Matrix4x4::Rotation(Vector3(m_eulerAngles.x, 0.0, 0.0));
+		m_matWorld = matScale * matRotSecond * matTrans * matRot;
 		
 		// If has parent then use parent matrix
 		if (NULL != m_pParent)

@@ -31,8 +31,8 @@ int main(int argc, char ** argv)
 //	Task * pTask = new Task05_01();
 //	Task * pTask = new Task05_02();
 //	Task * pTask = new Task05_03();
-	Task * pTask = new Task06();
-//    Task * pTask = new Task08();
+//	Task * pTask = new Task06();
+    Task * pTask = new Task08();
 	{
 		GraphicsEngine & engine = GraphicsEngine::Instance();
 

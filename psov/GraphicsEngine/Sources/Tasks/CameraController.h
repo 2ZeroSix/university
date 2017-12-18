@@ -83,7 +83,7 @@ public:
 //                    float sinUp = sqrt(1 - cosUp * cosUp);
 //                    float cosForward = static_cast<float>(Vector3::Dot(up, Vector3(0, 0, 1)));
 //                    float sinForward = sqrt(1 - cosForward * cosForward);
-                    float vertical = static_cast<float>((*mousePos - newMousePos).y * speedAngle);
+                    float vertical = static_cast<float>((newMousePos - *mousePos).y * speedAngle);
                     float horizontal = static_cast<float>((newMousePos - *mousePos).x * speedAngle);
                     pTransform->Rotate(0.0, horizontal, 0.0);
                     pTransform->Rotate(vertical, 0.0, 0.0);
