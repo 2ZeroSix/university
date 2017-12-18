@@ -104,6 +104,16 @@ public:
 	{
 		return Vector3(0, 0, 0);
 	}
+
+	bool operator==(const Vector3 &rhs) const{
+		return x == rhs.x &&
+			   y == rhs.y &&
+			   z == rhs.z;
+	}
+
+	bool operator!=(const Vector3 &rhs) const{
+		return !(rhs == *this);
+	}
 };
 
 Vector3 operator + (const Vector3 & vec1, const Vector3 & vec2);

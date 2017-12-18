@@ -3,7 +3,8 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-
+#include <unordered_set>
+#include <functional>
 
 //// A structure for our custom vertex type
 
@@ -47,7 +48,26 @@ MeshObjFile::MeshObjFile(std::string pFilepath)
 {
 	m_pFilepath = pFilepath;
 }
+struct Vertex{
+    Vector3 v;
+    Vector3 n;
+    Vector3 t;
+    int ind;
+    bool operator==(const Vertex &rhs) const {
+        return v == rhs.v &&
+               n == rhs.n &&
+               t == rhs.t;
+    }
 
+    bool operator!=(const Vertex &rhs) const {
+        return !(rhs == *this);
+    }
+    struct VertexHash {
+        size_t operator()(const Vertex& a) const{
+            return std::hash<double>()(std::hash<double>()(a.v.x+a.v.y+a.v.z) + std::hash<double>()(a.n.x+a.n.y+a.n.z) + std::hash<double>()(a.t.x+a.t.y+a.t.z));
+        }
+    };
+};
 void MeshObjFile::Init()
 {
 	ReadAllTriangles();
@@ -57,25 +77,49 @@ void MeshObjFile::Init()
 	std::vector<Vector3> norms;
 	std::vector<Vector3> texcs;
 	size_t ind = 0;
-
+    std::unordered_set<Vertex, Vertex::VertexHash> vertexes;
 	for (auto& triangle : m_triangles) {
-		vertices.emplace_back(m_vertices[triangle.v1Idx-1]);
-		vertices.emplace_back(m_vertices[triangle.v2Idx-1]);
-		vertices.emplace_back(m_vertices[triangle.v3Idx-1]);
-		norms.emplace_back(m_normals[triangle.n1Idx-1]);
-		norms.emplace_back(m_normals[triangle.n2Idx-1]);
-		norms.emplace_back(m_normals[triangle.n3Idx-1]);
-		texcs.emplace_back(Vector3(1.0, 1.0, 1.0) - m_textCoords[triangle.t1Idx-1]);
-		texcs.emplace_back(Vector3(1.0, 1.0, 1.0) - m_textCoords[triangle.t2Idx-1]);
-		texcs.emplace_back(Vector3(1.0, 1.0, 1.0) - m_textCoords[triangle.t3Idx-1]);
-		m_indices.emplace_back(ind++);
-        m_indices.emplace_back(ind++);
-        m_indices.emplace_back(ind++);
+        Vertex vertex{m_vertices[triangle.v1Idx-1], m_normals[triangle.n1Idx-1], Vector3(1.0, 1.0, 1.0) -  m_textCoords[triangle.t1Idx-1]};
+        auto iter = vertexes.find(vertex);
+        if (iter == vertexes.end()) {
+            vertices.emplace_back(vertex.v);
+            norms.emplace_back(vertex.n);
+            texcs.emplace_back(vertex.t);
+            vertex.ind = ind;
+            m_indices.emplace_back(ind++);
+            vertexes.insert(vertex);
+        } else {
+            m_indices.emplace_back(iter->ind);
+        }
+        vertex = Vertex{m_vertices[triangle.v2Idx-1], m_normals[triangle.n2Idx-1], Vector3(1.0, 1.0, 1.0) - m_textCoords[triangle.t2Idx-1]};
+        iter = vertexes.find(vertex);
+        if (iter == vertexes.end()) {
+            vertices.emplace_back(vertex.v);
+            norms.emplace_back(vertex.n);
+            texcs.emplace_back(vertex.t);
+            vertex.ind = ind;
+            m_indices.emplace_back(ind++);
+            vertexes.insert(vertex);
+        } else {
+            m_indices.emplace_back(iter->ind);
+        }
+        vertex = Vertex{m_vertices[triangle.v3Idx-1], m_normals[triangle.n3Idx-1], Vector3(1.0, 1.0, 1.0) - m_textCoords[triangle.t3Idx-1]};
+        iter = vertexes.find(vertex);
+        if (iter == vertexes.end()) {
+            vertices.emplace_back(vertex.v);
+            norms.emplace_back(vertex.n);
+            texcs.emplace_back(vertex.t);
+            vertex.ind = ind;
+            m_indices.emplace_back(ind++);
+            vertexes.insert(vertex);
+        } else {
+            m_indices.emplace_back(iter->ind);
+        }
 //        std::cout << triangle.v1Idx << " " << triangle.v2Idx << " " << triangle.v3Idx << ";"
 //                  << triangle.t1Idx << " " << triangle.t2Idx << " " << triangle.t3Idx << ";"
 //                  << triangle.n1Idx << " " << triangle.n2Idx << " " << triangle.n3Idx << std::endl;
 	}
-    (std::cout << "hi").flush();
+//    (std::cout << "hi").flush();
 //    m_vertices = vertices;
 //    m_normals = norms;
 //    m_textCoords = texcs;
@@ -86,6 +130,10 @@ void MeshObjFile::Init()
     meshImpl->SetUV0(texcs);
     meshImpl->SetIndices(m_indices, MeshTopology::MESH_TOPOLOGY_TRIANGLE_LIST);
     meshImpl->Apply();
+    m_vertices.resize(0);
+    m_normals.resize(0);
+    m_textCoords.resize(0);
+    m_indices.resize(0);
 }
 
 void MeshObjFile::Deinit()
@@ -156,7 +204,7 @@ void MeshObjFile::ReadAllTriangles()
 					m_triangles.push_back(triangle);
 				}
 			} else {
-                std::cout <<  line << std::endl;
+//                std::cout <<  line << std::endl;
             }
 		}
 
