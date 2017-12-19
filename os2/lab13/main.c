@@ -16,10 +16,6 @@ int main() {
     sem_init(&sem[0], 0, 1); 
     sem_init(&sem[1], 0, 0); 
     pthread_t thread;
-    // pthread_mutexattr_t attr;
-    // pthread_mutexattr_init(&attr);
-    // pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
-    // pthread_mutex_init(&mutex, &attr);
     if(pthread_create(&thread, NULL, routine, NULL) != 0) {
         printf("Can't create thread\n");
         return 1;
