@@ -1,0 +1,73 @@
+1
+
+SELECT title, description
+FROM actor
+JOIN film_actor USING(actor_id)
+JOIN film USING(film_id)
+WHERE actor.first_name = 'Ed' AND actor.last_name = 'Chase'
+
+
+2
+
+SELECT film_id, SUM(payment.amount) AS total_amount
+    FROM film
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+    JOIN payment USING(rental_id)
+GROUP BY
+film_id
+ORDER BY
+total_amount DESC
+LIMIT 5
+
+
+3
+
+SELECT DISTINCT last_name, first_name
+FROM (
+    SELECT actor.last_name, actor.first_name, city_id
+    FROM actor
+    JOIN film_actor USING(actor_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+    JOIN customer USING(customer_id)
+    JOIN address USING(address_id)
+    JOIN city USING(city_id)
+) AS actors
+JOIN (
+    SELECT city_id, COUNT(*) AS customers
+        FROM customer 
+        JOIN address USING(address_id)
+        JOIN city USING(city_id)
+    GROUP BY city_id
+) AS cities USING(city_id)
+WHERE cities.customers >= 2
+
+
+4
+
+SELECT
+    film_group,
+    COALESCE(MIN(actors), 0) AS actors_min,
+    COALESCE(MAX(actors), 0) AS actors_max
+FROM (
+    SELECT
+        film_id,
+        CASE 
+            WHEN AVG (EXTRACT (DAY FROM (return_date - rental_date))) < 3 THEN '<3'
+            WHEN AVG (EXTRACT (DAY FROM (return_date - rental_date))) >= 3 AND AVG (EXTRACT (DAY FROM (return_date - rental_date))) < 7 THEN '>=3, <7'
+            ELSE '>=7'
+        END AS film_group
+    FROM rental
+    JOIN inventory USING (inventory_id)
+    GROUP BY film_id
+) AS days_count
+JOIN (
+    SELECT film_id, COUNT(*) AS actors
+    FROM film
+    JOIN film_actor USING(film_id)
+    GROUP BY film_id
+) AS film_actors ON(days_count.film_id = film_actors.film_id)
+RIGHT JOIN (VALUES ('<3'), ('>=3, <7'), ('>=7')) AS g (film_group) USING(film_group)
+GROUP BY 
+    film_group
