@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <unistd.h>
 pthread_mutex_t listMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t nodeMut = PTHREAD_MUTEX_INITIALIZER;
+// pthread_mutex_t nodeMut = PTHREAD_MUTEX_INITIALIZER;
 typedef struct _ListNode {
     char* data;
     pthread_mutex_t mutex;

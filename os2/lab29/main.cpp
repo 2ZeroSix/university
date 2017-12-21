@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -20,12 +19,13 @@ class Proxy {
         WRITE_TO_SERVER,
         READ_FROM_SERVER,
         WRITE_TO_CLIENT,
+        WRITE_PART_TO_CLIENT
     };
     struct CacheData{
         vector<char> request;
         vector<char> answer;
     };
-    const static size_t BUF_SIZE         = 65536;
+    const static size_t BUF_SIZE        = 65536;
     struct ConnectionInfo{
         int clientSocket{};
         int serverSocket{};
@@ -37,14 +37,14 @@ class Proxy {
         vector<char> answer;
         vector<char> buffer = vector<char>(BUF_SIZE);
     };
-    size_t PORTION_SIZE     = 1024;
-    size_t CACHE_SIZE       = 1024;
-    size_t MAX_CONNECTIONS  = 10;
-    uint16_t HTTP_PORT        = 80;
-    uint16_t LISTEN_PORT      = 5000;
+    size_t PACKET_SIZE                  = 8192;
+    size_t CACHE_SIZE                   = 10;
+    size_t CLIENTS_MAX                  = 10;
+    static const uint16_t HTTP_PORT     = 80;
+    uint16_t LISTEN_PORT                = 5000;
     vector<CacheData> cache{CACHE_SIZE};
     int getFreeFd(const vector<bool>& fdIsUsed) {
-        for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        for (int i = 0; i < CLIENTS_MAX; i++) {
             if (!fdIsUsed[i]) {
                 return i;
             }
@@ -76,11 +76,11 @@ class Proxy {
     int findAnswerInCache(const vector<char>& request) {
         for (int i = 0; i < CACHE_SIZE; i++) {
             if (cache[i].request == request) {
-                printf("Answer is from the cache\n");
+                cout << "Answer is from the cache" << endl;
                 return i;
             }
         }
-        printf("Answer is not found in the cache\n");
+        cout << "Answer is not found in the cache" << endl;
         return -1;
     }
 
@@ -90,24 +90,21 @@ class Proxy {
         FD_ZERO(&writeSet);
         FD_SET(our_fd, &readSet);
 
-        for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        for (int i = 0; i < CLIENTS_MAX; i++) {
             if (sessionIsUsed[i]) {
                 switch(client[i].connectionState){
                     case READ_FROM_CLIENT:
                         FD_SET(client[i].clientSocket, &readSet);
-                        //printf("PUT CLIENT READ\n");
                         break;
                     case READ_FROM_SERVER:
                         FD_SET(client[i].serverSocket, &readSet);
-                        //printf("PUT SERVER READ\n");
                         break;
                     case WRITE_TO_SERVER:
                         FD_SET(client[i].serverSocket, &writeSet);
-                        //printf("PUT SERVER WRITE\n");
                         break;
                     case WRITE_TO_CLIENT:
+                    case WRITE_PART_TO_CLIENT:
                         FD_SET(client[i].clientSocket, &writeSet);
-                        //printf("PUT CLIENT WRITE\n");
                         break;
                     default:
                         break;
@@ -120,7 +117,7 @@ class Proxy {
     void handleNewConnection(vector<bool>& sessionIsUsed, vector<ConnectionInfo>& client, int& maxFdP,
                              vector<sockaddr_in>& cl_addr, int& addr_size, int our_fd){
 
-        printf("Accept connection ...\n");
+        cout << "Accept connection ..." << endl;
 
         int index = getFreeFd(sessionIsUsed);
         if (-1 == index){
@@ -143,7 +140,7 @@ class Proxy {
             (client[sessionIndex].clientSocket == (maxFdP - 1)) ) {
 
             maxFdP = our_fd + 1;
-            for (int j = 0; j < MAX_CONNECTIONS; j++) {
+            for (int j = 0; j < CLIENTS_MAX; j++) {
                 if (sessionIsUsed[j] ) {
                     if (maxFdP - 1 < client[j].serverSocket) {
                         maxFdP = client[j].serverSocket + 1;
@@ -161,7 +158,6 @@ class Proxy {
         int end   = -1;
         int count = 0;
         if (request[4] != 104){
-//            cout << (int)request[4] << endl;
             return string();
         }
         start = 5;
@@ -194,8 +190,8 @@ class Proxy {
 
         ssize_t bytesRead = read( client[sessionIndex].clientSocket,
                                   client[sessionIndex].buffer.data() + client[sessionIndex].bytesInBuffer,
-                                  PORTION_SIZE);
-        printf("Bytes Read : %ld\n",bytesRead);
+                                  PACKET_SIZE);
+        cout << "Bytes Read : " << bytesRead << endl;
         client[sessionIndex].bytesInBuffer += bytesRead;
 
         if (!(bytesRead == 0 ||
@@ -214,12 +210,12 @@ class Proxy {
 
         cout << "Request received: " << endl;
         for (int j = 0; j < client[sessionIndex].bytesInBuffer; ++j) {
-            printf("%c", client[sessionIndex].buffer[j]);
+            cout << client[sessionIndex].buffer[j];
         }
 
         if ( !isItGetRequest(client[sessionIndex].request) ) {
-            printf("Do not support this type of message\n");
-            printf("Session is over\n");
+            cout << "Do not support this type of message" << endl;
+            cout << "Session is over" << endl;
 
             sessionIsUsed[sessionIndex] = false;
             updateMaxFd(maxFdP, client, sessionIsUsed, sessionIndex, our_fd);
@@ -232,11 +228,7 @@ class Proxy {
         if (-1 != index) {//we have an answer in the cache
             client[sessionIndex].connectionState = WRITE_TO_CLIENT;
             client[sessionIndex].answer = cache[index].answer;
-//		memcpy(client[sessionIndex].answer.data, cache[index].answer.data, cache[index].answer.size);
-            //client[sessionIndex].answer.data = cache[index].answer.data;
             client[sessionIndex].bytesInBuffer = client[sessionIndex].answer.size();
-            //bytesInBuffer is a special
-            //check handleWriteToClient() for details
         }
         else {
             struct sockaddr_in server_addr = {0};
@@ -246,12 +238,11 @@ class Proxy {
             cout << path << endl;
             struct hostent * host_info = gethostbyname(path.data());
             if(host_info == nullptr){
-                printf(" gethostbyname() failed\n");
-                return; // TODO exception
+                cout << " gethostbyname() failed" << endl;
+                return;
             }
 
             copy(host_info->h_addr, host_info->h_addr + host_info->h_length, (char*)&server_addr.sin_addr);
-            //server_addr.sin_addr.s_addr = inet_addr(argv[1]);
 
             client[sessionIndex].serverSocket = socket(AF_INET, SOCK_STREAM, 0);
             if ( maxFdP - 1 < client[sessionIndex].serverSocket ) {
@@ -260,10 +251,9 @@ class Proxy {
 
             if (0 != connect( client[sessionIndex].serverSocket,
                               (struct sockaddr *) &server_addr,
-                              sizeof(server_addr))
-                    ) {
-                perror("Can't connect to server address\n");
-                return; // TODO exception
+                              sizeof(server_addr))) {
+                cout << "Can't connect to server address" << endl;
+                return;
             }
             client[sessionIndex].bytesInBuffer = client[sessionIndex].request.size();
         }
@@ -271,23 +261,25 @@ class Proxy {
     }
 
     void handleReadFromServer(ConnectionInfo& client){
-        printf("Receiving answer : \n");
+        cout << "Receiving answer : " << endl;
 
         ssize_t bytesRead = read(client.serverSocket,
                                  client.buffer.data() + client.bytesInBuffer,
-                                 PORTION_SIZE );
+                                 PACKET_SIZE );
         client.bytesInBuffer += bytesRead;
-
         if (0 == bytesRead) {
-            client.connectionState = WRITE_TO_CLIENT;
+            client.connectionState = WRITE_PART_TO_CLIENT;
             client.answer = vector<char>(client.buffer.begin(), client.buffer.begin() + client.bytesInBuffer);
 
-            printf("We recieved an answer : \n");
+            cout << "Answer received : " << endl;
             for (char j : client.answer) {
-                printf("%c", j);
+                cout << j;
             }
+            client.serverSocket = -1;
             client.bytesInBuffer = client.answer.size();
             cachePush(client.request, client.answer);
+        } else if (client.bytesInBuffer + PACKET_SIZE > BUF_SIZE) {
+
         }
     }
 
@@ -297,12 +289,10 @@ class Proxy {
 
 
     void handleWriteToServer(ConnectionInfo& client){
-        //in this function bytesInBuffer isn't number of bytes in buffer
-        //it is a number of bytes that we need to send
         ssize_t bytesWritten = 0;
-        size_t bytesToWrite = PORTION_SIZE;
+        size_t bytesToWrite = PACKET_SIZE;
 
-        if (client.bytesInBuffer <= PORTION_SIZE ) {
+        if (client.bytesInBuffer <= PACKET_SIZE ) {
             bytesToWrite = client.bytesInBuffer;
         }
 
@@ -318,19 +308,16 @@ class Proxy {
         if (client.bytesInBuffer <= 0 ) {
             client.connectionState = READ_FROM_SERVER;
             client.bytesInBuffer = 0;
-            printf("Request are sent \n");
-            //sleep(2);
+            cout << "Request are sent" << endl;
         }
     }
 
 
     void handleWriteToClient(vector<ConnectionInfo>& client, int sessionIndex, vector<bool>& sessionIsUsed, int &maxFdP, int our_fd){
-        //in this function bytesInBuffer isn't number of bytes in buffer
-        //it is a number of bytes that we need to send
         ssize_t bytesWritten = 0;
-        size_t bytesToWrite = PORTION_SIZE;
+        size_t bytesToWrite = PACKET_SIZE;
 
-        if ( client[sessionIndex].bytesInBuffer <= PORTION_SIZE ) {
+        if ( client[sessionIndex].bytesInBuffer <= PACKET_SIZE ) {
             bytesToWrite = client[sessionIndex].bytesInBuffer;
         }
 
@@ -345,25 +332,29 @@ class Proxy {
         }
 
         if (client[sessionIndex].bytesInBuffer <= 0 ) {
-            printf("We sent our message to the client\n");
-            printf("Session is over\n");
+            if (client[sessionIndex].serverSocket != -1) {
+                client[sessionIndex].bytesInBuffer = 0;
+                client[sessionIndex].connectionState = READ_FROM_SERVER;
+            }
+            cout << "We sent our message to the client" << endl;
+            cout << "Session is over" << endl;
             sessionIsUsed[sessionIndex] = false;
             client[sessionIndex].bytesInBuffer = 0;
             updateMaxFd(maxFdP, client, sessionIsUsed, sessionIndex, our_fd);
 
             close(client[sessionIndex].clientSocket);
             close(client[sessionIndex].serverSocket);
-            printf("\n");
+            cout << endl;
         }
     }
 public:
     void* run(void* arg) {
         int our_fd = 0;
-        vector<ConnectionInfo> client{MAX_CONNECTIONS};
-        vector<bool> sessionIsUsed = vector<bool>(MAX_CONNECTIONS);
+        vector<ConnectionInfo> client{CLIENTS_MAX};
+        vector<bool> sessionIsUsed = vector<bool>(CLIENTS_MAX);
 
         struct sockaddr_in our_addr = {0};
-        vector<struct sockaddr_in> client_addr{MAX_CONNECTIONS};
+        vector<struct sockaddr_in> client_addr{CLIENTS_MAX};
 
 
         our_addr.sin_family = AF_INET;
@@ -381,7 +372,7 @@ public:
         if (-1 == setsockopt(our_fd, 0, SO_REUSEADDR, &flag, sizeof(int))) {
             perror("Can't set option\n");
         }
-        printf("Binding socket ...\n");
+        cout << "Binding socket ..." << endl;
         if (0 != bind( our_fd,
                        (struct sockaddr *) &our_addr,
                        sizeof(our_addr))
@@ -390,7 +381,7 @@ public:
             return reinterpret_cast<void *>(1);
         }
 
-        if (0 != listen(our_fd, MAX_CONNECTIONS)) {
+        if (0 != listen(our_fd, CLIENTS_MAX)) {
             perror("Can't listen to interface\n");
             return reinterpret_cast<void *>(1);
         }
@@ -406,13 +397,13 @@ public:
             refreshOurSets(client, sessionIsUsed, readSet, writeSet, our_fd);
             int ret_value = select(maxFd, &readSet, &writeSet, nullptr, nullptr);
             if (ret_value == -1) return reinterpret_cast<void *>(1);
-            if (FD_ISSET(our_fd, &readSet)) {
+            if (FD_ISSET(our_fd, &readSet) && getFreeFd(sessionIsUsed) != -1) {
                 handleNewConnection(sessionIsUsed, client, maxFd,
                                     client_addr, client_addr_size, our_fd);
 
             }
 
-            for (int i = 0; i < MAX_CONNECTIONS; i++) {
+            for (int i = 0; i < CLIENTS_MAX; i++) {
                 if (!sessionIsUsed[i]){
                     continue;
                 }
@@ -435,6 +426,10 @@ public:
                         break;
                     case WRITE_TO_CLIENT:
                         if (FD_ISSET(client[i].clientSocket, &writeSet) ) {
+                            handleWriteToClient(client, i, sessionIsUsed, maxFd, our_fd);
+                        }
+                    case WRITE_PART_TO_CLIENT:
+                        if (FD_ISSET(client[i].clientSocket, &writeSet)) {
                             handleWriteToClient(client, i, sessionIsUsed, maxFd, our_fd);
                         }
                         break;

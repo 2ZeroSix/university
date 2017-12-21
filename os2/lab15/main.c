@@ -10,40 +10,40 @@ int main(int argc, char* argv[]) {
     pid_t pid;
     if ((pid = fork()) == 0) {
         sem_t* sem[2];
-        sem[0] = sem_open("os2.first", O_CREAT);
+        sem[0] = sem_open("/os1", O_CREAT, O_RDWR, 1);
         if (sem[0] == SEM_FAILED) {
-            perror("1");
+            perror("10");
             exit(1);
         }
-        sem[1] = sem_open("os2.second", O_CREAT);
+        sem[1] = sem_open("/os2", O_CREAT, O_RDWR, 0);
         if (sem[1] == SEM_FAILED) {
-            perror("1");
+            perror("11");
             exit(1);
         }
         for (int i = 0; i < 10; ++i) {
-            if (sem_post(sem[0])) {
-                perror(NULL);
-                exit(1);
-            }
             if (sem_wait(sem[1])) {
                 perror(NULL);
                 exit(1);
             }
             write(1, "2\n", sizeof("2\n"));
+            if (sem_post(sem[0])) {
+                perror(NULL);
+                exit(1);
+            }
         }
         if (sem_close(sem[0]) || sem_close(sem[1])) {
             perror(NULL);
         }
     } else if (pid != -1) {
         sem_t* sem[2];
-        sem[0] = sem_open("os2.first", O_CREAT);
+        sem[0] = sem_open("/os1", O_CREAT, O_RDWR, 1);
         if (sem[0] == SEM_FAILED) {
-            perror("0");
+            perror("00");
             exit(1);
         }
-        sem[1] = sem_open("os2.second", O_CREAT);
+        sem[1] = sem_open("/os2", O_CREAT, O_RDWR, 0);
         if (sem[1] == SEM_FAILED) {
-            perror("0");
+            perror("01");
             exit(1);
         }
         for (int i = 0; i < 10; ++i) {
