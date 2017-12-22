@@ -19,24 +19,27 @@ public class Server extends Thread {
     private long previousReceived = 0;
     private long startTime = System.currentTimeMillis();
     private long lastCheck = startTime;
+
     private Server(Socket socket) {
         this.socket = socket;
     }
+
     public void printProgressInfo() {
         long curTime = System.currentTimeMillis();
         if (file != null)
             System.out.println(
-                socket.getInetAddress().getCanonicalHostName()
-                + " : " + socket.getLocalPort()
-                + " : "+ file.getName()
-                + "\nprogress: " + (double) received / fileLen
-                + "; current speed: "
-                + (received - previousReceived) / (curTime - lastCheck)
-                + "; average speed: " + received / (curTime - startTime)
+                    socket.getInetAddress().getCanonicalHostName()
+                            + " : " + socket.getLocalPort()
+                            + " : " + file.getName()
+                            + "\nprogress: " + (double) received / fileLen
+                            + "; current speed: "
+                            + (received - previousReceived) / (curTime - lastCheck)
+                            + "; average speed: " + received / (curTime - startTime)
             );
         lastCheck = curTime;
         previousReceived = received;
     }
+
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("usage: <port>");
@@ -52,8 +55,8 @@ public class Server extends Thread {
             List<Server> readers = new LinkedList<>();
             Thread closerUpdater = new Thread(() -> {
                 try {
-                    while(!Thread.interrupted()) {
-                            sleep(3000);
+                    while (!Thread.interrupted()) {
+                        sleep(3000);
                         synchronized (readers) {
                             readers.removeIf(r -> {
                                 r.printProgressInfo();
@@ -112,9 +115,9 @@ public class Server extends Thread {
 
     @Override
     public void run() {
-        try (   InputStream inStream = socket.getInputStream();
+        try (InputStream inStream = socket.getInputStream();
                 /*Reader inReader = new InputStreamReader(inStream);
-                BufferedReader bufReader = new BufferedReader(inReader)*/){
+                BufferedReader bufReader = new BufferedReader(inReader)*/) {
             byte[] tmp = new byte[4096];
             int len = 0;
             while (len < Integer.BYTES) {
@@ -122,7 +125,7 @@ public class Server extends Thread {
                 if (l == -1) throw new IOException();
                 len += l;
             }
-            int filenameLen = ByteBuffer.allocate(Long.BYTES).put(tmp,0, Integer.BYTES).getInt(0);
+            int filenameLen = ByteBuffer.allocate(Long.BYTES).put(tmp, 0, Integer.BYTES).getInt(0);
             if (filenameLen > 4096) {
                 System.err.println("name of file is too long (max 4096 bytes)");
                 return;
@@ -141,7 +144,7 @@ public class Server extends Thread {
                 len += l;
             }
             fileLen = ByteBuffer.allocate(Long.BYTES).put(tmp, 0, Long.BYTES).getLong(0);
-            if ( !(file.createNewFile() || file.canWrite())) {
+            if (!(file.createNewFile() || file.canWrite())) {
                 socket.close();
                 return;
             }
@@ -162,7 +165,7 @@ public class Server extends Thread {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (CloseFileException e){
+        } catch (CloseFileException e) {
             if (!file.delete()) {
                 System.err.println("error while deleting file: " + file.getName());
             }

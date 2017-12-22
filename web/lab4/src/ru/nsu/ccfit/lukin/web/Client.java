@@ -9,7 +9,7 @@ public class Client {
     public static void main( String[] args )
     {
         try {
-            FileInputStream inputStream = new FileInputStream("to_send.jpg");
+            FileInputStream inputStream = new FileInputStream("to_send.pdf");
             MySocket socket = new MySocket("127.0.0.1", 9000);
 
             byte[] buffer = new byte[10000];

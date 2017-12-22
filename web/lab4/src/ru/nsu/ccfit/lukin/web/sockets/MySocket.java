@@ -74,8 +74,6 @@ public class MySocket {
                 data = ByteBuffer.wrap(receivedPacket.getData());
             } catch (SocketTimeoutException ex) {
                 continue;
-            } catch (IOException ex) {
-                ex.printStackTrace();
             }
 
             int serverSeq = data.getInt();
@@ -103,7 +101,7 @@ public class MySocket {
 
             try {
                 Thread.sleep(3000); // через 3 секунды пробуем коннектиться снова
-                state = State.CLOSED;
+//                state = State.CLOSED;
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
