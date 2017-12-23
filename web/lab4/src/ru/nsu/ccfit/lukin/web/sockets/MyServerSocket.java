@@ -85,8 +85,8 @@ public class MyServerSocket {
                         continue;
                     }
 
-                    if (    ((flags & MySocket.SYN_FLAG) == MySocket.SYN_FLAG)
-                        ||  ((flags & MySocket.ACK_FLAG) == MySocket.ACK_FLAG)) {
+                    if (((flags & MySocket.SYN_FLAG) == MySocket.SYN_FLAG)
+                            || ((flags & MySocket.ACK_FLAG) == MySocket.ACK_FLAG)) {
                         forAccept.add(receivedPacket); // если новый клиент, и это syn или ack отдаем accept(у)
                     }
                 } catch (SocketTimeoutException ex) {
@@ -156,7 +156,7 @@ public class MyServerSocket {
                 ackNum = data.getInt();
                 flags = data.get();
 
-                if ((state == State.LISTEN) && ((flags & MySocket.SYN_FLAG) == MySocket.SYN_FLAG)) {
+                if (/*(state == State.LISTEN) && */(flags  == MySocket.SYN_FLAG)) {
                     // новое соединение, получили syn
                     data.clear();
 
@@ -189,6 +189,7 @@ public class MyServerSocket {
             }
         }
     }
+
     private boolean closeSockets() {
         boolean res = true;
         for (MySocket socket : sockets.values()) {
