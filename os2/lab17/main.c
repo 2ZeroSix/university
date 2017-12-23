@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <unistd.h>
 pthread_mutex_t listMut = PTHREAD_MUTEX_INITIALIZER;
-// pthread_mutex_t nodeMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t nodeMut = PTHREAD_MUTEX_INITIALIZER;
 typedef struct _ListNode {
     char* data;
     pthread_mutex_t mutex;
@@ -93,33 +93,45 @@ void sortList(List* list, int (*cmp)(const char*, const char*)) {
     pthread_mutex_unlock(&listMut);
     if (!list)                                      return;
     int count = 0;
-    for (ListNode* cur = list->head; cur->next != NULL; cur = cur->next, ++count) {}
-    for (int j = 0; j < count; ++j) {
-        int flag = 0;
+    int flag = 0;
+    do {
+        flag = 0;
+        pthread_mutex_lock(&list->head->mutex);
         ListNode* cur = list->head;
         ListNode* prev = NULL;
-        for (int i = 0; i < count - j; ++i) {
+        while (cur->next) {
+            pthread_mutex_lock(&cur->next->mutex);
             if (cmp(cur->data, cur->next->data) > 0) {
                 if (prev) {
                     prev->next = cur->next;
                 } else {
+                    pthread_mutex_lock(&list->mutex);
                     list->head = cur->next;
+                    pthread_mutex_unlock(&list->mutex);
                 }
+                pthread_mutex_unlock(&prev->mutex);
                 prev = cur->next;
+                if (cur->next->next)
+                    pthread_mutex_lock(&cur->next->next->mutex);
                 cur->next = cur->next->next;
                 prev->next = cur;
-                if (i == count - 1) {
+                if (!cur->next) {
+                    pthread_mutex_lock(&list->mutex);
                     list->tail = cur;
+                    pthread_mutex_unlock(&list->mutex);
                 }
                 flag = 1;
             } else {
+                pthread_mutex_unlock(&prev->mutex);
                 prev = cur;
                 cur = cur->next;
+                if (cur->next->next)
+                    pthread_mutex_lock(&cur->next->next->mutex);
             }
         }
-        if (!flag) break;
-    }
-    pthread_mutex_unlock(&(list->mutex));
+        pthread_mutex_unlock(&cur->mutex);
+    }   while(flag);
+    // pthread_mutex_unlock(&(list->mutex));
 }
 
 void printList(List* list) {

@@ -36,7 +36,6 @@ void pushList(List* list, char* data) {
         list->tail = list->tail->next = initListNode();
     }
     list->tail->data = data;
-    pthread_mutex_unlock(&(list->mutex));
 }
 
 char* popList(List* list) {
@@ -47,7 +46,6 @@ char* popList(List* list) {
     if (list->head == list->tail) list->tail = NULL;
     list->head = list->head->next;
     free(tmp);
-    pthread_mutex_unlock(&(list->mutex));
     return retVal;
 }
 
@@ -60,10 +58,7 @@ void freeList(List* list) {
         free(tmp->data);
         free(tmp);
     }
-    pthread_mutex_t mutex = list->mutex;
     free(list);
-    pthread_mutex_unlock(&mutex);
-    pthread_mutex_destroy(&mutex);
 }
 
 void sortList(List* list, int (*cmp)(const char*, const char*)) {
@@ -102,7 +97,6 @@ void printList(List* list) {
     for (ListNode* cur = list->head; cur != NULL; cur = cur->next) {
         printf("%s\n", cur->data);
     }
-    pthread_mutex_unlock(&(list->mutex));
 }
 
 char* readString(FILE* fin) {
