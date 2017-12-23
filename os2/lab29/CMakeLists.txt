@@ -3,5 +3,6 @@ project(lab29)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(lab29
-        main.cpp)
+add_executable(lab29 29\(2\).c
+#[[main.cpp picohttpparser.c Proxy.h Cache.h]])
+
