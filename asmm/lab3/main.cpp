@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
-const int iter = 10000;
+const int iter = 1000;
 const int maxL = 13;
 using namespace std;
 typedef unsigned long long ull;
