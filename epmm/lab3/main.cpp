@@ -4,29 +4,25 @@
 #include <omp.h>
 #include "barrier.h"
 typedef struct timespec timespec;
-#define THREADS 2
-#define LIB 1
-inline timespec gettime() {
-    timespec time;
-    clock_gettime(CLOCK_MONOTONIC_RAW, &time);
-    return time;
+
+typedef unsigned long long ull;
+inline unsigned long long rdtsc() {
+    unsigned int lo, hi;
+    asm volatile ( "rdtsc\n" : "=a" (lo), "=d" (hi) );
+    return ((unsigned long long)hi << 32) | lo;
 }
 
-inline void update_min(const timespec& start, const timespec& end, timespec& min) {
-    timespec tmp = {end.tv_sec - start.tv_sec - (end.tv_nsec - start.tv_nsec < 0), (end.tv_nsec - start.tv_nsec + 1000000000) % 1000000000};
-    min = min.tv_sec < tmp.tv_sec ? min : (min.tv_nsec < tmp.tv_nsec ? min : tmp); 
-}
-
-const size_t iterations = 100;
-template<size_t offset>
+const size_t iterations = 1024*128;
+template<size_t OFFSET, int THREADS=2>
 void recalcField(char*const main, char*const result, const size_t N, const size_t M, const size_t count) {
-	#if LIB == 0
-	BarrierOMP<offset> barrier{THREADS};
-	#endif
+	BarrierOMP<OFFSET> barrier{THREADS};
+	volatile ull global_min = UINT64_MAX, global_average = UINT64_MAX, average;
 	#pragma omp parallel num_threads(THREADS) 
 	{
+		ull start, end, min = UINT64_MAX;
 		char* mainField = main;
 		char* resultField = result;
+
 		for (size_t i = 0; i < count; ++i) {
 			#pragma omp for
 			for (size_t row = 0; row < N; ++row) {
@@ -56,14 +52,27 @@ void recalcField(char*const main, char*const result, const size_t N, const size_
 					}
 				}
 			}
-			#if LIB == 1
-			#pragma omp barrier
-			#else
+			start = rdtsc();
 			barrier.wait();
-			#endif
+			end = rdtsc();
+			min = end - start > min ? min : end - start;
+			#pragma omp reduction(+:average)
+			{
+				average = (end - start);
+			}
+			barrier.wait();
+			#pragma omp single
+			{
+				global_average = global_average <= average / THREADS ? global_average : average / THREADS;
+			}
 			std::swap(mainField, resultField);
 		}
+		#pragma omp critical
+		{
+			global_min = global_min <= min ? global_min : min;
+		}
 	}
+	std::cout << global_min << "," << global_average << std::endl;
 }
 void recalcField(const char* mainField, char* resultField, size_t N, size_t M) {
 	for (size_t row = 0; row < N; ++row) {
@@ -118,44 +127,12 @@ int main(int argc, char** argv) {
 	for (size_t i = 0; i < 2048*1024; ++i) {
 		mainField[i] = i%5;
 	}
-	size_t N = 64, M = 32;
-	for (int i = 0; i < 4; ++i) {
-		timespec start, end, min = {INT64_MAX, INT64_MAX};
-		for (size_t iter = 0; iter < 100; ++iter) {
-			start = gettime();
-			recalcField<1>(mainField, tmpField, N, M, iterations);
-			end = gettime();
-			update_min(start, end, min);
-		}
-		std::cout << std::fixed << min.tv_sec + min.tv_nsec*0.000000001 << std::endl;
-		N *= 2;
-		M *= 4;
-	}
-	N = 64, M = 32;
-	for (int i = 0; i < 4; ++i) {
-		timespec start, end, min = {INT64_MAX, INT64_MAX};
-		for (size_t iter = 0; iter < 100; ++iter) {
-			start = gettime();
-			recalcField<64>(mainField, tmpField, N, M, iterations);
-			end = gettime();
-			update_min(start, end, min);
-		}
-		std::cout << std::fixed << min.tv_sec + min.tv_nsec*0.000000001 << std::endl;
-		N *= 2;
-		M *= 4;
-	}
-	N = 64, M = 32;
-	for (int i = 0; i < 4; ++i) {
-		timespec start, end, min = {INT64_MAX, INT64_MAX};
-		for (size_t iter = 0; iter < 100; ++iter) {
-			start = gettime();
-			recalcField<4096>(mainField, tmpField, N, M, iterations);
-			end = gettime();
-			update_min(start, end, min);
-		}
-		std::cout << std::fixed << min.tv_sec + min.tv_nsec*0.000000001 << std::endl;
-		N *= 2;
-		M *= 4;
+	for (size_t N = 64, M = 32; N <= 1024; N *= 2, M *= 4) {
+		recalcField<0>(mainField, tmpField, N, M, iterations);
+		recalcField<1>(mainField, tmpField, N, M, iterations);
+		recalcField<64>(mainField, tmpField, N, M, iterations);
+		recalcField<4096>(mainField, tmpField, N, M, iterations);
+		std::cout << std::endl;
 	}
 	delete[] mainField;
 	delete[] tmpField;
