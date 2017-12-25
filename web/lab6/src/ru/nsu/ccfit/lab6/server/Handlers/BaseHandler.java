@@ -28,21 +28,12 @@ abstract class BaseHandler implements HttpHandler {
     }
 
     static void printInfo(HttpExchange exchange) {
-//        try {
         System.out.print(exchange.getRequestMethod() + " ");
         System.out.println(exchange.getRequestURI());
         Headers headers = exchange.getRequestHeaders();
         for (String header : headers.keySet()) {
             System.out.println(header + " " + headers.getFirst(header));
         }
-        //System.out.println(headers.getFirst("Content-length"));
-//            byte[] body = new byte[1024];
-//            exchange.getRequestBody().read(body);
-//            System.out.println(new String(body, StandardCharsets.UTF_8));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     @Override
