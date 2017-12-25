@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.lab6.server;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpPrincipal;
@@ -17,7 +18,6 @@ public class Server {
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create();
         server.bind(new InetSocketAddress(2132), 0);
-
         Authenticator authorization = new Authenticator() {
             @Override
             public Result authenticate(HttpExchange httpExchange) {
