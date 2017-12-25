@@ -44,7 +44,7 @@ template<>
 class BarrierOMP<0> {
 	public:
 		BarrierOMP(size_t count){}
-		void wait() {
+		inline void wait() {
 			#pragma omp barrier
 		}
 };

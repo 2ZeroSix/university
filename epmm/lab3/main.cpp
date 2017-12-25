@@ -12,7 +12,7 @@ inline unsigned long long rdtsc() {
     return ((unsigned long long)hi << 32) | lo;
 }
 
-const size_t iterations = 1024*128;
+const size_t iterations = 1024*16;
 template<size_t OFFSET, int THREADS=2>
 void recalcField(char*const main, char*const result, const size_t N, const size_t M, const size_t count) {
 	BarrierOMP<OFFSET> barrier{THREADS};
@@ -55,15 +55,23 @@ void recalcField(char*const main, char*const result, const size_t N, const size_
 			start = rdtsc();
 			barrier.wait();
 			end = rdtsc();
-			min = end - start > min ? min : end - start;
+            #pragma omp single
+            {
+                average = 0;
+            }
+            min = end - start > min ? min : end - start;
 			#pragma omp reduction(+:average)
 			{
-				average = (end - start);
+				average += (end - start) / THREADS;
 			}
 			barrier.wait();
+            #pragma critical
+            {
+                std::cout << omp_get_thread_num() << ":" << end - start << std::endl;
+            }
 			#pragma omp single
 			{
-				global_average = global_average <= average / THREADS ? global_average : average / THREADS;
+				global_average = global_average <= average ? global_average : average ;
 			}
 			std::swap(mainField, resultField);
 		}
