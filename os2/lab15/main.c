@@ -70,3 +70,27 @@ int main(int argc, char* argv[]) {
     }
     return 0;
 }
+/*
+int shm;
+sem_t * mutex;
+
+if ((shm = shm_open("myshm", O_RDWR | O_CREAT, S_IRWXU))   0) {
+    perror("shm_open");
+    exit(1);
+}
+
+if (ftruncate(shm, sizeof(sem_t)) < 0 ) {
+    perror("ftruncate");
+    exit(1);
+}
+
+if ((mutex = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED, shm, 0)) == MAP_FAILED) {
+    perror("mmap");
+    exit(1);
+}
+
+if (sem_init(mutex, 1, 1) < 0) {
+    perror("semaphore initialization");
+    exit(1);
+}
+ */

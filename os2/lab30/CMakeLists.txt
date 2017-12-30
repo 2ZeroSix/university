@@ -4,4 +4,5 @@ project(lab30)
 set(CMAKE_CXX_STANDARD 11)
 
 add_executable(lab30
-        main.c)
+        second_proxy.c)
+target_link_libraries(lab30 pthread)

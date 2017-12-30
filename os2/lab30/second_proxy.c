@@ -7,33 +7,39 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <string.h>
-#include <stddef.h>
-#include <tgmath.h>
+#include <pthread.h>
 #include <errno.h>
 
 #define PORTION_SIZE (1024*32)
 #define BUF_SIZE 65536
 
-#define CACHE_SIZE 1024
+#define CACHE_SIZE 128
 
 #define MAX_CONNECTIONS 100
 #define HTTP_PORT 80
 #define LISTEN_PORT 5001
 
+const char const *content_length_string = "Content-Length: ";
+const int content_length_string_length = 16;
 //CONNECTION STATES
-#define READ_FROM_CLIENT 0
-#define WRITE_TO_SERVER  1
-#define READ_FROM_SERVER 2
-#define WRITE_TO_CLIENT  3
-#define ONLY_WRITE_TO_CLIENT 4
-#define ONLY_READ_FROM_SERVER 5
-//CACHE STATES
-#define EMPTY            0
-#define READING_HEAD     1
-#define READING_ANSWER   2
-#define WRITING          3
-#define READY            4
+enum ConnectionState {
+    READ_FROM_CLIENT,
+    WRITE_TO_SERVER,
+    READ_FROM_SERVER,
+    WRITE_TO_CLIENT,
+    ONLY_WRITE_TO_CLIENT,
+    ONLY_READ_FROM_SERVER,
+    DONE
+};
 
+//CACHE STATES
+enum CacheState {
+    EMPTY,
+    READING_HEAD,
+    READING_ANSWER,
+    WRITING,
+    READY
+};
 
 typedef struct {
     size_t size;
@@ -45,15 +51,16 @@ typedef struct {
     String answer;
 
     int numberOfUsers;
-    int state;
+    enum CacheState state;
     size_t numberOfRdyBytes;
+    pthread_mutex_t mutex;
 } CacheData;
 
 typedef struct {
     int clientSocket;
     int serverSocket;
 
-    int connectionState;
+    enum ConnectionState connectionState;
 
     size_t bytesInBuffer;
 
@@ -71,11 +78,13 @@ typedef struct _Clients_struct {
     CacheData *cacheNode;
 } Clients_struct;
 
-char *content_length_string = "Content-Length: ";
-int content_length_string_length = 16;
 
 
-CacheData cache[CACHE_SIZE] = {0};
+CacheData cache[CACHE_SIZE]               = {0};
+Clients_struct* head                      = NULL;
+
+pthread_mutex_t lock_for_cache;
+pthread_mutex_t listLock;
 
 int isIt200(char* buffer, ssize_t length){
     int index = -1;
@@ -99,18 +108,19 @@ int isIt200(char* buffer, ssize_t length){
     return 0;
 }
 
-void deleteFromList(Clients_struct **head, int clSocket) {
+void deleteFromList(int clSocket) {
     printf("DELETE FROM LIST\n");
     fflush(stdout);
     Clients_struct *tmp;
 
+    pthread_mutex_lock(&listLock);
 
-    if ((*head)->client.clientSocket == clSocket) {
-        tmp = (*head)->next;
-        free(*head);
-        *head = tmp;
+    if (head->client.clientSocket == clSocket) {
+        tmp = head->next;
+        free(head);
+        head = tmp;
     } else {
-        tmp = *head;
+        tmp = head;
         while (tmp->next) {
             if (tmp->next->client.clientSocket == clSocket) {
                 Clients_struct *tmp2 = tmp->next->next;
@@ -118,6 +128,7 @@ void deleteFromList(Clients_struct **head, int clSocket) {
                 tmp->next = tmp2;
                 printf("DELETE FROM LIST\n");
                 fflush(stdout);
+                pthread_mutex_unlock(&listLock);
                 return;
             }
             tmp = tmp->next;
@@ -125,34 +136,62 @@ void deleteFromList(Clients_struct **head, int clSocket) {
     }
     printf("DELETE FROM LIST\n");
     fflush(stdout);
+    pthread_mutex_unlock(&listLock);
+
 }
 
-int isItGetRequest(String request) {
-    return ((request.size >= 3) &&
-            ('G' == request.data[0]) &&
-            ('E' == request.data[1]) &&
-            ('T' == request.data[2]));
+
+
+int isItGetRequest(String request ) {
+	return ((request.size >= 3) &&
+	   ('G' == request.data[0]) && 
+	   ('E' == request.data[1]) && 
+	   ('T' == request.data[2]));
 }
 
-CacheData *findPlaceInCache() {
+
+CacheData *findPlaceInCache(char *url) {
+    int index = -1;
+
     for (int i = 0; i < CACHE_SIZE; ++i) {
+        pthread_mutex_lock(&cache[i].mutex);
         if (cache[i].state == EMPTY) {
-            return &cache[i];
+            index = i;
+            break;
+        }
+        pthread_mutex_unlock(&cache[i].mutex);
+    }
+    if (-1 == index){
+        for (int i = 0; i < CACHE_SIZE; ++i) {
+            pthread_mutex_lock(&cache[i].mutex);
+            if (cache[i].numberOfUsers == 0) {
+                if (cache[i].url.data) {
+                    free(cache[i].url.data);
+                }
+                if (cache[i].answer.data) {
+                    free(cache[i].answer.data);
+                }
+                index = i;
+                break;
+            }
+            pthread_mutex_unlock(&cache[i].mutex);
         }
     }
-    for (int i = 0; i < CACHE_SIZE; ++i) {
-        if (cache[i].numberOfUsers == 0) {
-            if (cache[i].url.data) {
-                free(cache[i].url.data);
-            }
-            if (cache[i].answer.data) {
-                free(cache[i].answer.data);
-            }
-            return &cache[i];
-        }
+    if (-1 == index){
+        return NULL;
     }
-    return NULL;
+
+    cache[index].url.size = strlen(url) + 1;
+    cache[index].url.data = (char *) calloc((strlen(url) + 1), sizeof(char));
+    memcpy(cache[index].url.data, url, strlen(url) + 1);
+
+    cache[index].state = WRITING;
+    cache[index].numberOfUsers = 1;
+    cache[index].numberOfRdyBytes = 0;
+    pthread_mutex_unlock(&cache[index].mutex);
+    return &cache[index];
 }
+
 
 int compareStrings(String request1, char *url) {
     if (request1.size != strlen(url) + 1) {
@@ -168,111 +207,46 @@ int compareStrings(String request1, char *url) {
     return 1;
 }
 
-CacheData *findAnswerInCache(char *url) {
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        if (cache[i].state != EMPTY) {
-            if (compareStrings(cache[i].url, url)) {
-                printf("Answer is from the cache\n");
-                return &cache[i];
-            }
-        }
-    }
-    printf("Answer is not found in the cache\n");
-    return NULL;
-}
-
-
-void refreshOurSets(Clients_struct *client, fd_set *readSet, fd_set *writeSet, int our_fd) {
-    FD_ZERO(readSet);
-    FD_ZERO(writeSet);
-    FD_SET(our_fd, readSet);
-
-    while (client) {
-        switch (client->client.connectionState) {
-            case READ_FROM_CLIENT:
-                FD_SET(client->client.clientSocket, readSet);
-//printf("PUT CLIENT READ\n");
-                break;
-            case ONLY_READ_FROM_SERVER:
-                FD_SET(client->client.serverSocket, readSet);
-                break;
-            case ONLY_WRITE_TO_CLIENT:
-                FD_SET(client->client.clientSocket, writeSet);
-                break;
-            case READ_FROM_SERVER:
-                FD_SET(client->client.serverSocket, readSet);
-                FD_SET(client->client.clientSocket, writeSet);
-//printf("PUT SERVER READ\n");
-//printf("PUT CLIENT WRITE\n");
-                break;
-            case WRITE_TO_SERVER:
-                FD_SET(client->client.serverSocket, writeSet);
-//printf("PUT SERVER WRITE\n");
-                break;
-            case WRITE_TO_CLIENT:
-                FD_SET(client->client.clientSocket, writeSet);
-//printf("PUT CLIENT WRITE\n");
-                break;
-            default:
-                break;
-        }
-        client = client->next;
-    }
-}
-
-void push_new_client(Clients_struct **client, int clientSocket) {
+Clients_struct* push_new_client(int clientSocket) {
     printf("HI\n");
     fflush(stdout);
-    Clients_struct *tmp = (Clients_struct *) malloc(sizeof(Clients_struct));
+    Clients_struct *tmp = (Clients_struct *) calloc(1, sizeof(Clients_struct));
     if (tmp == NULL) {
         perror("HELLO\n");
         fflush(stdout);
         fflush(stderr);
     }
-    tmp->client = (ConnectionInfo) {0};
+
+    pthread_mutex_lock(&listLock);
+    tmp->client                 = (ConnectionInfo) {0};
     tmp->client.connectionState = READ_FROM_CLIENT;
-    tmp->client.clientSocket = clientSocket;
-    tmp->next = (*client);
+    tmp->client.clientSocket    = clientSocket;
+    tmp->next = head;
 
-    (*client) = tmp;
+    head = tmp;
+    pthread_mutex_unlock(&listLock);
+
+    return tmp;
 }
 
-void handleNewConnection(Clients_struct **client, int *maxFdP, int our_fd) {
 
-    if (!client) {
-        printf("somehow adress to Clients_struct is NULL\n");
-        return;
-    }
-    printf("Accept connection ...\n");
-
-    struct sockaddr_in cl_addr = {0};
-    int client_addr_size = sizeof(struct sockaddr_in);
-
-    int clientSocket = accept(
-            our_fd,
-            (struct sockaddr *) &cl_addr,
-            &client_addr_size);
-    if (clientSocket > *maxFdP - 1) {
-        *maxFdP = clientSocket + 1;
-    }
-    push_new_client(client, clientSocket);
-}
-
-void updateMaxFd(int *maxFdP, Clients_struct *client, int clSocket, int svSocket, int our_fd) {
-    if ((svSocket == (*maxFdP - 1)) || (clSocket == (*maxFdP - 1))) {
-        *maxFdP = our_fd + 1;
-
-        while (client) {
-            if (*maxFdP - 1 < client->client.serverSocket) {
-                *maxFdP = client->client.serverSocket + 1;
+CacheData *findAnswerInCache(char *url) {
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        pthread_mutex_lock(&cache[i].mutex);
+        if (cache[i].state != EMPTY) {
+            if (compareStrings(cache[i].url, url)) {
+                printf("Answer is from the cache\n");
+                ++cache[i].numberOfUsers;
+                pthread_mutex_unlock(&cache[i].mutex);
+                return &cache[i];
             }
-            if (*maxFdP - 1 < client->client.clientSocket) {
-                *maxFdP = client->client.clientSocket + 1;
-            }
-            client = client->next;
         }
+        pthread_mutex_unlock(&cache[i].mutex);
     }
+    printf("Answer is not found in the cache\n");
+    return NULL;
 }
+
 
 char *getPath(char *url) {
     int end = -1;
@@ -298,13 +272,12 @@ char *getPath(char *url) {
         return NULL;
     }
 
-    char *tmp = (char *) malloc((end - start + 1) * sizeof(char));
+    char *tmp = (char *) calloc((end - start + 1), sizeof(char));
     memcpy(tmp, url + start, end - start);
     tmp[end - start] = '\0';
     printf("%s", tmp);
     return tmp;
 }
-
 char *getUrl(char *data, size_t size) {
     int endIndex = -1;
     if (data[3] != ' ') {
@@ -317,14 +290,12 @@ char *getUrl(char *data, size_t size) {
             break;
         }
     }
-    char *tmp = (char *) malloc(sizeof(char) * (endIndex - 3));
+    char *tmp = (char *) calloc((endIndex - 3), sizeof(char));
     memcpy(tmp, data + 4, (endIndex - 4));
     tmp[endIndex - 4] = '\0';
     return tmp;
 }
-
-void handleReadFromClient(Clients_struct **fullList, Clients_struct *client,
-                          int *maxFdP, int our_fd) {
+void handleReadFromClient(Clients_struct* client){
 
     ssize_t bytesRead = read(client->client.clientSocket,
                              client->client.buffer + client->client.bytesInBuffer,
@@ -332,7 +303,7 @@ void handleReadFromClient(Clients_struct **fullList, Clients_struct *client,
     printf("Bytes Read : %ld\n", bytesRead);
     client->client.bytesInBuffer += bytesRead;
 
-    //if we need to read more
+//if we need to read more
     if (!(bytesRead == 0 ||
           (client->client.bytesInBuffer >= 4 &&
            client->client.buffer[client->client.bytesInBuffer - 1] == '\n' &&
@@ -354,26 +325,25 @@ void handleReadFromClient(Clients_struct **fullList, Clients_struct *client,
     for (int j = 0; j < client->client.bytesInBuffer; ++j) {
         printf("%c", client->client.buffer[j]);
     }
-    //if it is not get
+//if it is not get
     if (!isItGetRequest(client->client.request)) {
         printf("Do not support this type of message\n");
         printf("Session is over\n\n");
 
-        int clSocket = client->client.clientSocket;
-        int svSocket = client->client.serverSocket;
-        deleteFromList(fullList, clSocket);
-        updateMaxFd(maxFdP, *fullList, clSocket, svSocket, our_fd);
-        close(clSocket);
+        client->client.connectionState = DONE;
+        close(client->client.clientSocket);
         return;
     }
 
     char *url = getUrl(client->client.request.data, client->client.request.size);
     if (url == NULL) {
-        printf("can't find URL\n");
-        exit(1);
+        close(client->client.clientSocket);
+        client->client.connectionState = DONE;
+        printf("url == null\n");
+        return;
     }
 
-    client->cacheNode = findAnswerInCache(url);
+    client->cacheNode = findAnswerInCache(url);//THIS
 
     struct sockaddr_in server_addr = {0};
     server_addr.sin_family = AF_INET;
@@ -383,27 +353,27 @@ void handleReadFromClient(Clients_struct **fullList, Clients_struct *client,
 
     struct hostent *host_info = gethostbyname(path);
     if (host_info == NULL) {
-        printf(" gethostbyname() failed\n");
-        exit(1);
+        close(client->client.clientSocket);
+        client->client.connectionState = DONE;
+        printf("host_info == null\n");
+        return;
     }
 
     memcpy(&server_addr.sin_addr, host_info->h_addr, host_info->h_length);
 
     client->client.serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (*maxFdP - 1 < client->client.serverSocket) {
-        *maxFdP = client->client.serverSocket + 1;
-    }
 
     if (0 != connect(client->client.serverSocket,
                      (struct sockaddr *) &server_addr,
                      sizeof(server_addr))
             ) {
-        printf("Can't connect to server address\n");
-        exit(1);
+        close(client->client.clientSocket);
+        client->client.connectionState = DONE;
+        return;
     }
 
     if (NULL != client->cacheNode) {//we have an answer in the cache
-        client->cacheNode->numberOfUsers += 1;
+        pthread_mutex_lock(&client->cacheNode->mutex);
         switch (client->cacheNode->state) {
             case READY:
                 client->client.connectionState = WRITE_TO_CLIENT;
@@ -415,22 +385,13 @@ void handleReadFromClient(Clients_struct **fullList, Clients_struct *client,
                 client->client.bytesInBuffer = client->client.request.size;
                 break;
         }
+        pthread_mutex_unlock(&client->cacheNode->mutex);
     } else {
-        client->cacheNode = findPlaceInCache();
-        if (client->cacheNode) {
-            client->cacheNode->url.size = strlen(url) + 1;
-            client->cacheNode->url.data = (char *) malloc(sizeof(char) * (strlen(url) + 1));
-            memcpy(client->cacheNode->url.data, url, strlen(url) + 1);
-
-            client->cacheNode->state = WRITING;
-            client->cacheNode->numberOfUsers = 1;
-            client->cacheNode->numberOfRdyBytes = 0;
-        }
+        client->cacheNode = findPlaceInCache(url);
         client->client.bytesInBuffer = client->client.request.size;
     }
 
 }
-
 
 ssize_t getLengthFromAnswer(char buffer[], size_t bodyStart) {
     // "Content-Length: " - our goal
@@ -493,7 +454,10 @@ void handleReadFromServer(Clients_struct *client) {
                          client->client.buffer + client->client.bytesInBuffer,
                          size_for_read);
     printf("GOT %d BYTES FROM SERVER\n", bytesRead);
-
+    if (bytesRead == 0) {
+        client->client.connectionState = WRITE_TO_CLIENT;
+        return;
+    }
     /*printf("CHECK THEM\n");
     for (int i = client->client.bytesInBuffer; i < client->client.bytesInBuffer + bytesRead; ++i){
         printf("%c", client->client.buffer[i]);
@@ -504,6 +468,7 @@ void handleReadFromServer(Clients_struct *client) {
     client->client.bytesInBuffer += bytesRead;
     ssize_t flag;
     if (client->cacheNode) {
+        pthread_mutex_lock(&client->cacheNode->mutex);
         switch (client->cacheNode->state) {
             case READY:
                 printf("CASE READY\n");
@@ -511,6 +476,7 @@ void handleReadFromServer(Clients_struct *client) {
                 client->client.connectionState = WRITE_TO_CLIENT;
                 client->client.answer.size = client->cacheNode->answer.size;
                 client->client.bytesInBuffer = client->client.answer.size;
+                pthread_mutex_unlock(&client->cacheNode->mutex);
                 return;
             case READING_HEAD:
 
@@ -522,6 +488,7 @@ void handleReadFromServer(Clients_struct *client) {
                         if (client->cacheNode->numberOfUsers == 0) {
                             client->cacheNode->state = EMPTY;
                         }
+                        pthread_mutex_unlock(&client->cacheNode->mutex);
                         client->cacheNode = NULL;
                         if (client->client.bytesInBuffer == BUF_SIZE){
                             client->client.connectionState = ONLY_WRITE_TO_CLIENT;
@@ -535,6 +502,7 @@ void handleReadFromServer(Clients_struct *client) {
                             if (client->cacheNode->numberOfUsers == 0) {
                                 client->cacheNode->state = EMPTY;
                             }
+                            pthread_mutex_unlock(&client->cacheNode->mutex);
                             client->cacheNode = NULL;
                             if (client->client.bytesInBuffer == BUF_SIZE){
                                 client->client.connectionState = ONLY_WRITE_TO_CLIENT;
@@ -545,7 +513,7 @@ void handleReadFromServer(Clients_struct *client) {
                         printf("FLAG: %ld", flag);
                         client->client.bytesInBuffer = 0;//WE NEED IT TO WRITE DATE IN THE BEGINING OF BUF
                         client->cacheNode->state = READING_ANSWER;
-                        client->cacheNode->answer.data = (char *) malloc(flag * sizeof(char));
+                        client->cacheNode->answer.data = (char *) calloc(flag, sizeof(char));
                         client->cacheNode->answer.size = (size_t) flag;
                         client->cacheNode->numberOfRdyBytes = client->client.readedFromServerBytes;
                         copyArr(client->client.buffer, client->cacheNode->answer.data, 0,
@@ -563,6 +531,7 @@ void handleReadFromServer(Clients_struct *client) {
 //                            for (int j = 0; j < client->cacheNode->answer.size; j++) {
 //                                printf("%c", client->cacheNode->answer.data[j]);
 //                            }
+                            pthread_mutex_unlock(&client->cacheNode->mutex);
                             return;
                         }
                     } else {//cant calculate length
@@ -573,8 +542,10 @@ void handleReadFromServer(Clients_struct *client) {
                         exit(1);
                     }
                 } else {//have not readed head yet
+                    pthread_mutex_unlock(&client->cacheNode->mutex);
                     return;
                 }
+                pthread_mutex_unlock(&client->cacheNode->mutex);
                 break;
             case READING_ANSWER:
                 printf("CASE READING_ANSWER\n");
@@ -597,11 +568,14 @@ void handleReadFromServer(Clients_struct *client) {
                             printf("%c", client->cacheNode->answer.data[j]);
                         }
 
+                        pthread_mutex_unlock(&client->cacheNode->mutex);
                         return;
                     }
                 }
+                pthread_mutex_unlock(&client->cacheNode->mutex);
                 break;
             default:
+                pthread_mutex_unlock(&client->cacheNode->mutex);
                 break;
         }
     } else {//no cache
@@ -615,9 +589,8 @@ void handleReadFromServer(Clients_struct *client) {
 }
 
 
-void handleWriteToServer(Clients_struct *client) {
-    //in this function bytesInBuffer isn't number of bytes in buffer
-    //it is a number of bytes that we need to send
+
+void handleWriteToServer(Clients_struct* client){
     int bytesWritten = 0;
     int bytesToWrite = PORTION_SIZE;
 
@@ -632,11 +605,12 @@ void handleWriteToServer(Clients_struct *client) {
     client->client.bytesInBuffer -= bytesWritten;
     if (0 == bytesWritten) {
         client->client.bytesInBuffer = 0;
-    }   
+    }
 
 
     if (client->client.bytesInBuffer <= 0) {
         if (client->cacheNode) {
+            pthread_mutex_lock(&client->cacheNode->mutex);
             switch (client->cacheNode->state) {
                 case READY:
                     close(client->client.serverSocket);
@@ -654,6 +628,7 @@ void handleWriteToServer(Clients_struct *client) {
                     client->client.bytesInBuffer = 0;
                     break;
             }
+            pthread_mutex_unlock(&client->cacheNode->mutex);
         } else{
             client->client.bytesInBuffer = 0;
             client->client.connectionState = READ_FROM_SERVER;
@@ -663,7 +638,7 @@ void handleWriteToServer(Clients_struct *client) {
 }
 
 
-void handleWriteToClient(Clients_struct **fullList, Clients_struct *client, int *maxFdP, int our_fd) {
+void handleWriteToClient(Clients_struct *client) {
     //in this function bytesInBuffer isn't number of bytes in buffer
     //it is a number of bytes that we need to send
     int bytesWritten = 0;
@@ -671,8 +646,8 @@ void handleWriteToClient(Clients_struct **fullList, Clients_struct *client, int 
 
     char *source;
     size_t shift;
-
     if (client->cacheNode) {
+        pthread_mutex_lock(&client->cacheNode->mutex);
         switch (client->cacheNode->state) {
             case READY:
                 source = client->cacheNode->answer.data;
@@ -690,6 +665,7 @@ void handleWriteToClient(Clients_struct **fullList, Clients_struct *client, int 
                 bytesToWrite = client->client.bytesInBuffer - shift;
                 break;
             default:
+                pthread_mutex_unlock(&client->cacheNode->mutex);
                 return;
         }
         bytesToWrite = (bytesToWrite > PORTION_SIZE) ? PORTION_SIZE : bytesToWrite;
@@ -699,16 +675,18 @@ void handleWriteToClient(Clients_struct **fullList, Clients_struct *client, int 
         if (errno != 0) {
             int clSocket = client->client.clientSocket;
             int svSocket = client->client.serverSocket;
-            deleteFromList(fullList, clSocket);
-            updateMaxFd(maxFdP, *fullList, clSocket, svSocket, our_fd);
+
             close(clSocket);
+            client->client.connectionState = DONE;
             perror("Error");
+            pthread_mutex_unlock(&client->cacheNode->mutex);
             return;
         }
         client->client.writtenToClientBytes += bytesWritten;
 
         switch (client->cacheNode->state) {
             case READING_HEAD:
+                pthread_mutex_unlock(&client->cacheNode->mutex);
                 return;
             default:
                 if (client->client.writtenToClientBytes == client->cacheNode->answer.size) {
@@ -719,12 +697,13 @@ void handleWriteToClient(Clients_struct **fullList, Clients_struct *client, int 
                     int clSocket = client->client.clientSocket;
                     int svSocket = client->client.serverSocket;
 
-                    deleteFromList(fullList, clSocket);
-                    updateMaxFd(maxFdP, *fullList, clSocket, svSocket, our_fd);
+
                     close(clSocket);
+                    client->client.connectionState = DONE;
                     printf("\n");
                 }
         }
+        pthread_mutex_unlock(&client->cacheNode->mutex);
     } else {
         source = client->client.buffer;
         shift = (int) (client->client.writtenToClientBytes % BUF_SIZE);
@@ -741,9 +720,9 @@ void handleWriteToClient(Clients_struct **fullList, Clients_struct *client, int 
             printf("Session is over\n");
             int clSocket = client->client.clientSocket;
             int svSocket = client->client.serverSocket;
-            deleteFromList(fullList, clSocket);
-            updateMaxFd(maxFdP, *fullList, clSocket, svSocket, our_fd);
+
             close(clSocket);
+            client->client.connectionState = DONE;
             return;
         }
 
@@ -755,100 +734,117 @@ void handleWriteToClient(Clients_struct **fullList, Clients_struct *client, int 
     }
 }
 
-int main(int argc, char **argv) {
 
-    int our_fd = 0;
+void* childBody(void* p){
+	Clients_struct* client = (Clients_struct*)p;
+	
+	while(1){
+		switch(client->client.connectionState){
+			case READ_FROM_CLIENT:
+				handleReadFromClient(client);
+				break;
+			case WRITE_TO_SERVER:
+				handleWriteToServer(client);
+				break;
+			case READ_FROM_SERVER:
+				handleReadFromServer(client);
+				handleWriteToClient(client);
+				break;
+			case ONLY_WRITE_TO_CLIENT:
+			case WRITE_TO_CLIENT:
+				handleWriteToClient(client);
+				break;
+			case DONE:
+                if (client->cacheNode) {
+                    pthread_mutex_lock(&client->cacheNode->mutex);
+                    --client->cacheNode->numberOfUsers;
+                    pthread_mutex_unlock(&client->cacheNode->mutex);
+                }
+                free(client->client.request.data);
+                client->client.request.data = NULL;
+                free(client->client.answer.data);
+                client->client.answer.data = NULL;
+				deleteFromList(client->client.clientSocket);
+				pthread_exit(NULL);
+				break;
+		}
+	}	
+}
 
 
-    Clients_struct *client = NULL;
+int main ( int argc, char ** argv ) {
+	int our_fd = 0;
 
-    struct sockaddr_in our_addr = {0};
-
-
-    our_addr.sin_family = AF_INET;
-    our_addr.sin_port = htons(LISTEN_PORT);
-    our_addr.sin_addr.s_addr = INADDR_ANY;
-
-
-    our_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (-1 == our_fd) {
-        perror("Can't create socket\n");
-        return 1;
-    }
-
-    printf("Binding socket ...\n");
-    if (0 != bind(our_fd,
-                  (struct sockaddr *) &our_addr,
-                  sizeof(our_addr))
-            ) {
-        perror("Can't bind socket to address\n");
-        return 1;
-    }
-
-    if (0 != listen(our_fd, 128)) {
-        perror("Can't listen to interface\n");
-        return 1;
-    }
-
-    fd_set readSet;
-    fd_set writeSet;
-
-    int maxFd = our_fd + 1;
-    int client_addr_size = sizeof(struct sockaddr_in);
-    Clients_struct *tmp;
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-    while (1) {
-        refreshOurSets(client, &readSet, &writeSet, our_fd);
-        int ret_value = select(maxFd, &readSet, &writeSet, NULL, NULL);
-
-        if (FD_ISSET(our_fd, &readSet)) {
-            printf("BEFORE HANDLE NEW CONNECTION\n");
-            handleNewConnection(&client, &maxFd, our_fd);
-            printf("AFTER HANDLE NEW CONNECTION\n");
-        }
-        tmp = client;
-
-        while (tmp) {
-            Clients_struct *next = tmp->next;
-            switch (tmp->client.connectionState) {
-                case READ_FROM_CLIENT://time to read from client?
-                    if (FD_ISSET(tmp->client.clientSocket, &readSet)) {
-                        handleReadFromClient(&client, tmp, &maxFd, our_fd);
-                    }
-                    break;
-                case READ_FROM_SERVER://time to read from server?
-                    if (FD_ISSET(tmp->client.serverSocket, &readSet)) {
-                        handleReadFromServer(tmp);
-                        if (FD_ISSET(tmp->client.clientSocket, &writeSet)) {
-                            handleWriteToClient(&client, tmp, &maxFd, our_fd);
-                        }
-                    }
-                    break;
-                case WRITE_TO_SERVER://time to write to server?
-                    if (FD_ISSET(tmp->client.serverSocket, &writeSet)) {
-                        handleWriteToServer(tmp);
-                    }
-                    break;
-                case ONLY_WRITE_TO_CLIENT:
-                case WRITE_TO_CLIENT://time to write to client?
-                    if (FD_ISSET(tmp->client.clientSocket, &writeSet)) {
-                        handleWriteToClient(&client, tmp, &maxFd, our_fd);
-
-                    }
-                    break;
-                case ONLY_READ_FROM_SERVER:
-                    if (FD_ISSET(tmp->client.serverSocket, &readSet)) {
-                        handleReadFromServer(tmp);
-
-                    }
-                default:
-                    break;
+	if (pthread_mutex_init (&listLock, NULL) != 0){
+        printf("mutex init error\n");
+        exit(1);
+	}
+	if (pthread_mutex_init (&lock_for_cache, NULL) != 0){
+        printf("mutex init error\n");
+        pthread_mutex_destroy(&listLock);
+        exit(1);
+	}
+    for (int i = 0; i < CACHE_SIZE; ++i){
+        if (pthread_mutex_init (&cache[i].mutex, NULL) != 0){
+            printf("mutex init error\n");
+            for (int j = 0; j < i; ++j){
+                pthread_mutex_destroy(&cache[i].mutex);
             }
-            tmp = next;
+            exit(1);
         }
     }
-#pragma clang diagnostic pop
-    return 0;
+
+	struct sockaddr_in our_addr = {0};
+	
+	our_addr.sin_family      = AF_INET;
+	our_addr.sin_port        = htons(LISTEN_PORT);
+	our_addr.sin_addr.s_addr = INADDR_ANY;
+	
+
+	our_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (-1 == our_fd) {
+		perror("Can't create socket\n");
+		return 1;
+	}
+
+	printf("Binding socket ...\n");
+	if (0 != bind( our_fd, 
+				   (struct sockaddr *) &our_addr, 
+				   sizeof(our_addr))
+		) {
+		perror("Can't bind socket to address\n");
+		return 1;
+	}
+
+	if (0 != listen(our_fd, MAX_CONNECTIONS)) {
+		perror("Can't listen to interface\n");
+		return 1;
+	}
+	
+	
+	
+	int client_addr_size = sizeof(struct sockaddr_in);
+	int *tmpSocketP = (int*)calloc(1, sizeof(int));
+	struct sockaddr_in client_addr_tmp = {0};
+	while (1) {
+		*tmpSocketP = accept(our_fd, 
+				  	  		 (struct sockaddr *) &client_addr_tmp, 
+				  	   		  &client_addr_size);
+		printf("New connection ...\n");
+
+		
+		Clients_struct* new_client = push_new_client(*tmpSocketP);
+		
+		pthread_t thread;
+
+		if (pthread_create(&thread, NULL, childBody, new_client) != 0){
+        	printf("thread problem\n");
+        	//don't know what to do here
+        	exit(1);
+    	}
+        pthread_detach(thread);
+
+	}
+
+	return 0;
 }
