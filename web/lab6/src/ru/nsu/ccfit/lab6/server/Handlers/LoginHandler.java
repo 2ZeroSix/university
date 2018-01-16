@@ -21,7 +21,11 @@ public class LoginHandler extends BaseHandler {
             JsonParser parser = new JsonParser();
             JsonObject obj = parser.parse(getRequestBodyAsString(httpExchange)).getAsJsonObject();
             String username = obj.get("username").getAsString();
-            if (username == null || UserController.getInstance().isUserExistAndOnline(username)) {
+            if (username == null) {
+                httpExchange.getResponseHeaders().add("WWW-Authenticate", "Token realm=’need username'");
+                httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, -1);
+            }
+            if (UserController.getInstance().isUserExistAndOnline(username)) {
                 httpExchange.getResponseHeaders().add("WWW-Authenticate", "Token realm=’Username is already in use'");
                 httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_UNAUTHORIZED, -1);
             } else {
@@ -40,9 +44,8 @@ public class LoginHandler extends BaseHandler {
 
                 httpExchange.getResponseBody().write(responseBodyBytes);
             }
-        }
-        else{
-            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_FORBIDDEN, -1);
+        } else{
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_METHOD, -1);
         }
         httpExchange.close();
     }

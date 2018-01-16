@@ -82,11 +82,11 @@ public class MessagesHandler extends BaseHandler {
                 httpExchange.getResponseHeaders().add("Content-Type", "application/json");
                 httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, responseBodyBytes.length);
                 httpExchange.getResponseBody().write(responseBodyBytes);
-            } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
+            } catch (IndexOutOfBoundsException | IllegalArgumentException  e) {
                 httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, -1);
             }
         } else {
-            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_FORBIDDEN, -1);
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_METHOD, -1);
         }
         httpExchange.close();
     }

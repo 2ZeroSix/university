@@ -15,9 +15,11 @@ public class Client {
     private String userToken = "";
     private int nextReceivedMessageID = 0;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Client client = new Client();
         client.start();
+        client.consoleReader.interrupt();
+        client.consoleReader.join();
     }
 
 
@@ -47,11 +49,13 @@ public class Client {
                             System.out.print("Relogin...");
                             if (!login(username)) {
                                 System.out.println("Failure");
-                                break;
+                            } else {
+                                System.out.println("Success");
                             }
-                            System.out.println("Success");
                         } else {
-                            e.printStackTrace();
+//                            e.printStackTrace();
+                            System.err.println("can't reconnect: " + e.getLocalizedMessage());
+                            return;
                         }
                     }
                 }
@@ -62,7 +66,7 @@ public class Client {
     }
 
     private boolean login(String username) throws InterruptedException {
-        for (int attempts = 0; attempts < 5; attempts++) {
+        for (int attempts = 0; attempts < 10; attempts++) {
             try {
                 connectWithUsername(username);
                 return true;
@@ -71,9 +75,10 @@ public class Client {
                     System.out.println("Введите username:");
                     username = consoleReader.getNextLine();
                 } else {
-                    e.printStackTrace();
+                    System.err.println("Can't login: " + e.getLocalizedMessage());
                 }
             }
+            Thread.sleep(1000);
         }
         return false;
     }
@@ -109,11 +114,28 @@ public class Client {
     private JsonObject getUsers() throws IOException {
         try {
             URL url = new URL("http", "localhost", 2132, "/users");
+            HttpURLConnection connection = null;
             //System.out.println(url.toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Authorization", userToken);
-            connection.connect();
-            int status = connection.getResponseCode();
+            int status = 0;
+            for (int i = 0; i < 10; ++i) {
+                try {
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestProperty("Authorization", userToken);
+                    connection.connect();
+                    status = connection.getResponseCode();
+                    break;
+                } catch (IOException e) {
+                    System.err.println("trying reconnect : " + e.getLocalizedMessage());
+                    if (i == 9) {
+                        throw e;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch(InterruptedException ignored) {
+                    }
+                }
+            }
+
             //System.out.println(status);
             if (status == HttpURLConnection.HTTP_OK) {
                 return readBody(connection);
@@ -123,7 +145,7 @@ public class Client {
         } catch (MalformedURLException | ProtocolException ignored) {
             //newer throw this
         }
-        throw new IOException("Some magic");
+        throw new IOException("403");
     }
 
     private JsonObject readBody(HttpURLConnection connection) throws IOException {
@@ -139,17 +161,34 @@ public class Client {
         try {
             URL url = new URL("http", "localhost", 2132, "/messages");
             //System.out.println(url.toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Authorization", userToken);
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
+            HttpURLConnection connection = null;
+            int status = 0;
             JsonObject requestBody = new JsonObject();
             requestBody.addProperty("message", message);
             Gson gson = new Gson();
-            connection.getOutputStream().write(gson.toJson(requestBody).getBytes(StandardCharsets.UTF_8));
-            connection.connect();
-            int status = connection.getResponseCode();
+            for (int i = 0; i < 10; ++i) {
+                try {
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestProperty("Authorization", userToken);
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setRequestMethod("POST");
+                    connection.setDoOutput(true);
+                    connection.getOutputStream().write(gson.toJson(requestBody).getBytes(StandardCharsets.UTF_8));
+                    connection.connect();
+                    status = connection.getResponseCode();
+                    break;
+                } catch (IOException e) {
+                    System.err.println("trying reconnect : " + e.getLocalizedMessage());
+                    if (i == 9) {
+                        throw e;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch(InterruptedException ignored) {
+                    }
+                }
+            }
+
             //System.out.println(status);
            /* if (status == HttpURLConnection.HTTP_OK) {
 
@@ -171,11 +210,29 @@ public class Client {
             URL url = new URL("http", "localhost", 2132, "/messages?offset="
                     + String.valueOf(nextReceivedMessageID) + "&count=50");
             //System.out.println(url.toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Authorization", userToken);
+            HttpURLConnection connection = null;
 
-            connection.connect();
-            int status = connection.getResponseCode();
+            int status = 0;
+            for (int i = 0; i < 10; ++i) {
+                try {
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestProperty("Authorization", userToken);
+                    connection.connect();
+                    status = connection.getResponseCode();
+                    break;
+                } catch (IOException e) {
+                    System.err.println("trying reconnect : " + e.getLocalizedMessage());
+                    if (i == 9) {
+                        throw e;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch(InterruptedException ignored) {
+                    }
+                }
+            }
+
+
             //System.out.println(status);
             if (status == HttpURLConnection.HTTP_OK) {
                 return readBody(connection);
@@ -185,7 +242,7 @@ public class Client {
         } catch (MalformedURLException | ProtocolException ignored) {
             //newer throw this
         }
-        throw new IOException("Some magic");
+        throw new IOException("403");
     }
 
     private String readBodyString(InputStream inputStream, int bodySize) throws IOException {
@@ -203,15 +260,33 @@ public class Client {
         try {
             URL url = new URL("http", "localhost", 2132, "/login");
             //System.out.println(url.toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
+            HttpURLConnection connection = null;
             JsonObject requestBody = new JsonObject();
             requestBody.addProperty("username", username);
-            connection.getOutputStream().write(requestBody.toString().getBytes(StandardCharsets.UTF_8));
-            connection.connect();
-            int status = connection.getResponseCode();
+            int status = 0;
+            for (int i = 0; i < 10; ++i) {
+                try {
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setDoOutput(true);
+                    connection.getOutputStream().write(requestBody.toString().getBytes(StandardCharsets.UTF_8));
+                    connection.connect();
+                    status = connection.getResponseCode();
+                    break;
+                } catch (IOException e) {
+                    System.err.println("trying reconnect : " + e.getLocalizedMessage());
+                    if (i == 9) {
+                        throw e;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch(InterruptedException ignored) {
+                    }
+                }
+            }
+
+
             //System.out.println(status);
             if (status == HttpURLConnection.HTTP_OK) {
                 userToken = readBody(connection).get("token").getAsString();
@@ -227,10 +302,27 @@ public class Client {
     private void logout() {
         try {
             URL url = new URL("http", "localhost", 2132, "/logout");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Authorization", userToken);
-            connection.connect();
-            int status = connection.getResponseCode();
+            HttpURLConnection connection = null;
+            int status = 0;
+            for (int i = 0; i < 10; ++i) {
+                try {
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestProperty("Authorization", userToken);
+                    connection.connect();
+                    status = connection.getResponseCode();
+                    break;
+                } catch (IOException e) {
+                    System.err.println("trying reconnect : " + e.getLocalizedMessage());
+                    if (i == 9) {
+                        throw e;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch(InterruptedException ignored) {
+                    }
+                }
+            }
+
             if (status == HttpURLConnection.HTTP_OK) {
                 System.out.println("success logout");
             } else {

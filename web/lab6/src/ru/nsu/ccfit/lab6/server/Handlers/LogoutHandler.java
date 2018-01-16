@@ -17,7 +17,12 @@ public class LogoutHandler extends BaseHandler {
     public void myHandle(HttpExchange httpExchange) throws Throwable {
         printInfo(httpExchange);
         if (httpExchange.getRequestMethod().equalsIgnoreCase("GET")) {
-            UserController.getInstance().getUser(UUID.fromString(httpExchange.getPrincipal().getRealm())).logout();
+            UserController.User user = UserController.getInstance().getUser(UUID.fromString(httpExchange.getPrincipal().getRealm()));
+            if (user == null) {
+                httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, -1);
+            } else {
+                user.logout();
+            }
             JsonObject responseBody = new JsonObject();
             responseBody.addProperty("message", "bye!");
             Gson gson = new Gson();
@@ -26,7 +31,7 @@ public class LogoutHandler extends BaseHandler {
             httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, responseBodyBytes.length);
             httpExchange.getResponseBody().write(responseBodyBytes);
         } else {
-            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_FORBIDDEN, -1);
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_METHOD, -1);
         }
         httpExchange.close();
     }

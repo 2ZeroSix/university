@@ -55,7 +55,7 @@ public class UsersHandler extends BaseHandler {
             }
 
         } else {
-            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_FORBIDDEN, -1);
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_METHOD, -1);
         }
         httpExchange.close();
     }
